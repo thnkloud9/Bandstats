@@ -1,0 +1,25 @@
+
+/* generic styles */
+* {
+  font-family: sans-serif;
+  }
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  }
+
+a {color:#30173a; text-decoration: none; outline:none;}
+a:visited {color:#666666; text-decoration: none;}
+a:focus {outline:none;}
+a:hover, a:active {text-decoration: underline; outline:none;}
+
+.navlist li
+{
+  display: inline;
+  list-style-type: none;
+  padding-right: 20px;
+}
+

@@ -1,0 +1,15 @@
+{% extends "./base.jinjs" %}
+{% block title %}Site Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for site in sites %}
+    <li><a href="/site/{{site.site_id}}/edit">{{ site.site_name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

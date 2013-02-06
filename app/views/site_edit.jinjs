@@ -1,0 +1,46 @@
+{% extends "./base.jinjs" %}
+{% block title %}Site Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<form>
+    <fieldset>
+{% for item in site %}
+    {{item}}: <input type="text" value="{{site[item]}}"><br />
+{% endfor %}
+    </fieldset>
+</form>
+
+<div id='feed-sample'>
+    <a href="#" id='bs-next-article'>load</a>
+    <dl>
+{% for field in article_fields %}
+        <dt id='bs-article-example-{{field}}'>{{field}}</dt>
+            <dd id='bs-article-example-{{field}}-value'></pre></dd>
+{% endfor %}
+    </dl>
+</div>
+<script type="text/javascript">
+    var articles = {{articles}};
+    var current_article = 1;
+    $('#bs-next-article').live('click', function() {
+        $('#bs-next-article').html('next');
+        for (var field in articles[current_article]) {
+            var value = articles[current_article][field];
+            if (typeof value === 'object') {
+                console.log(value);
+            }
+            $('#bs-article-example-'+field+'-value').html("<pre><code>"+value+"</code></pre>");
+        }
+        if (current_article === (articles.length-1)) {
+            current_article = 0;
+        } else {
+            current_article++;
+        }
+        return false; 
+    });
+</script>
+
+{% endblock %}

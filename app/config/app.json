@@ -1,0 +1,35 @@
+{
+    "app": {
+        "port": 4000,
+        "title": "Bandstats"
+    },
+    "admin": {
+        "port": 8000,
+        "title": "Bandstats Admin"
+    },
+    "db": {
+        "host": "localhost",
+        "port": 27017,
+        "database": "bandstats"
+    },
+    "bandcamp": {
+        "api_key": "vatnajokull",
+        "domain": "http://api.bandcamp.com/api"
+    },
+    "lastfm": {
+        "api_key": "e4d4f5353a13cf36fdb79957f831b6cf",
+        "api_secret": "33de9ec1331e068d9e50e3c80f173c96",
+        "domain": "http://ws.audioscrobbler.com/2.0"
+    },
+    "echonest": {
+        "api_key": "5SMVVCCJLQPN1IIOZ",
+        "api_secret": "58/+heZ1R3iRlFSGESrwcA",
+        "consumer_key": "8be1a338d938f19a8c9cde281d705095",
+        "domain": "http://developer.echonest.com/api/v4"
+    },
+    "facebook": {
+        "app_id": "115928858587081",
+        "channel_url": "//www.thedelimagazine.com/bandstats/channel.html",
+        "jssdk_src": "//connect.facebook.net/en_US/all.js"
+    }
+}

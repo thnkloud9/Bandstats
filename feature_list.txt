@@ -1,0 +1,67 @@
+sites:
+
+1. test parse on edit screen (see how many bands match, and what fields they match on
+2. drag and drop field matching
+3. add visual to edit (show image, site link)
+
+bands:
+
+1. add search terms fields, by default is only band name, but terms can be added
+2. add gigs, include as a score for regions
+    a. add running stat
+3. add external ids collection (echonest, lastfm, musicbrains, songkick, spotify, bandcamp, soundcloud, facebook, myspace)
+    a. add api search for each service, drag and drop to select
+4. create running stats for internal counts (mentions, gigs)
+5. create youtube collector (search needs loads of to be percise matches)
+    a. add running stat for sum of video plays
+6. add echonest hotttness running stat
+7. add echonest blogs running stat (just total by day)
+8. add echonest articles running stat (just total by day)
+9. find out if we can get spotify and grooveshark stats (plays or likes)
+10. add tags array, by default will include regions and genres, but could any anything (like a CHEATERS tag!)
+
+tools:
+
+1. duplicate band names list
+2. band import tool
+    a. lookup id for all available services (echonest, lastfm, musicbrains, songkick, spotify, bandcamp, soundcloud, facebook, myspace)
+    b. import from file (json, xml, xl, csv)
+    c. import from itunes 
+3. config tool to update api services and keys
+4. jobs scheduler
+    a. turn on/off any collector
+    b. schedule any collection for regular collection (maybe only by hour)
+    c. run any job immediately
+5. job log, start time, duration, number processed, number matched
+6. sites with no matches list
+7. show possible false matching bands (bands with high article matches and low fan scores)
+8. show possibel false matching articles
+
+users:
+
+1. login via facebook
+2. rate bands
+3. mark as dead
+4. mark as incorrectly match
+5. save tag prefs
+
+charts:
+
+1. by region
+2. by genre
+3. by any tag
+4. by any running stat
+5. by sum of all stats
+6. by user rating
+
+widgets:
+
+1. any chart can be a widget
+2. band widgets
+    a. 60 chart for any stats or total of all
+    b. all articles with links
+    c. promo widget
+        1. media player that link to only verified content
+        2. relevent promo stats
+        3. gigs
+        4. bios
