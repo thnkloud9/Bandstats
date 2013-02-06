@@ -10,7 +10,7 @@ the operating system:
   mongodb
 
 You'll need to do `npm install .` to install all required packages that the
-UPmin server requires.
+Bandstats server requires.
 
 
 ## Deployment
