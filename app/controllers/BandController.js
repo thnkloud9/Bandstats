@@ -9,7 +9,7 @@ var async = require('async');
 var _ = require('underscore');
 var xml2js = require('xml2js');
 
-var BandRepository = require('./../modules/BandRepository.js');
+var BandRepository = require('./../repositories/BandRepository.js');
 
 /**
  * constructor

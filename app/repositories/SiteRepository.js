@@ -6,7 +6,7 @@
  */
 var request = require('request');
 var xml2js = require('xml2js');
-var BaseRepository = require('./../modules/BaseRepository.js');
+var BaseRepository = require('./../repositories/BaseRepository.js');
 
 /**
  * constructor

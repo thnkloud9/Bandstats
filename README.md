@@ -22,32 +22,14 @@ Bandstats server requires.
 
 ## Configuration
 
-The Bandstats application can be configured by setting environment variables
+The Bandstats application can be configured by editing the app/config/app.conf file.  
 in your favourite OS, for example:
 
-    NODE_ENV={production|development}
-  
-  'production' is the default environment.
-
-- Custom port to listen at, default is 4000.
-
-    [NODE_PORT=80]
-    
-- Seperate databases for all managers, default is localhost.
-
-    [NODE_DB_MONGODB="mongodb://user:pass@host/mydb"]
-
-- Specify where the log file is
-
-    [LOG_PATH="/home/ubuntu/log_server.log"]
 
 
 ## Testing
 
-For now, we use VisionMedia's mochajs.
-
-Type `make test` to run all tests except the daemon test that requires root
-priviledges.
+Not implemented yet, plan to use mochajs
 
 ## Project Structure
 
@@ -63,35 +45,36 @@ submodules, e.g. for the whole module tree.
 The existence of this file makes npm ignore the package.json. You can create
 this file with `npm shrinkwrap`
 
-### server.js
+### app.js
 
 Assembles files and boots up the app to listen for connections, collects
 models, controllers and sets up the database connection.
 
-### server/
+### app/
 
-Server side scripting (surprise!)
-
-
-### server/libraries/
-
-General-purpose libraries used throughout the application.
+Server side scripting
 
 
-### server/main/
+### app/lib/
 
-Contains Controllers, Managers along with related back-end libraries.
+General-purpose libraries used throughout the application. Contains the controller Router.
 
-Controller classes reside in files called \*Controller.coffee and route the
-HTTP world to server side functions. These classes should know as little as
-possible about how things work, just server content and pass on tasks.
+
+### app/controllers/
+
+Contains Controllers.
+
+Controller classes reside in files called \*Controller.js and route the
+HTTP world to server side functions. They work pretty much like rails style controllers
+and routes map all HTTP methods to endpoints by default.
 
 Manager classes reside in files called \*Manager.coffee and mostly do database
 related tasks. They serve as collections of model related functionalities.
 
-### server/models/
+### server/repositories/
 
-Data models for the mongoose framework.
+Implementation of the Repository pattern with mongoskin.  Repositories extend BaseRepository which contains
+basic CRUD function.
 
 
 ### public/
@@ -99,16 +82,14 @@ Data models for the mongoose framework.
 Anything stored here is accessible from outside.
 
 
-### server/tools/
+### bin/
 
-Operating system related files for installation and deployment, not part of the
-actual server application.
+Command line tools (collectors, exporters, importers, etc)
 
 
 ### node\_modules/
 
-Untracked by git and initially not present. Contains all node modules after
-installed by npm via `npm install .`
+Contains all node modules after installed by npm via `npm install .`
 
 
 ### logs/
@@ -117,6 +98,3 @@ Untracked by git and initially not present. Contains log files sorted by date.
 Disable the log file functionality in order to not create log files. See the
 script `start_server` for details.
 
-### bin/
-
-Command-line tools to do things.

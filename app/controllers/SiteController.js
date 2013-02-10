@@ -9,7 +9,7 @@ var async = require('async');
 var _ = require('underscore');
 var xml2js = require('xml2js');
 
-var SiteRepository = require('./../modules/SiteRepository.js');
+var SiteRepository = require('./../repositories/SiteRepository.js');
 
 /**
  * constructor
