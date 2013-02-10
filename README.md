@@ -71,7 +71,7 @@ and routes map all HTTP methods to endpoints by default.
 Manager classes reside in files called \*Manager.coffee and mostly do database
 related tasks. They serve as collections of model related functionalities.
 
-### server/repositories/
+### app/repositories/
 
 Implementation of the Repository pattern with mongoskin.  Repositories extend BaseRepository which contains
 basic CRUD function.
