@@ -15,16 +15,16 @@ Bandstats server requires.
 
 ## Deployment
 
-1. Do `make install`
-2. Run `sudo bandstats start`
-3. Monitor the status with "sudo status bandstats"
+No real deloyment yet, but will implement upstart eventually.
+
+1. Do `npm install`
+2. node app.js 
 
 
 ## Configuration
 
 The Bandstats application can be configured by editing the app/config/app.conf file.  
-in your favourite OS, for example:
-
+I'm using nconf so will eventually add support for ENV config as well.
 
 
 ## Testing
