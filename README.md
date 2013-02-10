@@ -77,6 +77,11 @@ Implementation of the Repository pattern with mongoskin.  Repositories extend Ba
 basic CRUD function.
 
 
+### app/views/
+
+Jinjs templates.
+
+
 ### public/
 
 Anything stored here is accessible from outside.
