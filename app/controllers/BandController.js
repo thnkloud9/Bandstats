@@ -1,5 +1,5 @@
 /**
- * Site Controller
+ * Band Controller
  *
  * author: Mark Lewis
  */
@@ -9,69 +9,69 @@ var async = require('async');
 var _ = require('underscore');
 var xml2js = require('xml2js');
 
-var SiteRepository = require('./../modules/SiteRepository.js');
+var BandRepository = require('./../modules/BandRepository.js');
 
 /**
  * constructor
  */
-var SiteController = function(db) {
+var BandController = function(db) {
 
     /**
-     * Load the site repo for mongo connectivity
+     * Load the band repo for mongo connectivity
      */
-    this.siteRepository = new SiteRepository({'db': db});
+    this.bandRepository = new BandRepository({'db': db});
 
     this.indexAction = function(req, res) {
         var query = {};
         if (req.query.search) {
             search = new RegExp('.*' + req.query.search + '.*', 'i');
-            query = {"site_name": search};
+            query = {"band_name": search};
         }
-        this.siteRepository.find(query, function(err, sites) {
-            var data = { 'sites': sites };
-            var template = require('./../views/site_index');
+        this.bandRepository.find(query, function(err, bands) {
+            var data = { 'bands': bands };
+            var template = require('./../views/band_index');
             res.send(template.render(data));
         });
     }
 
     this.editAction = function(req, res) {
-        var query = {'site_id': req.params.id};
-        var siteRepository = this.siteRepository;
-        var template = require('./../views/site_edit');
+        var query = {'band_id': req.params.id};
+        var bandRepository = this.bandRepository;
+        var template = require('./../views/band_edit');
         var data = {json: {}};
 
         if (req.params.id === "0") {
             // this is a new record
-            data.site = {};
-            data.json.site = JSON.stringify({});
+            data.band = {};
+            data.json.band = JSON.stringify({});
             res.send(template.render(data));
         } else {
             // get the record from the db
-            this.siteRepository.findOne(query, function(err, site) {
-                if ((err) || (!site)) {
-                    res.send({status: "error", error: "site not found"});
+            this.bandRepository.findOne(query, function(err, band) {
+                if ((err) || (!band)) {
+                    res.send({status: "error", error: "band not found"});
                     return false;
                 }
-                delete site._id;
-                data.site = site;
-                data.json.site = JSON.stringify(site);
+                delete band._id;
+                data.band = band;
+                data.json.band = JSON.stringify(band);
                 res.send(template.render(data));
             });
         }
     }
 
     this.articlesAction = function(req, res) {
-        var query = {'site_id': req.params.id};
-        var siteRepository = this.siteRepository;
+        var query = {'band_id': req.params.id};
+        var bandRepository = this.bandRepository;
         var data = {};
 
-        this.siteRepository.findOne(query, function(err, site) {
-            if ((err) || (!site)) {
-                res.send({status: "error", error: "site not found"});
+        this.bandRepository.findOne(query, function(err, band) {
+            if ((err) || (!band)) {
+                res.send({status: "error", error: "band not found"});
                 return false;
             }
             // get articles
-            siteRepository.getSiteArticles(site, function(err, site, articles) {
+            bandRepository.getBandArticles(band, function(err, band, articles) {
                     data.articles = articles;
                     res.send(data);
             });
@@ -84,16 +84,16 @@ var SiteController = function(db) {
             res.send({status: "error", error: "update must be put action and must include values"});
             return false;
         }
-        var query = {'site_id': req.params.id};
+        var query = {'band_id': req.params.id};
         var values = req.body.values;
-        var siteRepository = this.siteRepository
+        var bandRepository = this.bandRepository
 
-        siteRepository.update(query, values, function(err, updated) {
+        bandRepository.update(query, values, function(err, updated) {
             if ((err) || (!updated)) {
                 res.send({status: "error", error: err});
                 return false;
             }
-            // send updated site back
+            // send updated band back
             res.send({status: "success", updated: updated});        
         });
 
@@ -103,15 +103,15 @@ var SiteController = function(db) {
         if ((req.route.method != "delete") || (!req.params.id)) {
             var data = {
                 status: "error",
-                error: "remove must be delete action and must be called from a site resource",
+                error: "remove must be delete action and must be called from a band resource",
                 method: req.route.method,
                 id: req.params.id
             };
             res.send(data);
         }
-        var query = {'site_id': req.params.id};
+        var query = {'band_id': req.params.id};
         
-        this.siteRepository.remove(query, {safe: true}, function(err, removed) {
+        this.bandRepository.remove(query, {safe: true}, function(err, removed) {
             if ((err) || (!removed)) {
                 res.send({status: "error", error: err});
                 return false;
@@ -130,11 +130,11 @@ var SiteController = function(db) {
             };
             res.send(data);
         }    
-        this.siteRepository.insert(req.body.values, {}, function(err, site) {
-            res.send({status: "success", site: site});
+        this.bandRepository.insert(req.body.values, {}, function(err, band) {
+            res.send({status: "success", band: band});
         });
     }
 }
 
 /* export the class */
-exports.controller = SiteController;
+exports.controller = BandController;

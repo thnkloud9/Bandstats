@@ -1,0 +1,114 @@
+{% extends "./base.jinjs" %}
+{% block title %}Band Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<form id="band-edit">
+    <fieldset>
+    band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
+    band_name: <input type="text" name="band_name" value="{{band.band_name}}"><br />
+    band_url: <input type="text" name="band_url" value="{{band.band_url}}"><br />
+    created: <input type="text" name="created" value="{{band.created}}"><br />
+    last_updated: <input type="text" name="last_updated" value="{{band.last_updated}}"><br />
+    </fieldset>
+</form>
+
+<button id="bs-band-update">Update</button>
+<button id="bs-band-delete">Delete</button>
+
+<div id='bs-band-regions'>
+</div>
+
+<div id='bs-band-facebook-stats'>
+    <h2>Facebook Likes</h2>
+    <h4>using id {{band.running_stats.facebook_likes.facebook_id}}</h4>
+    <ul>
+    {% for stat in band.running_stats.facebook_likes.daily_stats %}
+        <li>{{stat.date}} - {{stat.value}}</li>
+    {% endfor %}
+    </ul>
+</div>
+
+<div id='bs-band-lastfm-listeners'>
+    <h2>Lastfm Listeners</h2>
+    <h4>using id {{band.running_stats.lastfm_listeners.lastfm_id}}</h4>
+    <ul>
+    {% for stat in band.running_stats.lastfm_listeners.daily_stats %}
+        <li>{{stat.date}} - {{stat.value}}</li>
+    {% endfor %}
+    </ul>
+</div>
+
+<div id='bs-band-mentions'>
+    <h2>Article Mentions</h2>
+    <h4>using id {{band.band_name}}</h4>
+    <ul>
+    {% for stat in band.mentions %}
+        <li>{{stat.date}} - {{stat.link}}</li>
+    {% endfor %}
+    </ul>
+</div>
+<script type="text/javascript">
+
+$(function() {
+    var band = {{json.band}};
+    var articles = {};
+    var currentArticle = 1;
+
+    // delete record
+    $('#bs-band-delete').live('click', function() {
+        if (!band.band_id) {
+            return false;
+        }
+
+        $.ajax({
+            url: '../' + band.band_id + '/remove',
+            type: 'delete',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err); 
+            }
+        });
+    });
+
+    // update record
+    $('#bs-band-update').live('click', function() {
+        var url = '';
+        var type = '';
+        // update locally
+        $('#band-edit input').each(function() {
+            var name = $(this).attr('name');
+            var value = $(this).val();
+            band[name] = value;
+        });
+        // update on server
+        if (!band.band_id) {
+            url = '../create';
+            type = 'post';
+        } else {
+            url = '../' + band.band_id + '/update';
+            type = 'put';
+        }  
+        $.ajax({
+            url: url,
+            type: type,
+            data: {values: band},
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });            
+    });
+    
+});
+</script>
+
+{% endblock %}

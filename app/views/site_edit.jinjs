@@ -5,42 +5,129 @@
 {% endblock %}
 {% block content %}
 
-<form>
+<form id="site-edit">
     <fieldset>
-{% for item in site %}
-    {{item}}: <input type="text" value="{{site[item]}}"><br />
-{% endfor %}
+    site_id: <input type="hidden" name="site_id" value="{{site.site_id}}">{{site.site_id}}<br />
+    site_name: <input type="text" name="site_name" value="{{site.site_name}}"><br />
+    site_url: <input type="text" name="site_url" value="{{site.site_url}}"><br />
+    site_weight: <input type="text" name="site_weight" value="{{site.site_weight}}"><br />
+    link_field: <input type="text" name="link_field" value="{{site.link_field}}"><br />
+    description_field: <input type="text" name="description_field" value="{{site.description_field}}"><br />
+    publish_date_field: <input type="text" name="publish_date_field" value="{{site.publish_date_field}}"><br />
+    band_name_field: <input type="text" name="band_name_field" value="{{site.band_name_field}}"><br />
+    album_name_field: <input type="text" name="album_name_field" value="{{site.album_name_field}}"><br />
+    track_name_field: <input type="text" name="track_name_field" value="{{site.track_name_field}}"><br />
+    last_entry: <input type="text" name="last_entry" value="{{site.last_entry}}"><br />
+    created: <input type="text" name="created" value="{{site.created}}"><br />
+    last_updated: <input type="text" name="last_updated" value="{{site.last_updated}}"><br />
     </fieldset>
 </form>
 
-<div id='feed-sample'>
-    <a href="#" id='bs-next-article'>load</a>
-    <dl>
-{% for field in article_fields %}
-        <dt id='bs-article-example-{{field}}'>{{field}}</dt>
-            <dd id='bs-article-example-{{field}}-value'></pre></dd>
-{% endfor %}
-    </dl>
+<button id="bs-site-update">Update</button>
+<button id="bs-site-delete">Delete</button>
+
+<button id="bs-view-article">View Articles</button>
+
+<div id='bs-site-article'>
 </div>
 <script type="text/javascript">
-    var articles = {{articles}};
-    var current_article = 1;
-    $('#bs-next-article').live('click', function() {
-        $('#bs-next-article').html('next');
-        for (var field in articles[current_article]) {
-            var value = articles[current_article][field];
-            if (typeof value === 'object') {
-                console.log(value);
+
+$(function() {
+    var site = {{json.site}};
+    var articles = {};
+    var currentArticle = 1;
+
+    // delete record
+    $('#bs-site-delete').live('click', function() {
+        if (!site.site_id) {
+            return false;
+        }
+
+        $.ajax({
+            url: '../' + site.site_id + '/remove',
+            type: 'delete',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err); 
             }
-            $('#bs-article-example-'+field+'-value').html("<pre><code>"+value+"</code></pre>");
-        }
-        if (current_article === (articles.length-1)) {
-            current_article = 0;
-        } else {
-            current_article++;
-        }
-        return false; 
+        });
     });
+
+    // update record
+    $('#bs-site-update').live('click', function() {
+        var url = '';
+        var type = '';
+        // update locally
+        $('#site-edit input').each(function() {
+            var name = $(this).attr('name');
+            var value = $(this).val();
+            site[name] = value;
+        });
+        // update on server
+        if (!site.site_id) {
+            url = '../create';
+            type = 'post';
+        } else {
+            url = '../' + site.site_id + '/update';
+            type = 'put';
+        }  
+        $.ajax({
+            url: url,
+            type: type,
+            data: {values: site},
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });            
+    });
+    
+    // get sample articles
+    $('#bs-view-article').live('click', function() {
+        if ($.isEmptyObject(articles)) {
+            $.ajax({
+                url: '../' + site.site_id + '/articles',
+                type: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    articles = response.articles;
+                    displayArticle();
+                },
+                error: function(err, status, msg) {
+                    console.log(err);
+                }
+            });
+        } else {
+            displayArticle();
+        }
+    });
+
+    // display next article in list
+    function displayArticle() {
+        var output = "<dl>";
+        $('#bs-view-article').html('next article');
+        for (var field in articles[currentArticle]) {
+            var value = articles[currentArticle][field];
+            output += "<dt>" + field + "</dt><dl>" + value + "</dl>";
+        }
+        output += "</dl>";
+
+        $('#bs-site-article').html(output);
+
+        if (currentArticle === (articles.length-1)) {
+            currentArticle = 0;
+        } else {
+            currentArticle++;
+        }
+    };
+
+});
 </script>
 
 {% endblock %}

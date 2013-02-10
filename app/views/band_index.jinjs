@@ -10,11 +10,11 @@
     <input type="test" name="search" value="">
     <button id="search">Search</button>
 </form>
-<button id="new"><a href="/site/0/edit">New Site</a></button>
+<button id="new"><a href="/band/0/edit">New Site</a></button>
 
 <ul>
-{% for site in sites %}
-    <li>{{site.site_id}} <a href="/site/{{site.site_id}}/edit">{{ site.site_name }}</a></li>
+{% for band in bands %}
+    <li>{{band.band_id}} <a href="/band/{{band.band_id}}/edit">{{ band.band_name }}</a></li>
 {% endfor %}
 </ul>
 

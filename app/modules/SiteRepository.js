@@ -1,37 +1,67 @@
 /**
- * Site Modules
+ * Site Repository
  * handles all db related functions for sites
  *
  * author: Mark Lewis
  */
 var request = require('request');
 var xml2js = require('xml2js');
+var BaseRepository = require('./../modules/BaseRepository.js');
 
 /**
  * constructor
  */
-function SiteModule(args) {
-    this.args = args;
+function SiteRepository(args) {
     this.db = args.db;
+    this.collection = 'sites';
+    args.collection = this.collection;
+ 
+    BaseRepository.call(this, args);
 }
 
-SiteModule.prototype.find = function(query, callback) {
-    this.db.collection('sites').find(query).toArray(function(err, sites) { 
-        if (err) throw err;
-
-        callback(null, sites);
+/**
+ * base repo functions
+ */
+SiteRepository.prototype.find = function(query, callback) {
+    BaseRepository.prototype.find.call(this, query, function(err, sites) {
+        callback(err, sites);
     });
 }
 
-SiteModule.prototype.findOne = function(query, callback) {
-    this.db.collection('sites').findOne(query, function(err, site) { 
-        if (err) throw err;
-
-        callback.call(this, null, site);
+SiteRepository.prototype.findOne = function(query, callback) {
+    BaseRepository.prototype.findOne.call(this, query, function(err, site) {
+        callback(err, site);
     });
 }
 
-SiteModule.prototype.getSiteArticles = function(site, callback) {
+SiteRepository.prototype.insert = function(value, options, callback) {
+    BaseRepository.prototype.insert.call(this, value, options, function(err, sites) {
+        callback(err, sites);
+    });
+}
+
+SiteRepository.prototype.update = function(query, value, callback) {
+    BaseRepository.prototype.update.call(this, query, value, function(err, sites) {
+        callback(err, sites);
+    });
+}
+
+SiteRepository.prototype.findAndModify = function(query, sort, value, options, callback) {
+    BaseRepository.prototype.findAndModify.call(this, query, sort, value, options, function(err, sites) {
+        callback(err, sites);
+    });
+}
+
+SiteRepository.prototype.remove = function(query, options, callback) {
+    BaseRepository.prototype.remove.call(this, query, options, function(err, sites) {
+        callback(err, sites);
+    });
+}
+
+/**
+ * Site specific functions
+ */
+SiteRepository.prototype.getSiteArticles = function(site, callback) {
     var parent = this;
     console.log('getting articles from ' + site.site_url);
     var options = {
@@ -103,30 +133,32 @@ SiteModule.prototype.getSiteArticles = function(site, callback) {
  * attempts to match string values to each
  * article field
  */
-SiteModule.prototype.sanitizeArticle = function(article) {
+SiteRepository.prototype.sanitizeArticle = function(article) {
     var parsed_article = {};
     for (var field in article) {
         var value = article[field];
         if (typeof value === 'object') {
-            if (typeof value[0]['_'] === 'string') {
-                value = value[0]['_'];
-            } else {
-                if (typeof value === 'string') {
-                    continue;
-                }
-                for (var i in value) {
-                    if (typeof value[i] === 'string') {
-                        value = value[i];
+            if (value[0]) { 
+                if (typeof value[0]['_'] === 'string') {
+                    value = value[0]['_'];
+                } else {
+                    if (typeof value === 'string') {
                         continue;
-                    } else {
-                        for (var j in value[i]) {
-                            if (typeof value[i][j] === 'string') {
-                                value = value[i][j];
-                                continue;
+                    }
+                    for (var i in value) {
+                        if (typeof value[i] === 'string') {
+                            value = value[i];
+                            continue;
+                        } else {
+                            for (var j in value[i]) {
+                                if (typeof value[i][j] === 'string') {
+                                    value = value[i][j];
+                                    continue;
+                                }
                             }
-                        }
-                    } 
-                    //console.log("NEED TO PARSE " + field + ' = ' + value);
+                        } 
+                        //console.log("NEED TO PARSE " + field + ' = ' + value);
+                    }
                 }
             }
         }
@@ -147,4 +179,4 @@ SiteModule.prototype.sanitizeArticle = function(article) {
     return parsed_article;
 }
 
-module.exports = SiteModule;
+module.exports = SiteRepository;

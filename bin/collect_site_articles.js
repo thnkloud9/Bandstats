@@ -13,6 +13,10 @@ var request = require('request');
 var async = require('async');
 var moment = require('moment');
 var xml2js = require('xml2js');
+
+var SiteRepository = require('./../app/modules/SiteRepository.js');
+var BandRepository = require('./../app/modules/BandRepository.js');
+
 var db = require('mongoskin').db('localhost:27017', {
   database: 'bandstats',
   safe: true,
@@ -35,7 +39,33 @@ program
     .description('gets new articles from site, checks all bands for matches and saves matches in mongo')
     .action(function() {
         console.log('updating');
-        process.exit(1);
+        if (program.site_id) {
+            var query = { 'site_id': program.site_id };
+        } else if (program.site_name) {
+            var query = { 'site_name': program.site_name };
+        } else {
+            // process all sites
+            var query = {'site_url': {$ne: ''}};
+            getSite(query, function(err, sites) {
+                for (var s in sites) {
+                    var site = sites[s];
+                    var processed = 0;
+                    parseSiteArticles(site, true, function() {
+                        console.log('processing ' + site.site_name);
+                        processed++;
+                        if (processed == sites.length) { 
+                            process.exit(1);
+                        }
+                    });
+                }
+            });
+        }
+    
+        getSite(query, function(err, site) {
+            parseSiteArticles(site, function() {
+                process.exit(1);
+            });
+        });
     });
 
 /**
@@ -56,7 +86,7 @@ program
                 for (var s in sites) {
                     var site = sites[s];
                     var processed = 0;
-                    parseSiteArticles(site, function() {
+                    parseSiteArticles(site, false, function() {
                         console.log('processing '+site.site_name);
                         processed++;
                         if (processed == sites.length) { 
@@ -81,8 +111,9 @@ program.parse(process.argv);
  * Function
  * TODO: move these to modules
  */
-function parseSiteArticles(site, callback) {
+function parseSiteArticles(site, save, callback) {
     getBandsIndex({'band_name': { $ne: '' } }, function(err, bands) {
+        var bands = bands;
         getSiteArticles(site, function(err, site, articles) {
             for (var a in articles) {
                 var article = articles[a];
@@ -92,8 +123,13 @@ function parseSiteArticles(site, callback) {
                     var band = bands[b];
                     var match = articleHasMatch(site, article, band);
                     if (match) {
-                        console.log(band.band_name + ' matched ' + article[site['link_field']]);
-                        console.log('publish date ' + article[site['pbulish_date_field']]);
+                        if (save) {
+                            updateBandMention(band, site, article, function(err, band, site, article) {
+                                console.log('saving ' + band.band_name + ' matched ' + article[site['link_field']]);
+                            });
+                        } else {
+                            console.log(band.band_name + ' matched ' + article[site['link_field']]);
+                        }
                     } else {
                         // no match for article            
                     }
@@ -126,7 +162,7 @@ function articleHasMatch(site, article, band) {
 
         return false;
     } else {
-        console.log('could not parse article for band ' + band);
+        console.log('could not parse article for band ' + band.band_name + '(' + band.band_id + ')');
         return false;
     }
 }
@@ -149,7 +185,17 @@ function getSiteArticles(site, callback) {
         url: site.site_url,
     };
     request(options, function(err, response, body) {
-        if (err) throw err;
+        if (err) {
+            // TODO:
+            // something is wrong with this feed, report it
+            console.log(err);
+            callback(err);
+        }
+
+        if (typeof response === "undefined") {
+            callback('no response');
+            return false;
+        }
         
         if (response.statusCode == 200) {
             // convert xml to json
@@ -194,7 +240,7 @@ function getSiteArticles(site, callback) {
             });
         } else {
             console.log('could not get ' + site.site_url + ', statusCode: '+response.statusCode);
-            process.exit(1);
+            //process.exit(1);
         }
     }); 
 }
@@ -225,7 +271,10 @@ function getBand(query, callback) {
 
 function getBandsIndex(query, callback) {
     db.collection('bands').find(query, {'band_name':1, 'band_id':1}).toArray(function(err, results) {
-        if (err) throw err;
+        if (err) {
+            console.log(err);
+            return false;
+        }
        
         if (results.length > 0) {
             callback(null, results);
@@ -235,19 +284,16 @@ function getBandsIndex(query, callback) {
     });
 }
 
-function updateBandMentions(band_id, mention, callback) {
-    var query = { 'band_id': band_id };
+function updateBandMention(band, site, article, callback) {
+    var query = { 'band_id': band.band_id };
     var today = moment().format('YYYY-MM-DD');
-    var set = { $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } } };
+    var description = article[site['description_field']];
+    var link = article[site['link_field']];
+    var set = { $addToSet: {"mentions": { "date": today, "link": link, "description": description } } };
    
     // add toays stat with upsert to overwrite in case it was already collected today
     db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
-        var expire = moment().subtract('months', 6).calendar();
-        var set = { $pull: {"running_stats.facebook_likes.daily_stats": { "date":  expire } } };
-        // clean out any stats older than 6 months
-        db.collection('bands').update(query, set, function(err, result) {
-            callback(null, band_id, likes);
-        });
+        callback(null, band, site, article);
     });
    
 };

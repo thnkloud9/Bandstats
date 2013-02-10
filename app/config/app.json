@@ -28,7 +28,8 @@
         "domain": "http://developer.echonest.com/api/v4"
     },
     "facebook": {
-        "app_id": "115928858587081",
+        "app_id": "204182706372946",
+        "app_secret": "120e49c79cbef6c11b3b4442dfaec0d5",
         "channel_url": "//www.thedelimagazine.com/bandstats/channel.html",
         "jssdk_src": "//connect.facebook.net/en_US/all.js"
     }

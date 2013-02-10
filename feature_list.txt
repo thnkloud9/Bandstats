@@ -35,7 +35,10 @@ tools:
 5. job log, start time, duration, number processed, number matched
 6. sites with no matches list
 7. show possible false matching bands (bands with high article matches and low fan scores)
-8. show possibel false matching articles
+8. show possible false matching articles
+9. show bad feeds (feeds with no articles, or that failed on collection job)
+10. show possible bands with bad facebook ids
+11. show possible bands with bad lastfm ids
 
 users:
 

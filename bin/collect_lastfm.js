@@ -50,10 +50,10 @@ program
             getBand(query, function(err, results) {
                 if (err) throw err;
 
-                if (results[0].band_name) {
+                if (results[0]) {
                     var band_id = results[0].band_name;
-                    getLastfmListeners(program.lastfm_id, band_id, function(err, band_id, listeners) {
-                        updateBandLastfmListeners(band_id, listeners, function(err, band_id, listeners) { 
+                    getLastfmListeners(program.lastfm_id, function(err, listeners) {
+                        updateBandLastfmListeners(band_id, listeners, function(err, results) { 
                             console.log('updated band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
                             process.exit(1);
                         });
@@ -95,11 +95,9 @@ program
                 var band_id = results.band_id;
                 var lastfm_id = results.running_stats.lastfm_listeners.lastfm_id;
 
-                getLastfmListeners(lastfm_id, band_id, function(err, band_id, listeners) {
-                    updateBandLastfmListeners(band_id, listeners, function(err, band_id, listeners) { 
-                        console.log('updated band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
-                        process.exit(1);
-                    });
+                getLastfmListeners(lastfm_id, function(err, listeners) {
+                    console.log('band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
+                    process.exit(1);
                 });
             }
         });
@@ -115,7 +113,7 @@ program.parse(process.argv);
 function getAllLastfmListeners(callback) {
     var query = { 
         "running_stats.lastfm_listeners.lastfm_id": {"$exists" : true, "$ne" : ""},
-        "band_id": { $gt: "0" }, 
+        "band_id": { $ne: "" }, 
     };
     var fields = { 
         "_id":0, 
@@ -136,7 +134,7 @@ function getAllLastfmListeners(callback) {
                 var start = new Date().getTime(); 
 
                 // get the new lastfm listeners 
-                getLastfmListeners(lastfm_id, band_id, function(err, band_id, listeners) {
+                getLastfmListeners(lastfm_id, function(err, listeners) {
                     if (err) {
                         processed++;
                         console.log('could not find listeners for band_id ' + band_id);
@@ -148,7 +146,7 @@ function getAllLastfmListeners(callback) {
                             if (processed == results.length) {
                                 callback(null, processed);
                             } else {
-                                console.log(processed + '(band_id ' + band_id + ') out of ' + results.length + ' took ' + (end - start) + ' milliseconds');
+                                //console.log(processed + '(band_id ' + band_id + ') out of ' + results.length + ' took ' + (end - start) + ' milliseconds');
                             }
                         });
                     }
@@ -170,7 +168,7 @@ function getBand(query, callback) {
     });
 }
 
-function getLastfmListeners(lastfm_id, band_id, callback) {
+function getLastfmListeners(lastfm_id, callback) {
     var api_key = "e4d4f5353a13cf36fdb79957f831b6cf";
     var options = { 
         url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfm_id + '&api_key=' + api_key + '&format=json',
@@ -181,7 +179,7 @@ function getLastfmListeners(lastfm_id, band_id, callback) {
         if (!err && response.statusCode == 200) {
 
             if (body.artist) {
-                callback(null, band_id, body.artist.stats.listeners);
+                callback(null, body.artist.stats.listeners);
             } else {
                 callback('could not find listeners for '+lastfm_id, band_id, null);
             }
@@ -194,17 +192,33 @@ function getLastfmListeners(lastfm_id, band_id, callback) {
 
 function updateBandLastfmListeners(band_id, listeners, callback) {
     var query = { 'band_id': band_id };
-    var today = moment().format('YYYY-MM-DD');
-    var set = { $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } } };
-   
-    // add toays stat with upsert to overwrite in case it was already collected today
-    db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
-        var expire = moment().subtract('months', 6).calendar();
-        var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  expire } } };
-        // clean out any stats older than 6 months
-        db.collection('bands').update(query, set, function(err, result) {
-            callback(null, band_id, listeners);
-        });
+
+    async.series({
+        deleteToday: function(cb) {
+            var today = moment().format('YYYY-MM-DD');
+            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  today } } };
+            db.collection('bands').update(query, set, function(err, result) {
+                cb(err, result);
+            });
+        },
+        updateToday: function(cb) {
+            var today = moment().format('YYYY-MM-DD');
+            var set = { $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } } };
+            db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
+                cb(err, result);
+            });
+        },
+        deleteOld: function(cb) {
+            var expire = moment().subtract('months', 6).calendar();
+            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  expire } } };
+            db.collection('bands').update(query, set, function(err, result) {
+                cb(err, result);
+            });
+        },
+    },
+    function(err, results) {
+        callback(err, results);
     });
+   
 };
 
