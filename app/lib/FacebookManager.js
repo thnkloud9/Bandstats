@@ -44,9 +44,11 @@ FacebookManager.prototype.search = function(query, callback) {
 
         if (err || response.statusCode != 200) {
             callback("bad response from facebook");
+            return false;
         }
         if (!body.data) {
             callback("no results from faacebook");
+            return false;
         }
        
         for (var p in body.data) {
@@ -84,16 +86,16 @@ FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
     };
 
     request(options, function (err, response, body) {
-        if (!err && response.statusCode == 200) {
-            
-            if (body.likes) {
-                callback(null, body.likes);
-            } else {
-                callback('could not find likes for facebookId ' + facebookId, null);
-            }
-        } else {
-            callback(err);
+        if (err || response.statusCode != 200) {
+            callback("bad response from facebook");
+            return false;
         }
+        if (!body.likes) {
+            callback("no results from faacebook");
+            return false;
+        }
+
+        callback(null, body.likes);
     });
 }
 
@@ -125,11 +127,12 @@ FacebookManager.prototype.getPageLikesBatch = function(batch, callback) {
         };
 
         request(options, function (err, response, body) {
-            if (!err && response.statusCode == 200) {
-                callback(null, body);
-            } else {
-                callback(err);
+            if (err && response.statusCode == 200) {
+                callback('bad response from facebook ' + err);
+                return false;
             }
+
+            callback(null, body);
         });
     });
 
