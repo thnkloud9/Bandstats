@@ -55,16 +55,16 @@ LastfmManager.prototype.getListeners = function(lastfmId, callback) {
     };
 
     request(options, function (err, response, body) {
-        if (!err && response.statusCode == 200) {
-
-            if (body.artist) {
-                callback(null, body.artist.stats.listeners);
-            } else {
-                callback('could not find listeners for '+lastfmId, null);
-            }
-        } else {
-            callback(err);
+        if (err && response.statusCode == 200) {
+            callback('bad response from lastfm ' + err);
+            return false;
         }
+        if (!body.artist) {
+            callback('could not find listeners for ' + lastfmId);
+            return false;
+        }
+
+        callback(null, body.artist.stats.listeners);
     });
 
 }
