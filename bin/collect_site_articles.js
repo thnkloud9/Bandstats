@@ -14,8 +14,8 @@ var async = require('async');
 var moment = require('moment');
 var xml2js = require('xml2js');
 
-var SiteRepository = require('./../app/modules/SiteRepository.js');
-var BandRepository = require('./../app/modules/BandRepository.js');
+var SiteRepository = require('./../app/repositories/SiteRepository.js');
+var BandRepository = require('./../app/repositories/BandRepository.js');
 
 var db = require('mongoskin').db('localhost:27017', {
   database: 'bandstats',

@@ -5,7 +5,10 @@
 {% endblock %}
 {% block content %}
 
-<form id="band-edit">
+<button id="bs-band-update">Update</button>
+<button id="bs-band-delete">Delete</button>
+
+<form id="bs-band-edit">
     <fieldset>
     band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
     band_name: <input type="text" name="band_name" value="{{band.band_name}}"><br />
@@ -15,30 +18,39 @@
     </fieldset>
 </form>
 
-<button id="bs-band-update">Update</button>
-<button id="bs-band-delete">Delete</button>
+<form id="bs-band-regions">
+</form>
 
-<div id='bs-band-regions'>
+<form id="bs-band-genres">
+</form>
+
+<div id='bs-external-ids'>
+    <form id='bs-band-external-ids'>
+        <h2>External Ids</h2>
+        <fieldset>
+        </fieldset>
+        <button id="bs-band-add-external-id">Add External Id</button>
+    </form>
 </div>
 
 <div id='bs-band-facebook-stats'>
     <h2>Facebook Likes</h2>
     <h4>using id {{band.running_stats.facebook_likes.facebook_id}}</h4>
-    <ul>
-    {% for stat in band.running_stats.facebook_likes.daily_stats %}
-        <li>{{stat.date}} - {{stat.value}}</li>
-    {% endfor %}
-    </ul>
+
+    <!-- chart div -->
+    <div class='chart' style='overflow: hidden;'>
+        <div id='bs-facebook-likes-chart' style='width:300px;height:200px;float: left'></div>
+    </div>
 </div>
 
 <div id='bs-band-lastfm-listeners'>
     <h2>Lastfm Listeners</h2>
     <h4>using id {{band.running_stats.lastfm_listeners.lastfm_id}}</h4>
-    <ul>
-    {% for stat in band.running_stats.lastfm_listeners.daily_stats %}
-        <li>{{stat.date}} - {{stat.value}}</li>
-    {% endfor %}
-    </ul>
+    
+    <!-- chart div -->
+    <div class='chart' style='overflow: hidden;'>
+        <div id='bs-lastfm-listeners-chart' style='width:300px;height:200px;float: left'></div>
+    </div>
 </div>
 
 <div id='bs-band-mentions'>
@@ -56,6 +68,128 @@ $(function() {
     var band = {{json.band}};
     var articles = {};
     var currentArticle = 1;
+
+    showChart('bs-facebook-likes-chart', band.running_stats.facebook_likes.daily_stats);
+    showChart('bs-lastfm-listeners-chart', band.running_stats.lastfm_listeners.daily_stats);
+
+    showExternalIds();
+
+    /**
+     * functions
+     *
+     * these should go somewhere at some point
+     * maybe backbone makes sense
+     */
+    function showChart(id, dataset) {
+        var data = []
+        var options = {
+            legend: { show: false },
+            lines: { show: true },
+            points: { show: true },
+            xaxis: { mode: "time" }
+        };
+        // format the data for the chart
+        var data = []
+        for (var p in dataset) {
+            var point = dataset[p]; 
+            data.push([new Date(point.date), point.value]);
+        };
+        $.plot($('#' + id), [data], options);
+    };
+
+    function showExternalIds() {
+        for (var l in band.external_ids) {
+            var list = band.external_ids[l];
+            for (var name in list) {
+                var value = list[name];
+                var typeParts = name.split('_');
+                var type = typeParts[0];
+                var output = name + ": <input type='text' name='" + name + "' value='" + value + "'>";
+                output += "<a data-type='" + name + "' class='bs-id-lookup' href='#'>lookup</a><br />";
+                output += "<div id='bs-lookup-matches-" + type + "' class='bs-lookup-matches'></div>";
+                $('#bs-band-external-ids fieldset').append(output);
+            }
+        }
+    };
+
+    function externalIdLookup(type, search) {
+        var typeParts = type.split('_');
+        var url = '/' + typeParts[0] + '/search?search=' + search;
+        console.log(url); 
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                showLookupMatches(typeParts[0], response);
+            },
+            error: function(err, status, msg) {
+                console.log(err); 
+            }
+
+        });
+    }
+    
+    function showLookupMatches(type, response) {
+        var output = "";
+        $('#bs-lookup-matches-'+type).empty();
+        output += "<ul>";
+        for (var r in response) {
+            var result = response[r];
+            if (type === 'facebook') {             
+                output += "<li class='bs-lookup-match' data-external-id='" + result.id + "'>";
+                output += "<div>";
+                if (result.cover) {
+                    output += "<img src='" + result.cover.source + "'>";
+                }
+                output += "<strong>" + result.name + "</strong>";
+                output += "<p>" + result.about + "</p>";
+                if (result.bio) {
+                    output += "<p>" + result.bio + "</p>";
+                }
+                output += "<p><strong>" + result.likes + "</strong> likes, ";
+                output += "<strong>" + result.talking_about_count + "</strong> talking about</p>";
+                output += "</div>";
+            };
+            if (type === 'lastfm') {
+                output += "<li class='bs-lookup-match' data-external-id='" + result.mbid + "'>";
+                if (result.image) {
+                    var src = '';
+                    for (var i in result.image) {
+                        var image = result.image[i];
+                        if (image['#text'] && image.size === "medium") {
+                            src = image['#text'];
+                            break;
+                        }
+                    }
+                    output += "<img src='" + src + "'>";
+                }
+                output += "<strong>" + result.name + "</strong>";
+                output += "<p><strong>" + result.listeners + "</strong> listeners</p>";
+                output += "<div>";
+                output += "</div>";
+                output += "</li>";
+            }
+            
+        }
+        output += "<ul>";
+        $('#bs-lookup-matches-'+type).html(output);
+        $('#bs-lookup-matches-'+type).show();
+    }
+     
+    /* event listeners */
+    $('.bs-lookup-matches').live('click', function() {
+        $(this).hide();
+    });
+    
+    // external id lookup
+    $('.bs-id-lookup').live('click', function() {
+        var type = $(this).attr('data-type');
+        var search = band.band_name;
+        externalIdLookup(type, search);
+        return false;
+    });
 
     // delete record
     $('#bs-band-delete').live('click', function() {
@@ -107,7 +241,7 @@ $(function() {
             }
         });            
     });
-    
+
 });
 </script>
 

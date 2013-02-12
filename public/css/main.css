@@ -21,5 +21,45 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   display: inline;
   list-style-type: none;
   padding-right: 20px;
-}
+ }
 
+/** Band Page Elements **/
+#bs-external-ids {
+  width: 400px;
+ }
+
+.bs-lookup-matches {
+  position: absolute;
+  left: 350px;
+  width: 350px;
+  height: 350px;
+  background: white;
+  padding: 5px;
+  overflow: scroll;
+  z-index: 10000;
+  display: none;
+  border: solid 1px #adadad; 
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+ }
+
+.bs-lookup-match {
+    font-size: 12px;
+    margin-bottom: 5px;
+    min-height: 80px;
+    border-bottom: dashed 1px #adadad;
+ }
+  .bs-lookup-match div {
+    width: 300px;
+   }
+  .bs-lookup-match p {
+    font-size: 12px;
+   }
+  .bs-lookup-match img {
+    float: left;
+    margin-right: 5px;
+    width: 75px;
+    height: 75px; 
+   }
+ 

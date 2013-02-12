@@ -1,5 +1,5 @@
 {% extends "./base.jinjs" %}
-{% block title %}Site Edit{% endblock %}
+{% block title %}Band Edit{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -10,7 +10,7 @@
     <input type="test" name="search" value="">
     <button id="search">Search</button>
 </form>
-<button id="new"><a href="/band/0/edit">New Site</a></button>
+<button id="new"><a href="/band/0/edit">Band Site</a></button>
 
 <ul>
 {% for band in bands %}

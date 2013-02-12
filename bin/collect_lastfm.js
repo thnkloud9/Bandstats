@@ -11,12 +11,20 @@
 var program = require('commander');
 var request = require('request');
 var async = require('async');
-var moment = require('moment');
+var path = require('path');
+
+/**
+ * config, db, and app stuff
+ */
 var db = require('mongoskin').db('localhost:27017', {
   database: 'bandstats',
   safe: true,
   strict: false,
 });
+var LastfmManager = require(path.join(__dirname, '/../app/lib/LastfmManager.js'));
+var lastfmManager = new LastfmManager();
+var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
+var bandRepository = new BandRepository({'db': db}); 
 
 /**
  * command parameters
@@ -39,7 +47,7 @@ program
 
         // process single id
         if (program.lastfm_id) {
-            var query = { 'running_stats.lastfm_listeners.lastfm_id': program.lastfm_id };
+            var query = { 'external_ids.lastfm_id': program.lastfm_id };
         } else if (program.band_id) {
             var query = { 'band_id': program.band_id };
         } else if (program.band_name) {
@@ -47,14 +55,16 @@ program
         }
 
         if (query) {
-            getBand(query, function(err, results) {
+            bandRepository.findOne(query, function(err, results) {
                 if (err) throw err;
 
-                if (results[0]) {
-                    var band_id = results[0].band_name;
-                    getLastfmListeners(program.lastfm_id, function(err, listeners) {
-                        updateBandLastfmListeners(band_id, listeners, function(err, results) { 
-                            console.log('updated band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
+                if (results.band_id) {
+                    var bandName = results.band_name;
+                    var bandId = results.band_id;
+                    var lastfmId = getExternalId(results.external_ids, 'lastfm_id');
+                    lastfmManager.getListeners(lastfmId, function(err, listeners) {
+                        bandRepository.updateLastfmListeners({ 'band_id': bandId }, listeners, function(err, results) { 
+                            console.log('updated band_id ' + bandId  + ' with ' + listeners + ' listeners'); 
                             process.exit(1);
                         });
                     });
@@ -88,14 +98,14 @@ program
             console.log('you must use either lastfm_id, band_id, or band_name with view command');
             process.exit(1);
         }
-        getBand(query, function(err, results) {
+        bandRepository.findOne(query, function(err, results) {
             if (err) throw err;
 
             if (results.band_id) {
-                var band_id = results.band_id;
-                var lastfm_id = results.running_stats.lastfm_listeners.lastfm_id;
+                var bandId = results.band_id;
+                var lastfmId = getExternalId(results.external_ids, 'lastfm_id');
 
-                getLastfmListeners(lastfm_id, function(err, listeners) {
+                lastfmManager.getListeners(lastfmId, function(err, listeners) {
                     console.log('band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
                     process.exit(1);
                 });
@@ -110,115 +120,77 @@ program.parse(process.argv);
  * Functions
  * TODO: move these to a LastFm module
  */
+function getExternalId(externalIds, id) {
+    for (var l in externalIds) {
+        var list = externalIds[l];
+        for (var name in list) {
+            if (name === id) {
+                return list[name]; 
+            }
+        }
+    }
+    return false;
+};
 function getAllLastfmListeners(callback) {
-    var query = { 
-        "running_stats.lastfm_listeners.lastfm_id": {"$exists" : true, "$ne" : ""},
-        "band_id": { $ne: "" }, 
+    var query = {
+        $and: [ 
+            {"external_ids.lastfm_id": { "$ne" : ""}},
+            {"external_ids.lastfm_id": { "$ne" : null}},
+            {"band_id": { $ne: "" }},
+        ]
     };
     var fields = { 
         "_id":0, 
         "band_id":1, 
-        "running_stats.lastfm_listeners.lastfm_id":1 
+        "external_ids":1 
     };
 
     db.collection('bands').find(query, fields).toArray(function(err, results) {
         if (err) throw err;
 
         var processed = 0;
-        for (var r in results) {
-            var result = results[r];
 
-            if (result.running_stats) {
-                var lastfm_id = result.running_stats.lastfm_listeners.lastfm_id;
-                var band_id = result.band_id;
-                var start = new Date().getTime(); 
-
-                // get the new lastfm listeners 
-                getLastfmListeners(lastfm_id, function(err, listeners) {
-                    if (err) {
-                        processed++;
-                        console.log('could not find listeners for band_id ' + band_id);
-                    } else {
-                        // update the band document
-                        updateBandLastfmListeners(band_id, listeners, function(err, band_id, listeners) {
-                            var end = new Date().getTime();
-                            processed++;
-                            if (processed == results.length) {
-                                callback(null, processed);
-                            } else {
-                                //console.log(processed + '(band_id ' + band_id + ') out of ' + results.length + ' took ' + (end - start) + ' milliseconds');
+        async.forEachSeries(results, function(result, scb) {
+            async.waterfall([
+                function(cb) {
+                    var lastfmId = getExternalId(result.external_ids, 'lastfm_id');
+                    var bandId = result.band_id;
+                    lastfmManager.getListeners(lastfmId, function(err, listeners) {
+                        if (err) {
+                            cb(err);
+                        }
+                        cb(null, bandId, listeners);
+                    });
+                },
+                function(bandId, listeners, cb) {
+                    if (listeners) {
+                        bandRepository.updateLastfmListeners({'band_id': bandId}, listeners, function(err, results) {
+                            if (err) {
+                                cb(err);
                             }
+                            cb(null, bandId, listeners); 
                         });
+                    } else {
+                        cb(null, bandId, 0);
                     }
-                });
+                },
+            ], 
+            function (err, bandId, listeners) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('updated ' + bandId + ' with ' + listeners + ' listeners'); 
+                }
+                scb();
+            });
+        },
+        function(err) {
+            if (err) {
+                console.log(err);
             }
-        }
+            console.log('done with all');
+            callback();
+        });
     });
-};
-
-function getBand(query, callback) {
-    db.collection('bands').find(query).toArray(function(err, results) {
-        if (err) throw err;
-       
-        if (results.length > 1) {
-            callback('more than one band matched', results);
-        } else { 
-            callback(null, results[0]);
-        }
-    });
-}
-
-function getLastfmListeners(lastfm_id, callback) {
-    var api_key = "e4d4f5353a13cf36fdb79957f831b6cf";
-    var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfm_id + '&api_key=' + api_key + '&format=json',
-        json: true
-    };
-
-    request(options, function (err, response, body) {
-        if (!err && response.statusCode == 200) {
-
-            if (body.artist) {
-                callback(null, body.artist.stats.listeners);
-            } else {
-                callback('could not find listeners for '+lastfm_id, band_id, null);
-            }
-        } else {
-            callback(err);
-        }
-    });
-
-};
-
-function updateBandLastfmListeners(band_id, listeners, callback) {
-    var query = { 'band_id': band_id };
-
-    async.series({
-        deleteToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  today } } };
-            db.collection('bands').update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-        updateToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } } };
-            db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
-                cb(err, result);
-            });
-        },
-        deleteOld: function(cb) {
-            var expire = moment().subtract('months', 6).calendar();
-            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  expire } } };
-            db.collection('bands').update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-    },
-    function(err, results) {
-        callback(err, results);
-    });
-   
 };
 

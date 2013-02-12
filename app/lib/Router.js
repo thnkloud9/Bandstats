@@ -29,9 +29,10 @@ exports.initRoutes = function(app, db) {
         var controller = new mdl.controller(db);
 
         // build action parameter
-        if( !request.params.action ) { 
-            if (request.params.id === "create") {
-                request.params.action = "createAction";
+        if( !request.params.action ) {
+            // see if action is first 
+            if (typeof controller[request.params.id + "Action"] === "function") {
+                request.params.action = request.params.id + "Action";
             } else {
                 request.params.action = "indexAction"; 
             }
