@@ -35,7 +35,7 @@
 
 <div id='bs-external-ids'>
     <form id='bs-band-external-ids'>
-        <h2>External Ids</h2>
+        <h4>External Ids</h4>
         <fieldset>
         </fieldset>
         <button id="bs-band-add-external-id">Add External Id</button>
