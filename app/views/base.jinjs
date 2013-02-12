@@ -11,7 +11,6 @@
 </head>
 <body>
     <div class="menu">{% block menu %}{% include './menu.jinjs' %}{%endblock %}</div>
-    <div class="message">{{message}}</div>
     <div class="content">{% block content %}{% endblock %}</div>
     <div class="footer">
         {% block footer %}

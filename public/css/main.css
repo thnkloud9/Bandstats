@@ -4,6 +4,11 @@
   font-family: sans-serif;
   }
 
+body{
+  margin: 0;
+  padding: 0;
+}
+
 ul,
 ol {
   list-style: none;
@@ -16,6 +21,16 @@ a:visited {color:#666666; text-decoration: none;}
 a:focus {outline:none;}
 a:hover, a:active {text-decoration: underline; outline:none;}
 
+.menu {
+  background-color: #000;
+  color: #fff;
+  line-height: 20px;
+  padding: 10px;
+  }
+  .menu a {
+    color: #fff;
+    }
+
 .navlist li
 {
   display: inline;
@@ -24,6 +39,30 @@ a:hover, a:active {text-decoration: underline; outline:none;}
  }
 
 /** Band Page Elements **/
+.band-sub-menu {
+  text-align: right;
+  background-color: #ccc;
+  line-height: 10px;
+  padding: 3px;  
+  }
+  .band-sub-menu a {
+    color: #000;
+    }
+  .band-sub-menu .navlist {
+    float: left;
+    line-height: 24px;
+    width: 935px;
+    }
+
+.band-image {
+  float: left;
+  padding: 5px;
+  }
+  .band-image img {
+    width: 200px;
+    height: 200px;
+    }
+
 #bs-external-ids {
   width: 400px;
  }

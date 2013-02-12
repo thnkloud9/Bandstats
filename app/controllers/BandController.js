@@ -25,7 +25,14 @@ var BandController = function(db) {
         var query = {};
         if (req.query.search) {
             search = new RegExp('.*' + req.query.search + '.*', 'i');
-            query = {"band_name": search};
+            query = {
+                $or: [
+                    {"band_name": search},
+                    {"band_id": search},
+                    {"external_ids.facebook_id": search},
+                    {"band_url": search},
+                ]
+            };
         }
         this.bandRepository.find(query, function(err, bands) {
             var data = { 'bands': bands };

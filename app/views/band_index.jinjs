@@ -5,12 +5,7 @@
 {% endblock %}
 
 {% block content %}
-
-<form>
-    <input type="test" name="search" value="">
-    <button id="search">Search</button>
-</form>
-<button id="new"><a href="/band/0/edit">Band Site</a></button>
+{% block band_menu %}{% include './band_menu.jinjs' %}{%endblock %}
 
 <ul>
 {% for band in bands %}

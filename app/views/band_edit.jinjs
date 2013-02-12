@@ -4,19 +4,28 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
+{% block band_menu %}{% include './band_menu.jinjs' %}{%endblock %}
 
-<button id="bs-band-update">Update</button>
-<button id="bs-band-delete">Delete</button>
+<div class='band-image'>
+    <img src="">
+</div>
 
-<form id="bs-band-edit">
-    <fieldset>
-    band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
-    band_name: <input type="text" name="band_name" value="{{band.band_name}}"><br />
-    band_url: <input type="text" name="band_url" value="{{band.band_url}}"><br />
-    created: <input type="text" name="created" value="{{band.created}}"><br />
-    last_updated: <input type="text" name="last_updated" value="{{band.last_updated}}"><br />
-    </fieldset>
-</form>
+<div class='band-edit-main'>
+
+    <h3>{{band.band_name}}</h3>
+
+    <form id="bs-band-edit">
+        <fieldset>
+        band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
+        band_name: <input type="text" name="band_name" value="{{band.band_name}}"><br />
+        band_url: <input type="text" name="band_url" value="{{band.band_url}}"><br />
+        created: <input type="text" name="created" value="{{band.created}}"><br />
+        last_updated: <input type="text" name="last_updated" value="{{band.last_updated}}"><br />
+        </fieldset>
+    </form>
+    <button id="bs-band-update">Update</button>
+    <button id="bs-band-delete">Delete</button>
+</div>
 
 <form id="bs-band-regions">
 </form>
@@ -34,22 +43,20 @@
 </div>
 
 <div id='bs-band-facebook-stats'>
-    <h2>Facebook Likes</h2>
-    <h4>using id {{band.running_stats.facebook_likes.facebook_id}}</h4>
+    <h4>Facebook Likes</h4>
 
     <!-- chart div -->
     <div class='chart' style='overflow: hidden;'>
-        <div id='bs-facebook-likes-chart' style='width:300px;height:200px;float: left'></div>
+        <div id='bs-facebook-likes-chart' style='width:200px;height:100px;float: left'></div>
     </div>
 </div>
 
 <div id='bs-band-lastfm-listeners'>
-    <h2>Lastfm Listeners</h2>
-    <h4>using id {{band.running_stats.lastfm_listeners.lastfm_id}}</h4>
+    <h4>Lastfm Listeners</h4>
     
     <!-- chart div -->
     <div class='chart' style='overflow: hidden;'>
-        <div id='bs-lastfm-listeners-chart' style='width:300px;height:200px;float: left'></div>
+        <div id='bs-lastfm-listeners-chart' style='width:200px;height:100px;float: left'></div>
     </div>
 </div>
 
