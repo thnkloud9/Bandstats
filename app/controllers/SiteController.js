@@ -20,25 +20,28 @@ var SiteController = function(db) {
      * Load the site repo for mongo connectivity
      */
     this.siteRepository = new SiteRepository({'db': db});
+    this.data = {"section": "site"};
 
     this.indexAction = function(req, res) {
+        var data = this.data;
         var query = {};
         if (req.query.search) {
             search = new RegExp('.*' + req.query.search + '.*', 'i');
             query = {"site_name": search};
         }
-        this.siteRepository.find(query, function(err, sites) {
-            var data = { 'sites': sites };
+        this.siteRepository.find(query, {}, function(err, sites) {
+            _.extend(data, { 'sites': sites });
             var template = require('./../views/site_index');
             res.send(template.render(data));
         });
     }
 
     this.editAction = function(req, res) {
+        var data = this.data;
         var query = {'site_id': req.params.id};
         var siteRepository = this.siteRepository;
         var template = require('./../views/site_edit');
-        var data = {json: {}};
+        _.extend(data, {json: {}});
 
         if (req.params.id === "0") {
             // this is a new record
@@ -63,7 +66,7 @@ var SiteController = function(db) {
     this.articlesAction = function(req, res) {
         var query = {'site_id': req.params.id};
         var siteRepository = this.siteRepository;
-        var data = {};
+        var data = this.data;
 
         this.siteRepository.findOne(query, function(err, site) {
             if ((err) || (!site)) {
@@ -71,7 +74,7 @@ var SiteController = function(db) {
                 return false;
             }
             // get articles
-            siteRepository.getSiteArticles(site, function(err, site, articles) {
+            siteRepository.getNewArticles(site, function(err, articles) {
                     data.articles = articles;
                     res.send(data);
             });

@@ -14,14 +14,16 @@ var async = require('async');
 var moment = require('moment');
 var xml2js = require('xml2js');
 
-var SiteRepository = require('./../app/repositories/SiteRepository.js');
-var BandRepository = require('./../app/repositories/BandRepository.js');
-
 var db = require('mongoskin').db('localhost:27017', {
   database: 'bandstats',
   safe: true,
   strict: false,
 });
+
+var SiteRepository = require('./../app/repositories/SiteRepository.js');
+var siteRepository = new SiteRepository({"db": db});
+var BandRepository = require('./../app/repositories/BandRepository.js');
+var bandRepository = new BandRepository({"db": db});
 
 /**
  * command parameters
@@ -46,23 +48,29 @@ program
         } else {
             // process all sites
             var query = {'site_url': {$ne: ''}};
-            getSite(query, function(err, sites) {
-                for (var s in sites) {
-                    var site = sites[s];
-                    var processed = 0;
-                    parseSiteArticles(site, true, function() {
+            siteRepository.find(query, {}, function(err, sites) {
+                async.forEachSeries(sites, function(site, cb) {
+                    parseSiteArticles(site, true, function(err) {
                         console.log('processing ' + site.site_name);
-                        processed++;
-                        if (processed == sites.length) { 
-                            process.exit(1);
-                        }
+                        if (err) {
+                            console.log(err);
+                        } 
+                        cb();
                     });
-                }
+                },
+                function(err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log('done with all');
+                    process.exit(1);
+                }); 
             });
+            return false;
         }
     
-        getSite(query, function(err, site) {
-            parseSiteArticles(site, function() {
+        siteRepository.findOne(query, function(err, site) {
+            parseSiteArticles(site, true, function() {
                 process.exit(1);
             });
         });
@@ -82,23 +90,32 @@ program
         } else {
             // process all sites
             var query = {'site_url': {$ne: ''}};
-            getSite(query, function(err, sites) {
-                for (var s in sites) {
-                    var site = sites[s];
-                    var processed = 0;
-                    parseSiteArticles(site, false, function() {
-                        console.log('processing '+site.site_name);
-                        processed++;
-                        if (processed == sites.length) { 
-                            process.exit(1);
-                        }
+            siteRepository.find(query, {}, function(err, sites) {
+                async.forEachSeries(sites, function(site, cb) {
+                    parseSiteArticles(site, false, function(err) {
+                        console.log('processing ' + site.site_name);
+                        if (err) {
+                            console.log(err);
+                        } 
+                        cb();
                     });
-                }
+                },
+                function(err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log('done with all');
+                    process.exit(1);
+                }); 
             });
+            return false;
         }
     
-        getSite(query, function(err, site) {
-            parseSiteArticles(site, function() {
+        siteRepository.findOne(query, function(err, site) {
+            parseSiteArticles(site, false, function(err, results) {
+                if (err) {
+                    console.log(err);
+                }
                 process.exit(1);
             });
         });
@@ -112,30 +129,46 @@ program.parse(process.argv);
  * TODO: move these to modules
  */
 function parseSiteArticles(site, save, callback) {
-    getBandsIndex({'band_name': { $ne: '' } }, function(err, bands) {
-        var bands = bands;
-        getSiteArticles(site, function(err, site, articles) {
-            for (var a in articles) {
-                var article = articles[a];
-
-                // look in pre-defined search fields
-                for (var b in bands) {
-                    var band = bands[b];
+    // get band list
+    bandRepository.getBandsIndex({"band_name": { $ne: "" } }, function(err, bands) {
+        // get new articles  
+        siteRepository.getNewArticles(site, function(err, articles) {
+            // loop through articles
+            async.forEachSeries(articles, function(article, scb) {
+                // loop through bands 
+                async.forEachSeries(bands, function(band, cb) {
                     var match = articleHasMatch(site, article, band);
-                    if (match) {
-                        if (save) {
-                            updateBandMention(band, site, article, function(err, band, site, article) {
-                                console.log('saving ' + band.band_name + ' matched ' + article[site['link_field']]);
-                            });
-                        } else {
-                            console.log(band.band_name + ' matched ' + article[site['link_field']]);
-                        }
-                    } else {
-                        // no match for article            
+
+                    if (!match) {
+                        cb();
+                        return false;
                     }
+                    
+                    console.log('match ' + band.band_name + ' ' + article[site.link_field]);
+
+                    if (save) {
+                        bandRepository.updateMentions({ 'band_id': band.band_id }, site, article, function(err, results) {
+                            cb(null, results);
+                        });
+                    } else { 
+                        cb();
+                    }
+
+                },
+                function(err, results) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    scb();
+                });
+            },
+            function(err, results) {
+                if (err) {
+                    console.log(err);
                 }
-            }
-            callback();
+                console.log('done with all');
+                callback();
+            });
         });
     });
 }
@@ -163,6 +196,7 @@ function articleHasMatch(site, article, band) {
         return false;
     } else {
         console.log('could not parse article for band ' + band.band_name + '(' + band.band_id + ')');
+        console.log(band);
         return false;
     }
 }
@@ -178,123 +212,3 @@ function sanitizeSearchString(text) {
  
     return sanitized_text;
 }
-
-function getSiteArticles(site, callback) {
-    console.log('getting articles from ' + site.site_url);
-    var options = {
-        url: site.site_url,
-    };
-    request(options, function(err, response, body) {
-        if (err) {
-            // TODO:
-            // something is wrong with this feed, report it
-            console.log(err);
-            callback(err);
-        }
-
-        if (typeof response === "undefined") {
-            callback('no response');
-            return false;
-        }
-        
-        if (response.statusCode == 200) {
-            // convert xml to json
-            var parser = new xml2js.Parser();
-            parser.parseString(body, function(err, results) { 
-                var articles = [];
-
-                /**
-                 * TODO: find out if there is a better way to parse rss items
-                 */
-                if (results.rss) {
-                    for (var i in results.rss.channel) {
-                        var items = results.rss.channel[i];
-                        for (var a in items.item) {
-                            var article = items.item[a];
-                            articles.push(article);
-                        }
-                    }
-                } else if (results['rdf:RDF']) {
-                    for (var i in results['rdf:RDF']['item']) {
-                        var article = results['rdf:RDF']['item'][i];
-                        articles.push(article);
-                    }
-
-                } else if (results.feed) {
-                    if (results.feed.entry) {
-                        for (var a in results.feed.entry) {
-                            var article = results.feed.entry[a];
-                            articles.push(article);
-                        }
-                    } else {
-                        console.log(results);
-                        console.log('could not parse response from ' + site.site_url);
-                        process.exit(1);
-                    }
-                } else {
-                    console.log(results);
-                    console.log('could not parse response from ' + site.site_url);
-                    process.exit(1);
-                }
-                callback(null, site, articles);
-            });
-        } else {
-            console.log('could not get ' + site.site_url + ', statusCode: '+response.statusCode);
-            //process.exit(1);
-        }
-    }); 
-}
-
-function getSite(query, callback) {
-    db.collection('sites').find(query).toArray(function(err, results) {
-        if (err) throw err;
-
-        if (results.length > 1) {
-            callback('more than one site matched', results);
-        } else {
-            callback(null, results[0]);
-        }
-    });
-}
-
-function getBand(query, callback) {
-    db.collection('bands').find(query).toArray(function(err, results) {
-        if (err) throw err;
-       
-        if (results.length > 1) {
-            callback('more than one band matched', results);
-        } else { 
-            callback(null, results[0]);
-        }
-    });
-}
-
-function getBandsIndex(query, callback) {
-    db.collection('bands').find(query, {'band_name':1, 'band_id':1}).toArray(function(err, results) {
-        if (err) {
-            console.log(err);
-            return false;
-        }
-       
-        if (results.length > 0) {
-            callback(null, results);
-        } else {
-            callback('no bands found', null);
-        }
-    });
-}
-
-function updateBandMention(band, site, article, callback) {
-    var query = { 'band_id': band.band_id };
-    var today = moment().format('YYYY-MM-DD');
-    var description = article[site['description_field']];
-    var link = article[site['link_field']];
-    var set = { $addToSet: {"mentions": { "date": today, "link": link, "description": description } } };
-   
-    // add toays stat with upsert to overwrite in case it was already collected today
-    db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
-        callback(null, band, site, article);
-    });
-   
-};
-

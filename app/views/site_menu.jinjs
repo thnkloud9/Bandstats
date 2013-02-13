@@ -1,0 +1,16 @@
+<div class="site-sub-menu">
+  <div>
+    <ul class="navlist">
+      <li><a href="/band/0/edit">New Site</a></li>
+      <li><a href="/band/failed">Failed Lookups</a></li>
+      <li><a href="/band/dups">Duplicates</a></li>
+      <li><a href="/band">Edit Fields</a></li>
+    </ul>
+  </div>
+  <div>
+    <form action="/site">
+      <input type="test" name="search" value="">
+      <button id="search">Search</button>
+    </form>
+  </div>
+</div>

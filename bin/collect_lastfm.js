@@ -139,13 +139,13 @@ function getAllLastfmListeners(callback) {
             {"band_id": { $ne: "" }},
         ]
     };
-    var fields = { 
+    var options = { 
         "_id":0, 
         "band_id":1, 
         "external_ids":1 
     };
 
-    db.collection('bands').find(query, fields).toArray(function(err, results) {
+    bandRepository.find(query, options).toArray(function(err, results) {
         if (err) throw err;
 
         var processed = 0;

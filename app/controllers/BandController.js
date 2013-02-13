@@ -20,8 +20,10 @@ var BandController = function(db) {
      * Load the band repo for mongo connectivity
      */
     this.bandRepository = new BandRepository({'db': db});
+    this.data = {"section": "band"};
 
     this.indexAction = function(req, res) {
+        var data = this.data;
         var query = {};
         if (req.query.search) {
             search = new RegExp('.*' + req.query.search + '.*', 'i');
@@ -34,18 +36,34 @@ var BandController = function(db) {
                 ]
             };
         }
-        this.bandRepository.find(query, function(err, bands) {
-            var data = { 'bands': bands };
+        this.bandRepository.find(query, {}, function(err, bands) {
+            _.extend(data, {"bands": bands});
             var template = require('./../views/band_index');
             res.send(template.render(data));
         });
     }
 
+    this.lookupsAction = function(req, res) {
+        var data = this.data;
+        var query = {
+            $or: [
+                {"external_ids.facebook_id": ""},
+                {"external_ids.facebook_id": null}
+            ]
+        };
+        this.bandRepository.count(query, function(err, results) {
+            _.extend(data, {"missing_facebook_count": results });
+            var template = require('./../views/band_lookups');
+            res.send(template.render(data));
+        });
+    }
+
     this.editAction = function(req, res) {
+        var data = this.data;
         var query = {'band_id': req.params.id};
         var bandRepository = this.bandRepository;
         var template = require('./../views/band_edit');
-        var data = {json: {}};
+        _.extend(data, {json: {}});
 
         if (req.params.id === "0") {
             // this is a new record
@@ -68,9 +86,9 @@ var BandController = function(db) {
     }
 
     this.articlesAction = function(req, res) {
+        var data = this.data;
         var query = {'band_id': req.params.id};
         var bandRepository = this.bandRepository;
-        var data = {};
 
         this.bandRepository.findOne(query, function(err, band) {
             if ((err) || (!band)) {

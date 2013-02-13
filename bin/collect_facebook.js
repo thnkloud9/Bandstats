@@ -148,7 +148,7 @@ function getAllFacebookLikes(callback) {
         "external_ids":1 
     };
 
-    db.collection('bands').find(query, fields).toArray(function(err, results) {
+    db.collection('bands').find(query, {}, fields).toArray(function(err, results) {
         if (err) throw err;
 
         var processed = 0;
@@ -178,7 +178,7 @@ function getAllFacebookLikes(callback) {
 
         async.forEachSeries(batches, function(batch, scb) {
             // get likes 50 at a time
-            facebookManager.getPageLikesBatch(batch, function(err, results) {
+            facebookManager.getBatch(batch, function(err, results) {
                 // update likes one at a time
                 async.forEach(results, function(result, cb) {
                     if (!result) {

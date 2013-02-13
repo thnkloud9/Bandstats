@@ -19,8 +19,8 @@ function BaseRepository(args) {
     this.collection = args.collection;
 }
 
-BaseRepository.prototype.find = function(query, callback) {
-    this.db.collection(this.collection).find(query).toArray(function(err, results) { 
+BaseRepository.prototype.find = function(query, options, callback) {
+    this.db.collection(this.collection).find(query, options).toArray(function(err, results) { 
         if (err) throw err;
 
         callback(null, results);

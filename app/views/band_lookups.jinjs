@@ -1,0 +1,75 @@
+{% extends "./base.jinjs" %}
+{% block title %}Band Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<h3>External Ids</h3>
+<ul>
+  <li><a id="bs-lookup-facebook-id" href="#">Lookup Facebook Ids</a> (missing {{missing_facebook_count}}) 
+      <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
+    </li>
+  <li><a href="#">Lookup Lastfm Ids</a></li>
+  <li><a href="#">Lookup Musicbrainz Ids</a></li>
+  <li><a href="#">Lookup Bandcamp Ids</a></li>
+  <li><a href="#">Lookup Soundcloud Ids</a></li>
+  <li><a href="#">Lookup Echonest Ids</a></li>
+</ul>
+
+<h3>Lastfm Info</h3>
+<ul>
+  <li><a href="#">Lookup Images</a></li>
+  <li><a href="#">Lookup Bios</a></li>
+  <li><a href="#">Lookup Tags</a></li>
+  <li><a href="#">Lookup Events</a></li>
+  <li><a href="#">Lookup Event Attendees</a></li>
+  <li><a href="#">Lookup Listeners</a></li>
+  <li><a href="#">Lookup Plays</a></li>
+</ul>
+
+<h3>Facebook Info</h3>
+<ul>
+  <li><a href="#">Lookup Images</a></li>
+  <li><a href="#">Lookup Bios</a></li>
+  <li><a href="#">Lookup Descriptions</a></li>
+  <li><a href="#">Lookup Likes</a></li>
+  <li><a href="#">Lookup Talking About</a></li>
+</ul>
+
+<h3>Echonest Info</h3>
+<ul>
+  <li><a href="#">Lookup Images</a></li>
+  <li><a href="#">Lookup Bios</a></li>
+  <li><a href="#">Lookup Descriptions</a></li>
+  <li><a href="#">Lookup Hotttnesss</a></li>
+  <li><a href="#">Lookup Familiarity</a></li>
+  <li><a href="#">Lookup Genres</a></li>
+  <li><a href="#">Lookup Terms</a></li>
+  <li><a href="#">Lookup News</a></li>
+  <li><a href="#">Lookup Profiles</a></li>
+  <li><a href="#">Lookup Reviews</a></li>
+  <li><a href="#">Lookup Blogs</a></li>
+  <li><a href="#">Lookup Similar</a></li>
+  <li><a href="#">Lookup Songs</a></li>
+</ul>
+
+<script type="text/javascript">
+$(function() {
+    
+    /* bandstats objects setup */
+    var externalLookup = new Lookup();
+
+    /* event listeners */
+    $('#bs-lookup-facebook-id').live('click', function() {
+        externalLookup.setProvider('facebook');
+        externalLookup.setResource('pageids');
+        externalLookup.setService('lookup');
+        externalLookup.getMatches();
+
+        return false;
+    });
+    
+});
+</script>
+{% endblock %}

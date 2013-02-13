@@ -1,0 +1,5 @@
+{% if section == "band" %}
+    {% include './band_menu.jinjs' %}
+{% elif section == "site" %}
+    {% include './site_menu.jinjs' %}
+{% endif %}

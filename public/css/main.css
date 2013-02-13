@@ -31,12 +31,52 @@ a:hover, a:active {text-decoration: underline; outline:none;}
     color: #fff;
     }
 
-.navlist li
-{
+.navlist li {
   display: inline;
   list-style-type: none;
   padding-right: 20px;
  }
+
+.submenu {
+  }
+
+.content {
+  padding: 5px;
+  margin-bottom: 55px;
+  height: 100%;
+  }
+
+.footer {
+  width: 100%;
+  position: fixed; 
+  bottom: 0;
+  margin-top: 20px;
+  background-color: black;
+  color: white;
+  line-height: 35px;
+  text-align: right;
+  font-size: 10px;
+  }
+  .footer a {
+    color: #fff;
+    }
+
+
+/** Site Page Elements **/
+.site-sub-menu {
+  text-align: right;
+  background-color: #ccc;
+  line-height: 10px;
+  padding: 3px;  
+  }
+  .site-sub-menu a {
+    color: #000;
+    }
+  .site-sub-menu .navlist {
+    float: left;
+    line-height: 24px;
+    width: 935px;
+    }
 
 /** Band Page Elements **/
 .band-sub-menu {
@@ -70,12 +110,13 @@ a:hover, a:active {text-decoration: underline; outline:none;}
 .bs-lookup-matches {
   position: absolute;
   left: 350px;
-  width: 350px;
-  height: 350px;
+  top: 90px;
+  width: 500px;
+  height: 400px;
   background: white;
   padding: 5px;
   overflow: scroll;
-  z-index: 10000;
+  z-index: 1000;
   display: none;
   border: solid 1px #adadad; 
   -webkit-border-radius: 5px;
@@ -83,22 +124,60 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   -o-border-radius: 5px;
  }
 
+.bs-lookup-match-group {
+  }
+
 .bs-lookup-match {
-    font-size: 12px;
-    margin-bottom: 5px;
-    min-height: 80px;
-    border-bottom: dashed 1px #adadad;
- }
+  margin-left: 40px;
+  font-size: 12px;
+  margin-bottom: 5px;
+  min-height: 80px;
+  border-bottom: dashed 1px #adadad;
+  padding: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+  }
+  .bs-lookup-match.active {
+    background-color: #CCF;
+    } 
   .bs-lookup-match div {
     width: 300px;
-   }
+    min-height: 140px; 
+    }
   .bs-lookup-match p {
     font-size: 12px;
-   }
+    line-height: 8px;
+    }
   .bs-lookup-match img {
     float: left;
     margin-right: 5px;
     width: 75px;
     height: 75px; 
-   }
- 
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    }
+
+.bs-bio-link:hover + div {
+  display: inline;
+}
+
+.bs-lookup-match-bio {
+  position: absolute;
+  display: none;
+  background: white;
+  width: 250px;
+  margin-left: 70px;
+  margin-top: -60px;
+  padding: 5px;
+  overflow: scroll;
+  z-index: 1001;
+  border: solid 1px #adadad; 
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+  } 
+  .bs-lookup-match-bio:hover {
+    display: inline; 
+    } 

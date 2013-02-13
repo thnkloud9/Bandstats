@@ -24,8 +24,8 @@ function BandRepository(args) {
 /**
  * base repo functions
  */
-BandRepository.prototype.find = function(query, callback) {
-    BaseRepository.prototype.find.call(this, query, function(err, bands) {
+BandRepository.prototype.find = function(query, options, callback) {
+    BaseRepository.prototype.find.call(this, query, options, function(err, bands) {
         callback(err, bands);
     });
 }
@@ -71,20 +71,21 @@ BandRepository.prototype.remove = function(query, options, callback) {
  */
 BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) {
     var db = this.db;
+    var collection = this.collection
 
     // add toays stat with upsert to overwrite in case it was already collected today
     async.series({
         deleteToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
             var set = { $pull: {"running_stats.facebook_likes.daily_stats": { "date":  today } } };
-            db.collection('bands').update(query, set, function(err, result) {
+            db.collection(collection).update(query, set, function(err, result) {
                 cb(err, result);
             });
         },
         updateToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
             var set = { $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } } };
-            db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
+            db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
             });
         },
@@ -108,26 +109,27 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
  */
 BandRepository.prototype.updateLastfmListeners = function(query, listeners, callback) {
     var db = this.db;
+    var collection = this.collection;
 
     async.series({
         deleteToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
             var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  today } } };
-            db.collection('bands').update(query, set, function(err, result) {
+            db.collection(collection).update(query, set, function(err, result) {
                 cb(err, result);
             });
         },
         updateToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
             var set = { $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } } };
-            db.collection('bands').update(query, set, {upsert:true}, function(err, result) {
+            db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
             });
         },
         deleteOld: function(cb) {
             var expire = moment().subtract('months', 6).calendar();
             var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  expire } } };
-            db.collection('bands').update(query, set, function(err, result) {
+            db.collection(collection).update(query, set, function(err, result) {
                 cb(err, result);
             });
         },
@@ -136,4 +138,92 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
         callback(err, results);
     });
 };
+
+BandRepository.prototype.getBandsIndex = function(query, callback) {
+    var db = this.db;
+    var collection = this.collection;
+
+    this.db.collection(collection).find(query, {'band_name':1, 'band_id':1}).toArray(function(err, results) {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+       
+        if (!results.length > 0) {
+            callback('no bands found', null);
+            return false;
+        }
+
+        callback(null, results);
+    });
+
+};
+
+BandRepository.prototype.updateMentions = function(query, site, article, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var today = moment().format('YYYY-MM-DD');
+    var description = article[site['description_field']];
+    var link = article[site['link_field']];
+    var set = { 
+        $addToSet: {   
+            "mentions": { 
+                "date": today,
+                "site_id": site.site_id,
+                "link": link, 
+                "description": description 
+            } 
+        } 
+    };
+   
+    // overwrite in case it was already collected today
+    async.series({
+        checkForOld: function(cb) {
+            var query = {
+                "mentions.link": link
+            };
+            db.collection(collection).count(query, function(err, count) {
+                if (count > 0) {
+                    // dont need to do anything
+                    cb("already saved");
+                } else {
+                    cb();
+                }
+            }); 
+        },
+        addNew: function(cb) {
+            db.collection(collection).update(query, set, function(err, results) {
+                if (err) {
+                    cb(err);
+                    return false;
+                }
+                cb(err, results);
+            });
+        },
+    },
+    function(err, results) {
+        if (err) {
+            callback(err);
+            return false;
+        }
+        callback(null, results);
+    });
+};
+
+/**
+ * Counts
+ */
+BandRepository.prototype.count = function(query, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    db.collection(collection).count(query, function(err, results) {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+       
+        callback(null, results);
+    });
+};
+
 module.exports = BandRepository;

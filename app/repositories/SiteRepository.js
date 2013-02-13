@@ -22,8 +22,8 @@ function SiteRepository(args) {
 /**
  * base repo functions
  */
-SiteRepository.prototype.find = function(query, callback) {
-    BaseRepository.prototype.find.call(this, query, function(err, sites) {
+SiteRepository.prototype.find = function(query, options, callback) {
+    BaseRepository.prototype.find.call(this, query, options, function(err, sites) {
         callback(err, sites);
     });
 }
@@ -61,7 +61,13 @@ SiteRepository.prototype.remove = function(query, options, callback) {
 /**
  * Site specific functions
  */
-SiteRepository.prototype.getSiteArticles = function(site, callback) {
+
+/**
+ * TODO: move to a RSSManager class?
+ * don't think this really belongs in the repository class,
+ * but leaving it here for now.
+ */
+SiteRepository.prototype.getNewArticles = function(site, callback) {
     var parent = this;
     console.log('getting articles from ' + site.site_url);
     var options = {
@@ -100,14 +106,12 @@ SiteRepository.prototype.getSiteArticles = function(site, callback) {
                             articles.push(article);
                         }
                     } else {
-                        console.log(results);
-                        console.log('could not parse response from ' + site.site_url);
-                        process.exit(1);
+                        callback('could not parse response from ' + site.site_url);
+                        return false;
                     }
                 } else {
-                    console.log(results);
-                    console.log('could not parse response from ' + site.site_url);
-                    process.exit(1);
+                    callback('could not parse response from ' + site.sit_url);
+                    return false;
                 }
                 
                 // make sure we actually have real string values
@@ -119,11 +123,10 @@ SiteRepository.prototype.getSiteArticles = function(site, callback) {
                     parsed_articles.push(parsed_article); 
                 }
 
-                callback(null, site, parsed_articles);
+                callback(null, parsed_articles);
             });
         } else {
-            console.log('could not get ' + site.site_url + ', statusCode: '+response.statusCode);
-            process.exit(1);
+            callback('could not get ' + site.site_url + ', statusCode: '+ response.statusCode)
         }
     }); 
 }
@@ -164,9 +167,11 @@ SiteRepository.prototype.sanitizeArticle = function(article) {
         }
 
         // get rid of html
-        if (typeof value === 'string') {
+        if ((typeof value === 'string') && (field != 'link')) {
             value = value.replace(/<.p>/gi, '')
-                .replace(/<(?:.|\n)*?>/gm, '')
+                .replace(/<(?:.|\n)*?>/gi, '')
+                .replace(/\n/gi, '')
+                .replace(/[?\.\\,!\“\”\’\‘\"\'\(\)\[\]\{\}]/g, '')
                 .replace(/<a.*href="(.*?)".*>(.*?)<\/a>/gi, '')
                 .replace(/<img.*>/gi, '');
         }

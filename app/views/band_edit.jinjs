@@ -4,10 +4,9 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
-{% block band_menu %}{% include './band_menu.jinjs' %}{%endblock %}
 
 <div class='band-image'>
-    <img src="">
+    <img class='image-droppable image draggable' src="">
 </div>
 
 <div class='band-edit-main'>
@@ -53,7 +52,7 @@
 
 <div id='bs-band-lastfm-listeners'>
     <h4>Lastfm Listeners</h4>
-    
+
     <!-- chart div -->
     <div class='chart' style='overflow: hidden;'>
         <div id='bs-lastfm-listeners-chart' style='width:200px;height:100px;float: left'></div>
@@ -112,89 +111,49 @@ $(function() {
                 var typeParts = name.split('_');
                 var type = typeParts[0];
                 var output = name + ": <input type='text' name='" + name + "' value='" + value + "'>";
-                output += "<a data-type='" + name + "' class='bs-id-lookup' href='#'>lookup</a><br />";
+                output += "<a data-provider='" + type + "' class='bs-id-lookup' href='#'>lookup</a><br />";
                 output += "<div id='bs-lookup-matches-" + type + "' class='bs-lookup-matches'></div>";
                 $('#bs-band-external-ids fieldset').append(output);
             }
         }
     };
 
-    function externalIdLookup(type, search) {
-        var typeParts = type.split('_');
-        var url = '/' + typeParts[0] + '/search?search=' + search;
-        console.log(url); 
-        $.ajax({
-            url: url,
-            type: 'get',
-            dataType: 'json',
-            success: function(response) {
-                console.log(response);
-                showLookupMatches(typeParts[0], response);
-            },
-            error: function(err, status, msg) {
-                console.log(err); 
-            }
-
-        });
-    }
+    /**
+     * image drag and drop
+     */
+    var dragImage = null;
+    $('.image-draggable').live('dragstart', function(e) {
+        var source = $(this).attr('src');
+        e.originalEvent.dataTransfer.setData('src', source);
+    });
     
-    function showLookupMatches(type, response) {
-        var output = "";
-        $('#bs-lookup-matches-'+type).empty();
-        output += "<ul>";
-        for (var r in response) {
-            var result = response[r];
-            if (type === 'facebook') {             
-                output += "<li class='bs-lookup-match' data-external-id='" + result.id + "'>";
-                output += "<div>";
-                if (result.cover) {
-                    output += "<img src='" + result.cover.source + "'>";
-                }
-                output += "<strong>" + result.name + "</strong>";
-                output += "<p>" + result.about + "</p>";
-                if (result.bio) {
-                    output += "<p>" + result.bio + "</p>";
-                }
-                output += "<p><strong>" + result.likes + "</strong> likes, ";
-                output += "<strong>" + result.talking_about_count + "</strong> talking about</p>";
-                output += "</div>";
-            };
-            if (type === 'lastfm') {
-                output += "<li class='bs-lookup-match' data-external-id='" + result.mbid + "'>";
-                if (result.image) {
-                    var src = '';
-                    for (var i in result.image) {
-                        var image = result.image[i];
-                        if (image['#text'] && image.size === "medium") {
-                            src = image['#text'];
-                            break;
-                        }
-                    }
-                    output += "<img src='" + src + "'>";
-                }
-                output += "<strong>" + result.name + "</strong>";
-                output += "<p><strong>" + result.listeners + "</strong> listeners</p>";
-                output += "<div>";
-                output += "</div>";
-                output += "</li>";
-            }
-            
-        }
-        output += "<ul>";
-        $('#bs-lookup-matches-'+type).html(output);
-        $('#bs-lookup-matches-'+type).show();
-    }
+    $('.image-droppable').bind('dragover', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    $('.image-droppable').live('drop', function(e) {
+        e.preventDefault();
+        var source = e.originalEvent.dataTransfer.getData('src');
+        $(this).attr('src', source); 
+    });
+
+
+    /* setup bandstats objects */
+    var externalLookup = new Lookup(); 
      
     /* event listeners */
-    $('.bs-lookup-matches').live('click', function() {
-        $(this).hide();
-    });
     
     // external id lookup
     $('.bs-id-lookup').live('click', function() {
-        var type = $(this).attr('data-type');
+        var provider = $(this).attr('data-provider');
         var search = band.band_name;
-        externalIdLookup(type, search);
+
+        externalLookup.setProvider(provider);
+        externalLookup.setResource('pageids');
+        externalLookup.setService('search');
+        externalLookup.getMatches(search);
+
         return false;
     });
 
@@ -247,6 +206,21 @@ $(function() {
                 console.log(err);
             }
         });            
+    });
+
+    $('#get-plays').live('click', function() {
+        $.ajax({
+            url: '../../lastfm/' + encodeURI(band.band_name) + '/plays',
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });
+        return false;
     });
 
 });

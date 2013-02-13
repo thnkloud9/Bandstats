@@ -6,12 +6,6 @@
 
 {% block content %}
 
-<form>
-    <input type="test" name="search" value="">
-    <button id="search">Search</button>
-</form>
-<button id="new"><a href="/site/0/edit">New Site</a></button>
-
 <ul>
 {% for site in sites %}
     <li>{{site.site_id}} <a href="/site/{{site.site_id}}/edit">{{ site.site_name }}</a></li>
