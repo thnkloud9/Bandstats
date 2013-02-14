@@ -28,7 +28,7 @@ var BandController = function(db) {
     this.indexAction = function(req, res) {
         var data = this.data;
         var template = require('./../views/band_index');
-        res.send(template.render({"search": req,query.search}));
+        res.send(template.render({"search": req.query.search}));
     }
 
     /**
