@@ -13,6 +13,14 @@
 
     <h3>{{band.band_name}}</h3>
 
+    <form id="bs-band-regions">
+        {{band.regions}}
+    </form>
+
+    <form id="bs-band-genres">
+        {{band.genres}}
+    </form>
+
     <form id="bs-band-edit">
         <fieldset>
         band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
@@ -25,12 +33,6 @@
     <button id="bs-band-update">Update</button>
     <button id="bs-band-delete">Delete</button>
 </div>
-
-<form id="bs-band-regions">
-</form>
-
-<form id="bs-band-genres">
-</form>
 
 <div id='bs-external-ids'>
     <form id='bs-band-external-ids'>

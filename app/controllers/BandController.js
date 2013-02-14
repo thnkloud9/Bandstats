@@ -22,9 +22,29 @@ var BandController = function(db) {
     this.bandRepository = new BandRepository({'db': db});
     this.data = {"section": "band"};
 
+    /**
+     * just render template for jquery datatables
+     */
     this.indexAction = function(req, res) {
         var data = this.data;
+        var template = require('./../views/band_index');
+        res.send(template.render({"search": req,query.search}));
+    }
+
+    /**
+     * server-side implementation to support
+     * jquery datatables plugin for mongoskin
+     */
+    this.bandsAction = function(req, res) {
+        var data = this.data;
         var query = {};
+        var parent = this;
+        var displayLength = req.query.iDisplayLength;
+        var displayStart = req.query.iDisplayStart;
+        var numDisplayColumns = req.query.iColumns;
+        var numSortColumns = req.query.iSortingCols;
+        var sEcho = req.query.sEcho;
+ 
         if (req.query.search) {
             search = new RegExp('.*' + req.query.search + '.*', 'i');
             query = {
@@ -36,23 +56,79 @@ var BandController = function(db) {
                 ]
             };
         }
-        this.bandRepository.find(query, {}, function(err, bands) {
-            _.extend(data, {"bands": bands});
-            var template = require('./../views/band_index');
-            res.send(template.render(data));
+
+        var options = {
+            "limit": displayLength,
+            "skip": displayStart,
+            "_id": 0
+        };
+        
+        // add display columns
+        for (var c=0; c<=numDisplayColumns; c++) {
+            options[req.query['mDataProp_'+c]] = 1;
+        }
+
+        // add sorting
+        var orderby = {};
+        for (var s=0; s<numSortColumns; s++) {
+            var columnName = req.query['mDataProp_'+req.query['iSortCol_'+s]];
+            if (req.query['sSortDir_'+s] === 'asc') {
+                var direction = 1;
+            } else {
+                var direction = -1;
+            }
+            orderby[columnName] = direction;
+        }
+
+        // make the ordered query
+        var orderedQuery = {
+            $query: query,
+            $orderby: orderby
+        }
+
+        console.log(orderedQuery);
+
+        this.bandRepository.count(query, function(err, count) {
+            parent.bandRepository.find(orderedQuery, options, function(err, bands) {
+                var results = {
+                    "sEcho": sEcho,
+                    "iTotalRecords": count,
+                    "iTotalDisplayRecords": count,
+                    "bands": bands
+                }
+                res.send(results);
+            });
         });
     }
 
     this.lookupsAction = function(req, res) {
         var data = this.data;
-        var query = {
-            $or: [
-                {"external_ids.facebook_id": ""},
-                {"external_ids.facebook_id": null}
-            ]
-        };
-        this.bandRepository.count(query, function(err, results) {
-            _.extend(data, {"missing_facebook_count": results });
+        var parent = this;
+
+        var apis = ['facebook', 'lastfm', 'musicbrainz', 'soundcloud', 'bandcamp', 'echonest'];
+
+        async.forEach(apis, function(api, cb) {
+            var apiId = "external_ids." + api + "_id";
+            var countId = "missing_" + api + "_count";
+            var emptyQuery = {};
+            var nullQuery ={};
+            emptyQuery[apiId] = "";
+            nullQuery[apiId] = null;
+
+            var query = {
+                $or: [
+                    emptyQuery,
+                    nullQuery 
+                ]
+            };
+            parent.bandRepository.count(query, function(err, results) {
+                var result = {};
+                result[countId] = results;
+                _.extend(data, result);
+                cb(err);
+            });
+        },
+        function (err) {
             var template = require('./../views/band_lookups');
             res.send(template.render(data));
         });

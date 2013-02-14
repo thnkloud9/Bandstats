@@ -145,7 +145,7 @@ function getAllLastfmListeners(callback) {
         "external_ids":1 
     };
 
-    bandRepository.find(query, options).toArray(function(err, results) {
+    bandRepository.find(query, options, function(err, results) {
         if (err) throw err;
 
         var processed = 0;

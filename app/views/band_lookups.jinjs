@@ -10,11 +10,21 @@
   <li><a id="bs-lookup-facebook-id" href="#">Lookup Facebook Ids</a> (missing {{missing_facebook_count}}) 
       <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
     </li>
-  <li><a href="#">Lookup Lastfm Ids</a></li>
-  <li><a href="#">Lookup Musicbrainz Ids</a></li>
-  <li><a href="#">Lookup Bandcamp Ids</a></li>
-  <li><a href="#">Lookup Soundcloud Ids</a></li>
-  <li><a href="#">Lookup Echonest Ids</a></li>
+  <li><a href="#">Lookup Lastfm Ids</a> (missing {{missing_lastfm_count}})
+      <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
+    </li>
+  <li><a href="#">Lookup Musicbrainz Ids</a> (missing {{missing_musicbrainz_count}})
+      <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
+    </li>
+  <li><a href="#">Lookup Bandcamp Ids</a> (missing {{missing_bandcamp_count}})
+      <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
+    </li>
+  <li><a href="#">Lookup Soundcloud Ids</a> (missing {{missing_soundcloud_count}})
+      <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
+    </li>
+  <li><a href="#">Lookup Echonest Ids</a> (missing {{missing_echonest_count}})
+      <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
+    </li>
 </ul>
 
 <h3>Lastfm Info</h3>
