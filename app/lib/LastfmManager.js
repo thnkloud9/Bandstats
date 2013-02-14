@@ -50,12 +50,12 @@ LastfmManager.prototype.search = function(query, callback) {
 
 LastfmManager.prototype.getInfo = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -71,12 +71,12 @@ LastfmManager.prototype.getInfo = function(lastfmId, callback) {
 
 LastfmManager.prototype.getListeners = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -92,12 +92,12 @@ LastfmManager.prototype.getListeners = function(lastfmId, callback) {
 
 LastfmManager.prototype.getTopTags = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.gettoptags&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.gettoptags&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -112,12 +112,12 @@ LastfmManager.prototype.getTopTags = function(lastfmId, callback) {
 
 LastfmManager.prototype.getEvents = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getevents&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -132,12 +132,13 @@ LastfmManager.prototype.getEvents = function(lastfmId, callback) {
 
 LastfmManager.prototype.getBio = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        console.log(body);
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -156,12 +157,12 @@ LastfmManager.prototype.getBio = function(lastfmId, callback) {
 
 LastfmManager.prototype.getPlays = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -177,12 +178,12 @@ LastfmManager.prototype.getPlays = function(lastfmId, callback) {
 
 LastfmManager.prototype.getMbid = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
@@ -197,15 +198,16 @@ LastfmManager.prototype.getMbid = function(lastfmId, callback) {
 
 LastfmManager.prototype.getImage = function(lastfmId, callback) {
     var options = { 
-        url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
     request(options, function (err, response, body) {
-        if (err && response.statusCode == 200) {
+        if (err || response.statusCode != 200) {
             callback('bad response from lastfm ' + err);
             return false;
         }
+
         if ((!body.artist) || (!body.artist.image)) {
             callback('could not find images for ' + lastfmId);
             return false;
