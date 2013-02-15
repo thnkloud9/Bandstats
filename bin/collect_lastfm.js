@@ -61,7 +61,7 @@ program
                 if (results.band_id) {
                     var bandName = results.band_name;
                     var bandId = results.band_id;
-                    var lastfmId = getExternalId(results.external_ids, 'lastfm_id');
+                    var lastfmId = results.external_ids.lastfm_id;
                     lastfmManager.getListeners(lastfmId, function(err, listeners) {
                         bandRepository.updateLastfmListeners({ 'band_id': bandId }, listeners, function(err, results) { 
                             console.log('updated band_id ' + bandId  + ' with ' + listeners + ' listeners'); 
@@ -103,7 +103,7 @@ program
 
             if (results.band_id) {
                 var bandId = results.band_id;
-                var lastfmId = getExternalId(results.external_ids, 'lastfm_id');
+                var lastfmId = results.external_ids.lastfm_id;
 
                 lastfmManager.getListeners(lastfmId, function(err, listeners) {
                     console.log('band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
@@ -120,17 +120,6 @@ program.parse(process.argv);
  * Functions
  * TODO: move these to a LastFm module
  */
-function getExternalId(externalIds, id) {
-    for (var l in externalIds) {
-        var list = externalIds[l];
-        for (var name in list) {
-            if (name === id) {
-                return list[name]; 
-            }
-        }
-    }
-    return false;
-};
 function getAllLastfmListeners(callback) {
     var query = {
         $and: [ 
@@ -153,7 +142,7 @@ function getAllLastfmListeners(callback) {
         async.forEachSeries(results, function(result, scb) {
             async.waterfall([
                 function(cb) {
-                    var lastfmId = getExternalId(result.external_ids, 'lastfm_id');
+                    var lastfmId = result.external_ids.lastfm_id;
                     var bandId = result.band_id;
                     lastfmManager.getListeners(lastfmId, function(err, listeners) {
                         if (err) {

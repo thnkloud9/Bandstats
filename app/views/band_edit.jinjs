@@ -53,7 +53,7 @@
     <div id='tabs-1'>
       <div class='bs-external-ids-form'>
         <form id='bs-facebook-form'>
-            facebook_id: <input type='text' name='external_ids.facebook_id' value='{{band.external_ids[0].facebook_id}}'>
+            facebook_id: <input type='text' name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
             <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
         </form>
@@ -64,7 +64,7 @@
         
         <h4>Tools</h4>
         <ul>
-            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids[0].facebook_id}}' class='bs-lookup' href='#'>Get Likes</a></li>
+            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids.facebook_id}}' class='bs-lookup' href='#'>Get Likes</a></li>
         </ul>
       </div>
 
@@ -78,7 +78,7 @@
     <div id='tabs-2'>
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
-            <input type='text' name='external_ids.lastfm_id' value='{{band.external_ids[1].lastfm_id}}'>
+            <input type='text' name='external_ids.lastfm_id' value='{{band.external_ids.lastfm_id}}'>
             <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
         </form>
@@ -96,7 +96,7 @@
     <!-- Bandcamp Section -->
     <div id='tabs-3'>
         <form id='bs-bandcamp-form'>
-            <input type='text' name='external_ids.bandcamp_id' value='{{band.external_ids[2].bandcamp_id}}'>
+            <input type='text' name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
             <a data-provider='bandcamp' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
         </form>
@@ -105,7 +105,7 @@
     <!-- Soundcloud Section -->
     <div id='tabs-4'>
         <form id='bs-soundcloud-form'>
-            <input type='text' name='external_ids.soundcloud_id' value='{{band.external_ids[3].soundcloud_id}}'>
+            <input type='text' name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
             <a data-provider='soundcloud' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
         </form>
@@ -114,7 +114,7 @@
     <!-- Musicbrainz Section -->
     <div id='tabs-5'>
         <form id='bs-musicbrainz-form'>
-            <input type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids[4].musicbrainz_id}}'>
+            <input type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
             <a data-provider='musicbrainz' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
         </form>
@@ -123,7 +123,7 @@
     <!-- Echonest Section -->
     <div id='tabs-6'>
         <form id='bs-echonest-form'>
-            <input type='text' name='external_ids.echonest_id' value='{{band.external_ids[1].echonest_id}}'>
+            <input type='text' name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
             <a data-provider='echonest' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
         </form>
@@ -157,8 +157,8 @@ $(function() {
     showChart('bs-facebook-likes-chart', band.running_stats.facebook_likes.daily_stats);
     showChart('bs-lastfm-listeners-chart', band.running_stats.lastfm_listeners.daily_stats);
 
-    showFacebookProfile(band.external_ids[0].facebook_id);
-    showLastfmProfile(band.external_ids[1].lastfm_id);
+    showFacebookProfile(band.external_ids.facebook_id);
+    showLastfmProfile(band.external_ids.lastfm_id);
 
     /**
      * functions
@@ -214,7 +214,6 @@ $(function() {
                         var taglist = response.tags[tl];
                         for (var t in taglist) {
                             var tag = taglist[t];
-                            console.log(tag);
                             tags.push(tag.name);
                         }
                     }

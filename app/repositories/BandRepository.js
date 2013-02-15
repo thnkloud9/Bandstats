@@ -232,16 +232,4 @@ BandRepository.prototype.count = function(query, callback) {
     });
 };
 
-BandRepository.prototype.getExternalId = function(externalIds, id) {
-    for (var l in externalIds) {
-        var list = externalIds[l];
-        for (var name in list) {
-            if (name === id) {
-                return list[name]; 
-            }
-        }
-    }
-    return false;
-};
-
 module.exports = BandRepository;

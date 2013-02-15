@@ -98,7 +98,7 @@ var FacebookController = function(db) {
                 if (resource === 'search') {
                     searchItem.search = band.band_name;
                 } else {
-                    searchItem.search = parent.bandRepository.getExternalId(band.external_ids, 'facebook_id');
+                    searchItem.search = band.external_ids.facebook_id;
                 }
 
                 searchObj.push(searchItem);

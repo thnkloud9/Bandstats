@@ -63,7 +63,7 @@ program
 
                 if (results.band_id) {
                     var band_id = results.band_id;
-                    var facebookId = getExternalId(results.external_ids, 'facebook_id');
+                    var facebookId = results.external_ids.facebook_id;
 
                     facebookManager.getPageLikes(facebookId, function (err, likes) {
                         bandRepository.updateFacebookLikes({"band_id": band_id}, likes, function(err, results) {
@@ -104,7 +104,7 @@ program
 
             if (results.band_id) {
                 var band_id = results.band_id
-                var facebookId = getExternalId(results.external_ids, 'facebook_id');
+                var facebookId = results.external_ids.facebook_id;
 
                 facebookManager.getPageLikes(facebookId, function (err, likes) {
                     console.log('band_id ' + band_id + ' facebook_id ' + facebookId + ' likes ' + likes);
@@ -121,18 +121,6 @@ program.parse(process.argv);
  * Function
  * TODO: move these to a lib 
  */
-function getExternalId(externalIds, id) {
-    for (var l in externalIds) {
-        var list = externalIds[l];
-        for (var name in list) {
-            if (name === id) {
-                return list[name]; 
-            }
-        }
-    }
-    return false;
-};
-
 function getAllFacebookLikes(callback) {
     var query = {
         $and: [
@@ -161,7 +149,7 @@ function getAllFacebookLikes(callback) {
         for (var r in results) {
             count++;
             var result = results[r];
-            var facebookId = getExternalId(result.external_ids, 'facebook_id');
+            var facebookId = result.external_ids.facebook_id;
             var request = {
                 "method": "GET",
                 "relative_url": facebookId + "?fields=likes"
