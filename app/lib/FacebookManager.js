@@ -32,14 +32,15 @@ function FacebookManager(accessToken) {
  * result
  */
 FacebookManager.prototype.search = function(query, callback) {
+    var parent = this;
     var api = this.apiDomain;
     var appId = this.appId;
     var appSecret = this.appSecret;
-    var parent = this;
     var options = {
         url: api + '/oauth/access_token?grant_type=client_credentials&client_id=' + appId + '&client_secret=' + appSecret,
         json: true 
     }
+
     // authenticate this request to reduce likelyhood of 403s
     request(options, function (err, response, body) {
         var bodyParts = body.split("=");
@@ -98,19 +99,23 @@ FacebookManager.prototype.search = function(query, callback) {
 }
 
 /**
- * searchIObj should not exceed 600 elements
+ * lookup
+ * takes a searchObj with a search parameter and loops through
+ * sending the search parameter to a function
+ * searchObj should not exceed 600 elements
  * in order to stay within facebook api rate limit
  */
-FacebookManager.prototype.searchList = function(searchObj, callback) {
+FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
     var searchResults = [];
     var parent = this;
+    var lookupFunction = eval('this.'+lookupFunction);
 
     async.forEach(searchObj, function(searchItem, cb) {
         var bandId = searchItem.band_id;
         var bandName = searchItem.band_name;
         var searchTerm = searchItem.search;
 
-        parent.search(searchTerm, function(err, results) {
+        lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
                 cb(err, searchResults);
                 return false;
@@ -119,6 +124,7 @@ FacebookManager.prototype.searchList = function(searchObj, callback) {
             var searchResult = {
                 "band_id": bandId,
                 "band_name": bandName,
+                "search": searchTerm,
                 "results": results
             };
 
@@ -132,7 +138,7 @@ FacebookManager.prototype.searchList = function(searchObj, callback) {
             callback(err, searchResults);
             return false;
         };
-        console.log('facebook searchList done with all');
+        console.log('facebook lookup done with all');
         callback(null, searchResults);
     });
 };
@@ -243,6 +249,8 @@ FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
         url: this.apiDomain + '/' + facebookId + '?fields=likes',
         json: true
     };
+
+    console.log('requesting facebook likes for ' + facebookId);
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {

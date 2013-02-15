@@ -84,7 +84,10 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
         },
         updateToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
-            var set = { $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } } };
+            var set = { 
+                $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } },
+                $set: {"running_stats.facebook_likes.current": likes }
+            };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
             });
@@ -121,7 +124,10 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
         },
         updateToday: function(cb) {
             var today = moment().format('YYYY-MM-DD');
-            var set = { $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } } };
+            var set = { 
+                $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } },
+                $set: {"running_stats.lastfm_listeners.current": listeners }
+            };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
             });
@@ -224,6 +230,18 @@ BandRepository.prototype.count = function(query, callback) {
        
         callback(null, results);
     });
+};
+
+BandRepository.prototype.getExternalId = function(externalIds, id) {
+    for (var l in externalIds) {
+        var list = externalIds[l];
+        for (var name in list) {
+            if (name === id) {
+                return list[name]; 
+            }
+        }
+    }
+    return false;
 };
 
 module.exports = BandRepository;

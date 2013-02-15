@@ -34,42 +34,119 @@
     <button id="bs-band-delete">Delete</button>
 </div>
 
-<div id='bs-external-ids'>
-    <form id='bs-band-external-ids'>
-        <h4>External Ids</h4>
-        <fieldset>
-        </fieldset>
-        <button id="bs-band-add-external-id">Add External Id</button>
-    </form>
-</div>
+<!-- external ids tabs panel -->
+<div id='bs-extneral-ids-tabs' class='tabs'>
+    <nav class='external-ids'>
+        <ul>
+            <li><a href='#tabs-1' rel='tabs-1' class='bs-tab'>Facebook</a></li>
+            <li><a href='#tabs-2' rel='tabs-2' class='bs-tab'>Lastfm</a></li>
+            <li><a href='#tabs-3' rel='tabs-3' class='bs-tab'>Bandcamp</a></li>
+            <li><a href='#tabs-4' rel='tabs-4' class='bs-tab'>Soundcloud</a></li>
+            <li><a href='#tabs-5' rel='tabs-5' class='bs-tab'>Musicbrainz</a></li>
+            <li><a href='#tabs-6' rel='tabs-6' class='bs-tab'>Echonest</a></li>
+            <li><a href='#tabs-7' rel='tabs-7' class='bs-tab'>Youtube</a></li>
+            <li><a href='#tabs-8' rel='tabs-8' class='bs-tab'>Articles</a></li>
+        </ul>
+    </nav>
 
-<div id='bs-band-facebook-stats'>
-    <h4>Facebook Likes</h4>
+    <!-- Facebook Section -->
+    <div id='tabs-1'>
+      <div class='bs-external-ids-form'>
+        <form id='bs-facebook-form'>
+            facebook_id: <input type='text' name='external_ids.facebook_id' value='{{band.external_ids[0].facebook_id}}'>
+            <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
+        </form>
 
-    <!-- chart div -->
-    <div class='chart' style='overflow: hidden;'>
-        <div id='bs-facebook-likes-chart' style='width:200px;height:100px;float: left'></div>
+        <h4>Facebook Likes</h4>
+        <!-- chart div -->
+        <div id='bs-facebook-likes-chart' style='width:300px;height:200px'></div>
+        
+        <h4>Tools</h4>
+        <ul>
+            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids[0].facebook_id}}' class='bs-lookup' href='#'>Get Likes</a></li>
+        </ul>
+      </div>
+
+      <!-- Facebook Profile -->
+      <div id='bs-facebook-profile' class='bs-external-ids-profile facebook-profile'>
+      </div>
+      
     </div>
-</div>
 
-<div id='bs-band-lastfm-listeners'>
-    <h4>Lastfm Listeners</h4>
+    <!-- Lastfm Section -->
+    <div id='tabs-2'>
+      <div class='bs-external-ids-form'>
+        <form id='bs-lastfm-form'>
+            <input type='text' name='external_ids.lastfm_id' value='{{band.external_ids[1].lastfm_id}}'>
+            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
+        </form>
 
-    <!-- chart div -->
-    <div class='chart' style='overflow: hidden;'>
-        <div id='bs-lastfm-listeners-chart' style='width:200px;height:100px;float: left'></div>
+        <h4>Lastfm Listeners</h4>
+        <!-- chart div -->
+        <div id='bs-lastfm-listeners-chart' style='width:300px;height:200px'></div>
+      </div>
+
+      <!-- Lastfm Profile -->
+      <div id='bs-lastfm-profile' class='bs-external-ids-profile lastfm-profile'>
+      </div> 
     </div>
+
+    <!-- Bandcamp Section -->
+    <div id='tabs-3'>
+        <form id='bs-bandcamp-form'>
+            <input type='text' name='external_ids.bandcamp_id' value='{{band.external_ids[2].bandcamp_id}}'>
+            <a data-provider='bandcamp' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
+        </form>
+    </div>
+
+    <!-- Soundcloud Section -->
+    <div id='tabs-4'>
+        <form id='bs-soundcloud-form'>
+            <input type='text' name='external_ids.soundcloud_id' value='{{band.external_ids[3].soundcloud_id}}'>
+            <a data-provider='soundcloud' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
+        </form>
+    </div>
+
+    <!-- Musicbrainz Section -->
+    <div id='tabs-5'>
+        <form id='bs-musicbrainz-form'>
+            <input type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids[4].musicbrainz_id}}'>
+            <a data-provider='musicbrainz' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
+        </form>
+    </div>
+
+    <!-- Echonest Section -->
+    <div id='tabs-6'>
+        <form id='bs-echonest-form'>
+            <input type='text' name='external_ids.echonest_id' value='{{band.external_ids[1].echonest_id}}'>
+            <a data-provider='echonest' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
+        </form>
+    </div>
+
+    <!-- Youtube Section -->
+    <div id='tabs-7'>
+        <p>not implemented yet</p>
+    </div>
+
+    <!-- Article Mentions Section -->
+    <div id='tabs-8'>
+        <h4>Article Mentions</h2>
+        <ul>
+        {% for stat in band.mentions %}
+            <li>{{stat.date}} - <a href='{{stat.link}}'>{{stat.link}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+
 </div>
 
-<div id='bs-band-mentions'>
-    <h2>Article Mentions</h2>
-    <h4>using id {{band.band_name}}</h4>
-    <ul>
-    {% for stat in band.mentions %}
-        <li>{{stat.date}} - {{stat.link}}</li>
-    {% endfor %}
-    </ul>
-</div>
+
 <script type="text/javascript">
 
 $(function() {
@@ -80,7 +157,8 @@ $(function() {
     showChart('bs-facebook-likes-chart', band.running_stats.facebook_likes.daily_stats);
     showChart('bs-lastfm-listeners-chart', band.running_stats.lastfm_listeners.daily_stats);
 
-    showExternalIds();
+    showFacebookProfile(band.external_ids[0].facebook_id);
+    showLastfmProfile(band.external_ids[1].lastfm_id);
 
     /**
      * functions
@@ -104,61 +182,106 @@ $(function() {
         };
         $.plot($('#' + id), [data], options);
     };
+    
+    function showLastfmProfile(lastfmId) {
+        $.ajax({
+            url: '/lastfm/' + lastfmId + '/info',
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var output = "";
+                if (response.image) {
+                    for (var i in response.image) {
+                        var image = response.image[i];
+                        if ((image.size === 'extralarge') && (image['#text'])) {
+                            output += "<img class='image-draggable lastfm-profile-img' src='" + image['#text'] + "'>";
+                            
+                        }
+                    }
+                }
+                output += "<div><h3>" + response.name + "</h3></div>";
 
-    function showExternalIds() {
-        for (var l in band.external_ids) {
-            var list = band.external_ids[l];
-            for (var name in list) {
-                var value = list[name];
-                var typeParts = name.split('_');
-                var type = typeParts[0];
-                var output = name + ": <input type='text' name='" + name + "' value='" + value + "'>";
-                output += "<a data-provider='" + type + "' class='bs-id-lookup' href='#'>lookup</a><br />";
-                output += "<div id='bs-lookup-matches-" + type + "' class='bs-lookup-matches'></div>";
-                $('#bs-band-external-ids fieldset').append(output);
+                output += "<div class='clearright'>"; 
+                if (response.url) {
+                    output += "<p><strong>url:</strong> " + response.url + "</p>";
+                }
+                if (response.mbid) {
+                    output += "<p><strong>mbid:</strong> " + response.mbid + "</p>";
+                }
+                if (response.tags) {
+                    var tags = [];
+                    for (var tl in response.tags) {
+                        var taglist = response.tags[tl];
+                        for (var t in taglist) {
+                            var tag = taglist[t];
+                            console.log(tag);
+                            tags.push(tag.name);
+                        }
+                    }
+                    
+                    output += "<p><strong>tags:</strong> " + tags.join(', ') + "</p>";
+                }
+                if (response.bio.summary) {
+                    output += "<p><strong>bio:</strong> " + response.bio.summary + "</p>";
+                }
+
+                output += "<p><strong>listeners:</strong> " + response.stats.listeners + "</p>";
+                output += "<p><strong>plays:</strong> " + response.stats.playcount + "</p>";
+                output += "</div>"; 
+                $('#bs-lastfm-profile').html(output);
+
+                
+            },
+            error: function(err, status, msg) {
+                console.log(err);
             }
-        }
+        }) 
+    }
+
+    function showFacebookProfile(facebookId) {
+        $.ajax({
+            url: '/facebook/' + facebookId + '/page',
+            type: 'get', 
+            dataType: 'json',
+            success: function(response) {
+                var output = "";
+                if (response.cover) {
+                    output += "<img class='image-draggable facebook-profile-img' src='" + response.cover.source + "'>";
+                }
+           
+                output += "<div><h3>" + response.name + "</h3></div>";
+
+                output += "<div class='clearright'>"; 
+                var displayFields = [ 
+                    'about', 
+                    'location', 
+                    'current_location',
+                    'hometown',
+                    'genre',
+                    'bio', 
+                    'record_label', 
+                    'website',
+                    'link', 
+                    'likes', 
+                    'talking_about_count' ];
+
+                for (var f in displayFields) {
+                    var field = displayFields[f];
+                    if (response[field]) {
+                        output += "<p><strong>" + field + ":</strong> " + response[field] + "</p>";
+                    }
+                }
+                output += "</div>"; 
+                $('#bs-facebook-profile').html(output);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });
     };
 
-    /**
-     * image drag and drop
-     */
-    var dragImage = null;
-    $('.image-draggable').live('dragstart', function(e) {
-        var source = $(this).attr('src');
-        e.originalEvent.dataTransfer.setData('src', source);
-    });
-    
-    $('.image-droppable').bind('dragover', function(e) {
-        e.preventDefault();
-        return false;
-    });
-
-    $('.image-droppable').live('drop', function(e) {
-        e.preventDefault();
-        var source = e.originalEvent.dataTransfer.getData('src');
-        $(this).attr('src', source); 
-    });
-
-
-    /* setup bandstats objects */
-    var externalLookup = new Lookup(); 
-     
     /* event listeners */
     
-    // external id lookup
-    $('.bs-id-lookup').live('click', function() {
-        var provider = $(this).attr('data-provider');
-        var search = band.band_name;
-
-        externalLookup.setProvider(provider);
-        externalLookup.setResource('pageids');
-        externalLookup.setService('search');
-        externalLookup.getMatches(search);
-
-        return false;
-    });
-
     // delete record
     $('#bs-band-delete').live('click', function() {
         if (!band.band_id) {
@@ -208,21 +331,6 @@ $(function() {
                 console.log(err);
             }
         });            
-    });
-
-    $('#get-plays').live('click', function() {
-        $.ajax({
-            url: '../../lastfm/' + encodeURI(band.band_name) + '/plays',
-            type: 'get',
-            dataType: 'json',
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(err, status, msg) {
-                console.log(err);
-            }
-        });
-        return false;
     });
 
 });

@@ -61,6 +61,66 @@ a:hover, a:active {text-decoration: underline; outline:none;}
     color: #fff;
     }
 
+.clearboth {
+  clear: both;
+  }
+
+.clearleft {
+  clear: left;
+  }
+
+.clearright {
+  clear: right;
+  }
+
+/*navigation */
+nav.external-ids {
+  padding-top: 15px;
+  height: 26px;
+  overflow: hidden;
+  }
+  nav.external-ids ul {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    }
+    nav.external-ids ul li {
+      display: inline;
+      }
+      nav.external-ids ul li a {
+        position: relative;
+        top: 3px;
+        color: #fff;
+        text-decoration: none;
+        background: #333;
+        border-radius: 3px 3px 0 0;
+        padding: 10px 20px;
+        box-shadow: 0 1px 10px #000;
+        text-shadow: 1px 1px #000;
+        }
+        nav.external-ids ul li a:hover {
+          top: 2px;
+          }
+        nav.external-ids ul li a.active {
+          background: #666;
+          top: 1px;
+          z-index: 100;
+          }
+          nav.external-ids ul li a.active:hover {
+            top: 0;
+            }
+
+/* set default tab display states */
+.tabs {
+  }
+  .tabs > div {
+    display: none;
+    padding: 15px;
+    }
+    .tabs > div:nth-of-type(1) {
+      display: block;
+      }
+
 
 /** Site Page Elements **/
 .site-sub-menu {
@@ -159,6 +219,10 @@ a:hover, a:active {text-decoration: underline; outline:none;}
     -o-border-radius: 5px;
     }
 
+.bs-lookup-close {
+  text-align: right;
+  }
+
 .bs-bio-link:hover + div {
   display: inline;
 }
@@ -181,3 +245,28 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   .bs-lookup-match-bio:hover {
     display: inline; 
     } 
+
+.bs-external-ids-form {
+  float: left;
+  margin-right: 10px;
+  }
+
+.bs-external-ids-profile {
+  padding: 3px;
+  font-size: 10px; 
+  line-height: 10px; 
+  }
+
+.facebook-profile-img {
+    width: 200px;
+    height: 200px;
+    float: left;
+    margin-right: 10px;
+    }
+
+.lastfm-profile-img {
+    width: 200px;
+    height: 200px;
+    float: left;
+    margin-right: 10px;
+    }

@@ -7,24 +7,37 @@
 
 <h3>External Ids</h3>
 <ul>
-  <li><a id="bs-lookup-facebook-id" href="#">Lookup Facebook Ids</a> (missing {{missing_facebook_count}}) 
-      <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
-    </li>
-  <li><a href="#">Lookup Lastfm Ids</a> (missing {{missing_lastfm_count}})
-      <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
-    </li>
-  <li><a href="#">Lookup Musicbrainz Ids</a> (missing {{missing_musicbrainz_count}})
-      <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
-    </li>
-  <li><a href="#">Lookup Bandcamp Ids</a> (missing {{missing_bandcamp_count}})
-      <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
-    </li>
-  <li><a href="#">Lookup Soundcloud Ids</a> (missing {{missing_soundcloud_count}})
-      <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
-    </li>
-  <li><a href="#">Lookup Echonest Ids</a> (missing {{missing_echonest_count}})
-      <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
-    </li>
+
+  <li>
+    <a class='bs-lookup' data-provider='facebook' data-resource='search' data-service='lookup' href='#'>Lookup Facebook Ids</a> (missing {{missing_facebook_count}}) 
+    <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a class='bs-lookup' data-provider='lastfm' data-resource='pageids' data-service='lookup' href="#">Lookup Lastfm Ids</a> (missing {{missing_lastfm_count}})
+    <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a href="#">Lookup Musicbrainz Ids</a> (missing {{missing_musicbrainz_count}})
+    <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a href="#">Lookup Bandcamp Ids</a> (missing {{missing_bandcamp_count}})
+    <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a href="#">Lookup Soundcloud Ids</a> (missing {{missing_soundcloud_count}})
+    <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a href="#">Lookup Echonest Ids</a> (missing {{missing_echonest_count}})
+    <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
+  </li>
+
 </ul>
 
 <h3>Lastfm Info</h3>
@@ -43,7 +56,8 @@
   <li><a href="#">Lookup Images</a></li>
   <li><a href="#">Lookup Bios</a></li>
   <li><a href="#">Lookup Descriptions</a></li>
-  <li><a href="#">Lookup Likes</a></li>
+  <li>
+    <a class='bs-lookup' data-provider='facebook' data-resource='getPageLikes' data-service='lookup' href='#'>Lookup Likes</a></li>
   <li><a href="#">Lookup Talking About</a></li>
 </ul>
 
@@ -64,22 +78,4 @@
   <li><a href="#">Lookup Songs</a></li>
 </ul>
 
-<script type="text/javascript">
-$(function() {
-    
-    /* bandstats objects setup */
-    var externalLookup = new Lookup();
-
-    /* event listeners */
-    $('#bs-lookup-facebook-id').live('click', function() {
-        externalLookup.setProvider('facebook');
-        externalLookup.setResource('pageids');
-        externalLookup.setService('lookup');
-        externalLookup.getMatches();
-
-        return false;
-    });
-    
-});
-</script>
 {% endblock %}

@@ -48,6 +48,51 @@ LastfmManager.prototype.search = function(query, callback) {
 
 };
 
+/**
+ * lookup
+ * takes a searchObj with a search parameter and loops through
+ * sending the search parameter to a function
+ * searchObj should not exceed 600 elements
+ * in order to stay within facebook api rate limit
+ */
+LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
+    var searchResults = [];
+    var parent = this;
+    var lookupFunction = eval('this.'+lookupFunction);
+
+    async.forEach(searchObj, function(searchItem, cb) {
+        var bandId = searchItem.band_id;
+        var bandName = searchItem.band_name;
+        var searchTerm = searchItem.search;
+
+        lookupFunction.call(parent, searchTerm, function(err, results) {
+            if (err) {
+                cb(err, searchResults);
+                return false;
+            };
+
+            var searchResult = {
+                "band_id": bandId,
+                "band_name": bandName,
+                "search": searchTerm,
+                "results": results
+            };
+
+            searchResults.push(searchResult); 
+
+            cb(null, searchResults);
+        });
+    },
+    function(err, results) {
+        if (err) {
+            callback(err, searchResults);
+            return false;
+        };
+        console.log('lastfm lookup done with all');
+        callback(null, searchResults);
+    });
+};
+
 LastfmManager.prototype.getInfo = function(lastfmId, callback) {
     var options = { 
         url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',

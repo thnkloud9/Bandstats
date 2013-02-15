@@ -40,27 +40,39 @@ var FacebookController = function(db) {
     };
 
     this.lookupAction = function(req, res) {
-        var query = {};
         var parent = this;
+        var query = {};
+        var resource = req.params.id;
+        var lookupFunction = resource;
 
         if (req.params.id === "lookup") {
-            res.send({"status": "error", "error": "must be called with id param"});
+            res.send({"status": "error", "error": "must be called with resource param"});
             return false;
         
         };
 
-        // lookup should send to appropriate LookupManager function
-        // based on req.params.id value
+        // if no search query provided use band_name on search lookups
+        // and facebook_id on anything else
         if (req.query.search) {
             query = req.query.search;
         } else {
-            // get all bands without facebook ids
-            query = {
-                $or: [
-                    {"external_ids.facebook_id": null},
-                    {"external_ids.facebook_id": ""}
-                ]
-            };
+            if (resource === 'search') {
+                // get all bands without facebook ids
+                query = {
+                    $or: [
+                        {"external_ids.facebook_id": null},
+                        {"external_ids.facebook_id": ""}
+                    ]
+                };
+            } else {
+                query = {
+                    $and: [
+                        {"external_ids.facebook_id": {$ne: null}},
+                        {"external_ids.facebook_id": {$ne: ""}},
+                        {"external_ids.facebook_id": /\d+/}
+                    ]
+                };
+            }
         };
         
         // only send 50 due to rate limits (600 max)
@@ -76,13 +88,18 @@ var FacebookController = function(db) {
                 res.send({"status": "error", "error": err});
                 return false;
             }
-
+        
+            // build searchObj
             async.forEach(results, function(band, cb) {
                 var searchItem = {
                     "band_id": band.band_id,
                     "band_name": band.band_name,
-                    "search": band.band_name
                 };
+                if (resource === 'search') {
+                    searchItem.search = band.band_name;
+                } else {
+                    searchItem.search = parent.bandRepository.getExternalId(band.external_ids, 'facebook_id');
+                }
 
                 searchObj.push(searchItem);
 
@@ -95,7 +112,7 @@ var FacebookController = function(db) {
                 }
 
                 // call facebook lookup
-                parent.facebookManager.searchList(searchObj, function(err, results) {
+                parent.facebookManager.lookup(searchObj, lookupFunction, function(err, results) {
                     if (err) {
                         res.send({"status": "error", "error": err, "results": results});
                         return false;

@@ -23,7 +23,23 @@ var Lookup = function(provider, resource, service) {
         this.resource = resource;
     };
 
-    this.getMatches = function(search) {
+    this.lookup = function(provider, resource, service, search) {
+        this.setProvider(provider);
+        this.setResource(resource);
+        this.setService(service);
+
+        if (this.service === 'search') {
+            this.getMatches(search);
+        } else if (this.service === 'lookup') {
+            this.getMatches(search);
+        } else if (this.service === 'likes') {
+            this.getLikes();
+        } else {
+            console.log(this.service + ' not found in bandstats_lookup.js');
+        }
+    };
+
+    this._send = function(search, callback) {
         var parent = this;
         var url = '/' + this.provider + '/' + this.resource + '/' + this.service;
         if (search) {
@@ -35,11 +51,41 @@ var Lookup = function(provider, resource, service) {
             dataType: 'json',
             success: function(response) {
                 parent.matches = response;
-                parent.showMatches();
+                callback(response);
             },
             error: function(err, status, msg) {
                 console.log(err);
             }
+        });
+    };
+    
+    this.getLikes = function() {
+        var parent = this;
+
+        this._send(null, function(response) {
+            parent.showLikes();
+        });
+    };
+
+    this.showLikes = function() {
+        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var response = this.matches;
+        var output = this.getCloseButton();
+
+        output += "<div>";
+        output += "<h4>Facebook Likes:</h4>";
+        output += response;
+        output += "</div>";
+
+        $(displayElement).html(output);
+        $(displayElement).show();
+    }
+
+    this.getMatches = function(search) {
+        var parent = this;
+
+        this._send(search, function(response) {
+            parent.showMatches();
         });
     };
 
@@ -57,11 +103,14 @@ var Lookup = function(provider, resource, service) {
         return false;
     };
 
+    this.getCloseButton = function() {
+        return "<div class='bs-lookup-close'><a class='bs-lookup-matches-close' href='#'>close</a></div>";
+    };
+
     this.showLastfmMatches = function(id) {
         var displayElement = '#bs-lookup-matches-' + this.provider;
         var response = this.matches;
-
-        var output = "<a class='bs-lookup-matches-close' href='#'>close</a>";
+        var output = this.getCloseButton();
 
         output += "<ul>";
         $(displayElement).empty();
@@ -115,11 +164,11 @@ var Lookup = function(provider, resource, service) {
         $(displayElement).html(output);
         $(displayElement).show();
     };
+
     this.showFacebookMatches = function(id) {
         var displayElement = '#bs-lookup-matches-' + this.provider;
         var response = this.matches;
-
-        var output = "<a class='bs-lookup-matches-close' href='#'>close</a>";
+        var output = this.getCloseButton();
 
         output += "<ul>";
         $(displayElement).empty();
@@ -180,16 +229,30 @@ var Lookup = function(provider, resource, service) {
     };
 
     this.saveMatch = function(type, match) {
-
+        //TODO: add save function that works
+        // with all lookup types
     };
 };
+
+var externalLookup = new Lookup(); 
 
 $(function() {
 
     /* event handlers */
 
+    $('.bs-lookup').live('click', function() {
+        var provider = $(this).attr('data-provider');
+        var resource = $(this).attr('data-resource');
+        var service = $(this).attr('data-service');
+        var search = $(this).attr('data-search');
+
+        externalLookup.lookup(provider, resource, service, search);
+
+        //return false;
+    });
+
     $('.bs-lookup-matches-close').live('click', function() {
-        $(this).parent('.bs-lookup-matches').hide();
+        $(this).parent().parent('.bs-lookup-matches').hide();
     });
 
     $('.bs-lookup-match').live('click', function() {

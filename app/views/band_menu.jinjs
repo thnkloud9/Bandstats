@@ -10,7 +10,7 @@
   </div>
   <div>
     <form action="/band">
-      <input type="test" name="search" value="">
+      <input type="test" name="search" value="{{search}}">
       <button id="search">Search</button>
     </form>
   </div>

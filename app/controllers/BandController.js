@@ -28,7 +28,7 @@ var BandController = function(db) {
     this.indexAction = function(req, res) {
         var data = this.data;
         var template = require('./../views/band_index');
-        res.send(template.render({"search": req.query.search}));
+        res.send(template.render(_.extend(data, {"search": req.query.search})));
     }
 
     /**
@@ -104,9 +104,9 @@ var BandController = function(db) {
     this.lookupsAction = function(req, res) {
         var data = this.data;
         var parent = this;
-
         var apis = ['facebook', 'lastfm', 'musicbrainz', 'soundcloud', 'bandcamp', 'echonest'];
 
+        // get number of missing ids for all external apis
         async.forEach(apis, function(api, cb) {
             var apiId = "external_ids." + api + "_id";
             var countId = "missing_" + api + "_count";
