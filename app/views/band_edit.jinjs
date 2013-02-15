@@ -79,7 +79,7 @@
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
             <input type='text' name='external_ids.lastfm_id' value='{{band.external_ids.lastfm_id}}'>
-            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
         </form>
 
@@ -157,8 +157,12 @@ $(function() {
     showChart('bs-facebook-likes-chart', band.running_stats.facebook_likes.daily_stats);
     showChart('bs-lastfm-listeners-chart', band.running_stats.lastfm_listeners.daily_stats);
 
-    showFacebookProfile(band.external_ids.facebook_id);
-    showLastfmProfile(band.external_ids.lastfm_id);
+    if (band.external_ids.facebook_id) {
+        showFacebookProfile(band.external_ids.facebook_id);
+    }
+    if (band.external_ids.lastfm_id) {
+        showLastfmProfile(band.external_ids.lastfm_id);
+    }
 
     /**
      * functions
@@ -185,7 +189,7 @@ $(function() {
     
     function showLastfmProfile(lastfmId) {
         $.ajax({
-            url: '/lastfm/' + lastfmId + '/info',
+            url: '/lastfm/' + encodeURIComponent(lastfmId) + '/info',
             type: 'get',
             dataType: 'json',
             success: function(response) {
@@ -305,7 +309,7 @@ $(function() {
         var url = '';
         var type = '';
         // update locally
-        $('#band-edit input').each(function() {
+        $('#bs-band-edit input').each(function() {
             var name = $(this).attr('name');
             var value = $(this).val();
             band[name] = value;

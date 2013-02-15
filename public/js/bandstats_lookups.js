@@ -116,7 +116,7 @@ var Lookup = function(provider, resource, service) {
         $(displayElement).empty();
         for (var r in response) {
             var result = response[r];
-
+            
             // skip if no matches
             if (!result.results.length) {
                 continue;
