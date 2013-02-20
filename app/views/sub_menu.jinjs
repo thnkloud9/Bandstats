@@ -2,4 +2,6 @@
     {% include './band_menu.jinjs' %}
 {% elif section == "site" %}
     {% include './site_menu.jinjs' %}
+{% elif section == "job" %}
+    {% include './job_menu.jinjs' %}
 {% endif %}

@@ -65,7 +65,7 @@ program
                     lastfmManager.getListeners(lastfmId, function(err, listeners) {
                         bandRepository.updateLastfmListeners({ 'band_id': bandId }, listeners, function(err, results) { 
                             console.log('updated band_id ' + bandId  + ' with ' + listeners + ' listeners'); 
-                            process.exit(1);
+                            process.exit();
                         });
                     });
                 }
@@ -76,7 +76,7 @@ program
                 var all_end  = new Date().getTime();
                 console.log('processed ' + processed + ' bands');
                 console.log('getAllLastfmListeners took ' + (all_end - all_start) + ' milliseconds');
-                process.exit(1);
+                process.exit();
             });
         }
     });
@@ -107,7 +107,7 @@ program
 
                 lastfmManager.getListeners(lastfmId, function(err, listeners) {
                     console.log('band_id ' + band_id  + ' with ' + listeners + ' listeners'); 
-                    process.exit(1);
+                    process.exit();
                 });
             }
         });

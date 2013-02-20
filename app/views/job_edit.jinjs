@@ -1,0 +1,87 @@
+{% extends "./base.jinjs" %}
+{% block title %}Job Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<form id="job-edit">
+    <fieldset>
+    id: <input type="hidden" name="job_id" value="{{job.job_id}}">{{job.job_id}}<br />
+    name: <input type="text" name="job_name" value="{{job.job_name}}"><br />
+    active: <input type="text" name="job_active" value="{{job.job_active}}"><br />
+    command: <input type="text" name="job_command" value="{{job.job_command}}"><br />
+    arguments: <input type="text" name="job_arguments" value="{{job.job_arguments}}"><br />
+    schedule: <input type="text" name="job_schedule" value="{{job.job_schedule}}"><br />
+    description: <input type="text" name="job_description" value="{{job.job_description}}"><br />
+    last_run: <input type="text" name="job_last_run" value="{{job.job_last_run}}"><br />
+    processed: <input type="text" name="job_processed" value="{{job.job_processed}}"><br />
+    failed: <input type="text" name="job_failed" value="{{job.job_failed}}"><br />
+    created: <input type="text" name="created" value="{{job.created}}"><br />
+    last_updated: <input type="text" name="last_updated" value="{{job.last_updated}}"><br />
+    </fieldset>
+</form>
+
+<button id="bs-job-update">Update</button>
+<button id="bs-job-delete">Delete</button>
+
+<script type="text/javascript">
+
+$(function() {
+    var job = {{json.job}};
+
+    // delete record
+    $('#bs-job-delete').live('click', function() {
+        if (!job.job_id) {
+            return false;
+        }
+
+        $.ajax({
+            url: '../' + job.job_id + '/remove',
+            type: 'delete',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err); 
+            }
+        });
+    });
+
+    // update record
+    $('#bs-job-update').live('click', function() {
+        var url = '';
+        var type = '';
+        // update locally
+        $('#job-edit input').each(function() {
+            var name = $(this).attr('name');
+            var value = $(this).val();
+            job[name] = value;
+        });
+        // update on server
+        if (!job.job_id) {
+            url = '../create';
+            type = 'post';
+        } else {
+            url = '../' + job.job_id + '/update';
+            type = 'put';
+        }  
+        $.ajax({
+            url: url,
+            type: type,
+            data: {values: job},
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });            
+    });
+    
+});
+</script>
+
+{% endblock %}

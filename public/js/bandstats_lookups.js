@@ -98,6 +98,10 @@ var Lookup = function(provider, resource, service) {
             this.showLastfmMatches();
             return true;
         }
+        if (this.provider === "echonest") {
+            this.showEchonestMatches();
+            return true;
+        }
 
         console.log('could not find show function for ' + this.provider);
         return false;
@@ -106,6 +110,70 @@ var Lookup = function(provider, resource, service) {
     this.getCloseButton = function() {
         return "<div class='bs-lookup-close'><a class='bs-lookup-matches-close' href='#'>close</a></div>";
     };
+
+    this.showEchonestMatches = function(id) {
+        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var response = this.matches;
+        var output = this.getCloseButton();
+
+        output += "<ul>";
+        $(displayElement).empty();
+        for (var r in response) {
+            var result = response[r];
+            
+            // skip if no matches
+            if (!result.results.length) {
+                continue;
+            }
+
+            if (result.band_name) {
+                var resultDisplay = result.band_name;
+            } else {
+                var resultDisplay = result.search;
+            }
+
+            if (result.band_id) {
+                var bandId = result.band_id;
+            } else {
+                var bandId = '';
+            }
+
+            output += "<li class='bs-lookup-match-group'>";
+            output += "<strong>" + resultDisplay + "</strong>";
+            output += "<ol>"
+            
+            for (var m in result.results) {
+                var match = result.results[m];
+                
+                output += "<li data-band-id='" + bandId + "' data-facebook-id='" + match.id + "' class='bs-lookup-match'>";
+                var src = "";
+                output += "<img class='image-draggable' src='" + src + "'>";
+                output += "<strong>" + match.name + "</strong> (" + match.id + ")";
+                if (match.artist_location) {
+                    output += "<p>";
+                    if (match.artist_location.city) {
+                        output += match.artist_location.city + ", ";
+                    }
+                    if (match.artist_location.country) {
+                        output += match.artist_location.country;
+                    }
+                    output += "</p>";
+                }
+                if (match.urls) {
+                    for (var u in match.urls) {
+                        var url = match.urls[u];
+                        output += "<p><a href='" + url + "' target='_blank'>" + u + "</a></p>";
+                    }
+                }
+                output += "</li>";
+            }
+            output += "</ol>"
+            output += "</li>";
+        }
+        output += "</ul>";
+        $(displayElement).html(output);
+        $(displayElement).show();
+    }
 
     this.showLastfmMatches = function(id) {
         var displayElement = '#bs-lookup-matches-' + this.provider;

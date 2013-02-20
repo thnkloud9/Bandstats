@@ -91,7 +91,7 @@ var SiteController = function(db) {
         var values = req.body.values;
         var siteRepository = this.siteRepository
 
-        siteRepository.update(query, values, function(err, updated) {
+        siteRepository.update(query, values, {}, function(err, updated) {
             if ((err) || (!updated)) {
                 res.send({status: "error", error: err});
                 return false;

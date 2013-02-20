@@ -51,10 +51,17 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
 });
 
 /**
+ * Load the JobSchedule
+ */
+var JobScheduler = require('./app/lib/JobScheduler.js');
+var jobScheduler = new JobScheduler(db);
+jobScheduler.initSchedule();
+
+/**
  * Load Router, which will autoload additional
  * controllers in app/controllers
  */
-require('./app/lib/Router.js').initRoutes(app, db);
+require('./app/lib/Router.js').initRoutes(app, db, jobScheduler);
 
 /**
  * Start Server

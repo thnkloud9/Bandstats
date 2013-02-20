@@ -40,8 +40,8 @@ SiteRepository.prototype.insert = function(value, options, callback) {
     });
 }
 
-SiteRepository.prototype.update = function(query, value, callback) {
-    BaseRepository.prototype.update.call(this, query, value, function(err, sites) {
+SiteRepository.prototype.update = function(query, value, options, callback) {
+    BaseRepository.prototype.update.call(this, query, value, options, function(err, sites) {
         callback(err, sites);
     });
 }

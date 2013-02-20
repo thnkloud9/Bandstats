@@ -189,7 +189,7 @@ var BandController = function(db) {
         var values = req.body.values;
         var bandRepository = this.bandRepository
 
-        bandRepository.update(query, values, function(err, updated) {
+        bandRepository.update(query, values, {"multi": true}, function(err, updated) {
             if ((err) || (!updated)) {
                 res.send({status: "error", error: err});
                 return false;

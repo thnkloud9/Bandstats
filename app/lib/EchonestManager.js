@@ -29,17 +29,17 @@ EchonestManager.prototype.search = function(query, callback) {
         var results = [];
 
         if (err || response.statusCode != 200) {
-            callback("bad response from echonest");
+            callback("error, bad response from echonest");
             return false;
         }
 
         if (!body.response) {
-            callback("no results from echonest");
+            callback("error, no results from echonest");
             return false;
         }
 
         if (!body.response.artists) {
-            callback("no results from echonest");
+            callback("error, no results from echonest");
             return false;
         }
        
@@ -62,12 +62,12 @@ EchonestManager.prototype.getProfile = function(echonestId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from echonest ' + err);
+            callback('error, bad response from echonest ' + err);
             return false;
         }
         if (!body.response.artist) {
             console.log(body);
-            callback('could not find info for ' + echonestId);
+            callback('error, could not find info for ' + echonestId);
             return false;
         }
 
@@ -84,11 +84,11 @@ EchonestManager.prototype.getHotttnesss = function(echonestId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from echonest ' + err);
+            callback('error, bad response from echonest ' + err);
             return false;
         }
         if (!body.response.artist) {
-            callback('could not find listeners for ' + echonestId);
+            callback('error, could not find listeners for ' + echonestId);
             return false;
         }
 
@@ -105,11 +105,11 @@ EchonestManager.prototype.getTerms = function(echonestId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from echonest ' + err);
+            callback('error, bad response from echonest ' + err);
             return false;
         }
         if (!body.response.terms) {
-            callback('could not find toptags for ' + echonestId);
+            callback('error, could not find toptags for ' + echonestId);
             return false;
         }
 
@@ -126,18 +126,18 @@ EchonestManager.prototype.getBiographies = function(echonestId, callback) {
     request(options, function (err, response, body) {
             console.log(body);
         if (err || response.statusCode != 200) {
-            callback('bad response from echonest ' + err);
+            callback('error, bad response from echonest ' + err);
             return false;
         }
 
         if (!body.response) {
             console.log(body);
-            callback('could not find biographies for ' + echonestId);
+            callback('error, could not find biographies for ' + echonestId);
             return false;
         }
 
         if (!body.response.biographies) {
-            callback('could not find biographies for ' + echonestId);
+            callback('error, could not find biographies for ' + echonestId);
             return false;
         }
 
@@ -153,11 +153,11 @@ EchonestManager.prototype.getImages = function(echonestId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from echonest ' + err);
+            callback('error, bad response from echonest ' + err);
             return false;
         }
         if ((!body.response) || (!body.response.images)) {
-            callback('could not find images for ' + echonestId);
+            callback('error, could not find images for ' + echonestId);
             return false;
         }
 

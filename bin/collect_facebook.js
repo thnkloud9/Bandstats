@@ -68,7 +68,7 @@ program
                     facebookManager.getPageLikes(facebookId, function (err, likes) {
                         bandRepository.updateFacebookLikes({"band_id": band_id}, likes, function(err, results) {
                             console.log('updated band_id ' + band_id + ' with ' + likes + ' likes');
-                            process.exit(1);
+                            process.exit();
                         });
                     });
                 }
@@ -77,7 +77,7 @@ program
             getAllFacebookLikes(function(err, processed) {
                 var all_end  = new Date().getTime();
                 console.log('getAllFacebookLikes took ' + (all_end - all_start) + ' milliseconds');
-                process.exit(1);
+                process.exit();
             });
         }
     });
@@ -108,7 +108,7 @@ program
 
                 facebookManager.getPageLikes(facebookId, function (err, likes) {
                     console.log('band_id ' + band_id + ' facebook_id ' + facebookId + ' likes ' + likes);
-                    process.exit(1);
+                    process.exit();
                 });
             }
         });
@@ -163,6 +163,8 @@ function getAllFacebookLikes(callback) {
                 count = 0;
             } 
         }
+        // push last request batch
+        batches.push(requests);
 
         async.forEachSeries(batches, function(batch, scb) {
             // get likes 50 at a time
@@ -170,6 +172,7 @@ function getAllFacebookLikes(callback) {
                 // update likes one at a time
                 async.forEach(results, function(result, cb) {
                     if (!result) {
+                        console.log(result);
                         cb('no result, wtf');
                         return false;
                     }

@@ -121,6 +121,21 @@ nav.external-ids {
       display: block;
       }
 
+/** Job Page Elements **/
+.job-sub-menu {
+  text-align: right;
+  background-color: #ccc;
+  line-height: 10px;
+  padding: 3px;  
+  }
+  .job-sub-menu a {
+    color: #000;
+    }
+  .job-sub-menu .navlist {
+    float: left;
+    line-height: 24px;
+    width: 935px;
+    }
 
 /** Site Page Elements **/
 .site-sub-menu {

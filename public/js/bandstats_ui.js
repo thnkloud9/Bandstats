@@ -30,7 +30,7 @@ function domSetup() {
       var source = $(this).attr('src');
       e.originalEvent.dataTransfer.setData('src', source);
   });
-  
+
   $('.image-droppable').bind('dragover', function(e) {
       e.preventDefault();
       return false;
@@ -41,6 +41,5 @@ function domSetup() {
       var source = e.originalEvent.dataTransfer.getData('src');
       $(this).attr('src', source); 
   });
-    
 
 }

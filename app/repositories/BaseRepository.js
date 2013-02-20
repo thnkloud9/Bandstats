@@ -54,8 +54,8 @@ BaseRepository.prototype.insert = function(values, options, callback) {
     });
 }
 
-BaseRepository.prototype.update = function(query, value, callback) {
-    this.db.collection(this.collection).update(query, {$set: value}, {multi: true}, function(err, results) {
+BaseRepository.prototype.update = function(query, value, options, callback) {
+    this.db.collection(this.collection).update(query, value, options, function(err, results) {
         if (err) throw err;
 
         callback(null, results);

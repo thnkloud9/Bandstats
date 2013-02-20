@@ -18,10 +18,32 @@ var path = require('path');
  */
 function FacebookManager(accessToken) {
     nconf.file(path.join(__dirname, '../config/app.json'));
-    this.accessToken = accessToken;
     this.apiDomain = nconf.get('facebook:domain');
     this.appId = nconf.get('facebook:app_id');
     this.appSecret = nconf.get('facebook:app_secret');
+    this.accessToken = this.appId + '|' + this.appSecret;
+};
+
+exports.getFacebookAccessToken = function(callback) {
+    var parent = this;
+    var api = this.apiDomain;
+    var appId = this.appId;
+    var appSecret = this.appSecret;
+    var options = {
+        url: api + '/oauth/access_token?grant_type=client_credentials&client_id=' + appId + '&client_secret=' + appSecret,
+        json: true 
+    }
+    // authenticate this request to reduce likelyhood of 403s
+    request(options, function (err, response, body) {
+        var bodyParts = body.split("=");
+        if (bodyParts[0] != "access_token") {
+            callback('error, could not get facebook access token');
+            return false;
+        }
+        var accessToken = bodyParts[1];
+        parent.accessToken = accessToken;
+        callback(err, accessToken);
+    });
 };
 
 /**
@@ -45,7 +67,7 @@ FacebookManager.prototype.search = function(query, callback) {
     request(options, function (err, response, body) {
         var bodyParts = body.split("=");
         if (bodyParts[0] != "access_token") {
-            callback('could not get facebook access token');
+            callback('error, could not get facebook access token');
             return false;
         }
         var accessToken = bodyParts[1];
@@ -61,11 +83,11 @@ FacebookManager.prototype.search = function(query, callback) {
             var results = [];
 
             if (err || response.statusCode != 200) {
-                callback("bad response from facebook, statusCode " + response.statusCode);
+                callback("error, bad response from facebook, statusCode " + response.statusCode);
                 return false;
             }
             if (!body.data) {
-                callback("no results from faacebook");
+                callback("error, no results from faacebook");
                 return false;
             }
            
@@ -108,7 +130,7 @@ FacebookManager.prototype.search = function(query, callback) {
 FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
     var searchResults = [];
     var parent = this;
-    var lookupFunction = eval('this.'+lookupFunction);
+    var lookupFunction = eval('parent.'+lookupFunction);
 
     async.forEach(searchObj, function(searchItem, cb) {
         var bandId = searchItem.band_id;
@@ -117,8 +139,8 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
 
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
-                cb(err, searchResults);
-                return false;
+                //just give err as result and move on
+                results = err;
             };
 
             var searchResult = {
@@ -129,7 +151,7 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
             };
 
             searchResults.push(searchResult); 
-
+            
             cb(null, searchResults);
         });
     },
@@ -145,13 +167,13 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
 
 FacebookManager.prototype.getPageImage = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId + '?fields=cover',
+        url: this.apiDomain + '/' + facebookId + '?fields=cover&access_token=' + this.accessToken,
         json: true
     };
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body.cover) {
@@ -165,17 +187,17 @@ FacebookManager.prototype.getPageImage = function(facebookId, callback) {
 
 FacebookManager.prototype.getPageTalkingAbout = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId + '?fields=talking_about_count',
+        url: this.apiDomain + '/' + facebookId + '?fields=talking_about_count&access_token=' + this.accessToken,
         json: true
     };
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body.talking_about_count) {
-            callback("no results from facebook");
+            callback("error, no results from facebook");
             return false;
         }
 
@@ -185,17 +207,17 @@ FacebookManager.prototype.getPageTalkingAbout = function(facebookId, callback) {
 
 FacebookManager.prototype.getPageBio = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId + '?fields=bio',
+        url: this.apiDomain + '/' + facebookId + '?fields=bio&access_token=' + this.accessToken,
         json: true
     };
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body.bio) {
-            callback("no results from facebook");
+            callback("error, no results from facebook");
             return false;
         }
 
@@ -206,17 +228,17 @@ FacebookManager.prototype.getPageBio = function(facebookId, callback) {
 
 FacebookManager.prototype.getPageDescription = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId + '?fields=description',
+        url: this.apiDomain + '/' + facebookId + '?fields=description&access_token=' + this.accessToken,
         json: true
     };
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body.description) {
-            callback("no results from facebook");
+            callback("error, no results from facebook");
             return false;
         }
 
@@ -226,17 +248,17 @@ FacebookManager.prototype.getPageDescription = function(facebookId, callback) {
 
 FacebookManager.prototype.getPage = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId,
+        url: this.apiDomain + '/' + facebookId + '?access_token=' + this.accessToken,
         json: true
     };
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body) {
-            callback("no results from facebook");
+            callback("error, no results from facebook");
             return false;
         }
 
@@ -246,7 +268,7 @@ FacebookManager.prototype.getPage = function(facebookId, callback) {
 
 FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
     var options = { 
-        url: this.apiDomain + '/' + facebookId + '?fields=likes',
+        url: this.apiDomain + '/' + facebookId + '?fields=likes&access_token=' + this.accessToken,
         json: true
     };
 
@@ -254,11 +276,11 @@ FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback("bad response from facebook");
+            callback("error, bad response from facebook, statusCode " + response.statusCode);
             return false;
         }
         if (!body.likes) {
-            callback("no results from facebook");
+            callback("error, no results from facebook");
             return false;
         }
 
@@ -283,7 +305,7 @@ FacebookManager.prototype.getBatch = function(batch, callback) {
     request(options, function (err, response, body) {
         var bodyParts = body.split("=");
         if (bodyParts[0] != "access_token") {
-            callback('could not get facebook access token');
+            callback('error, could not get facebook access token');
             return false;
         }
         var accessToken = bodyParts[1];
@@ -295,7 +317,7 @@ FacebookManager.prototype.getBatch = function(batch, callback) {
 
         request(options, function (err, response, body) {
             if (err) {
-                callback('bad response from facebook ' + err);
+                callback('error, bad response from facebook ' + err);
                 return false;
             }
 

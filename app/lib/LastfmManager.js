@@ -29,17 +29,17 @@ LastfmManager.prototype.search = function(query, callback) {
         var results = [];
 
         if (err || response.statusCode != 200) {
-            callback("bad response from lastfm");
+            callback("error, bad response from lastfm");
             return false;
         }
 
         if (!body.results) {
-            callback("no results from lastfm");
+            callback("error, no results from lastfm");
             return false;
         }
 
         if (!body.results.artistmatches) {
-            callback("no results from lastfm");
+            callback("error, no results from lastfm");
             return false;
         }
        
@@ -67,8 +67,8 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
 
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
-                cb(err, searchResults);
-                return false;
+                //just give err as result and move on
+                results = err;
             };
 
             var searchResult = {
@@ -101,11 +101,11 @@ LastfmManager.prototype.getInfo = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.artist) {
-            callback('could not find info for ' + lastfmId);
+            callback('error, could not find info for ' + lastfmId);
             return false;
         }
 
@@ -122,11 +122,11 @@ LastfmManager.prototype.getListeners = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.artist) {
-            callback('could not find listeners for ' + lastfmId);
+            callback('error, could not find listeners for ' + lastfmId);
             return false;
         }
 
@@ -143,11 +143,11 @@ LastfmManager.prototype.getTopTags = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.toptags) {
-            callback('could not find toptags for ' + lastfmId);
+            callback('error, could not find toptags for ' + lastfmId);
             return false;
         }
 
@@ -163,11 +163,11 @@ LastfmManager.prototype.getEvents = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.events) {
-            callback('could not find events for ' + lastfmId);
+            callback('error, could not find events for ' + lastfmId);
             return false;
         }
 
@@ -184,15 +184,15 @@ LastfmManager.prototype.getBio = function(lastfmId, callback) {
     request(options, function (err, response, body) {
         console.log(body);
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.artist) {
-            callback('could not find bio for ' + lastfmId);
+            callback('error, could not find bio for ' + lastfmId);
             return false;
         }
         if (!body.artist.bio) {
-            callback('could not find bio for ' + lastfmId);
+            callback('error, could not find bio for ' + lastfmId);
             return false;
         }
 
@@ -208,11 +208,11 @@ LastfmManager.prototype.getPlays = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if (!body.artist) {
-            callback('could not find plays for ' + lastfmId);
+            callback('error, could not find plays for ' + lastfmId);
             return false;
         }
 
@@ -229,11 +229,11 @@ LastfmManager.prototype.getMbid = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
         if ((!body.artist) || (!body.artist.mbid)) {
-            callback('could not find mbid for ' + lastfmId);
+            callback('error, could not find mbid for ' + lastfmId);
             return false;
         }
 
@@ -249,12 +249,12 @@ LastfmManager.prototype.getImage = function(lastfmId, callback) {
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
-            callback('bad response from lastfm ' + err);
+            callback('error, bad response from lastfm ' + err);
             return false;
         }
 
         if ((!body.artist) || (!body.artist.image)) {
-            callback('could not find images for ' + lastfmId);
+            callback('error, could not find images for ' + lastfmId);
             return false;
         }
 

@@ -39,6 +39,11 @@ var FacebookController = function(db) {
         });
     };
 
+    /**
+     * takes a bands query and loops through each result and maps
+     * to a facebook manager function using external_ids.facebook_id (or
+     * band_name if lookupFunction is search
+     */
     this.lookupAction = function(req, res) {
         var parent = this;
         var query = {};
@@ -75,9 +80,9 @@ var FacebookController = function(db) {
             }
         };
         
-        // only send 50 due to rate limits (600 max)
+        // only send 500 due to rate limits (600 max)
         var options = {
-            "limit": 50
+            "limit": 500
         };
 
         // loop through bands and make search object to send to lookups
@@ -107,14 +112,24 @@ var FacebookController = function(db) {
             },
             function(err, results) {
                 if (err) {
-                    res.send({"status": "error", "error": err, "results": results});
+                    var response = {
+                        "status": "error", 
+                        "error": err, 
+                        "results": results 
+                    };
+                    res.send(response);
                     return false;
                 }
 
                 // call facebook lookup
                 parent.facebookManager.lookup(searchObj, lookupFunction, function(err, results) {
                     if (err) {
-                        res.send({"status": "error", "error": err, "results": results});
+                        var response = {
+                            "status": "error", 
+                            "error": err, 
+                            "results": results 
+                        };
+                        res.send(response);
                         return false;
                     }
                     res.send(results);

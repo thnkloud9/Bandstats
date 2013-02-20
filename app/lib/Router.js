@@ -1,5 +1,5 @@
 // really simple routing
-exports.initRoutes = function(app, db) {
+exports.initRoutes = function(app, db, jobScheduler) {
    
     var fs = require('fs');
 
@@ -25,8 +25,14 @@ exports.initRoutes = function(app, db) {
 
     function mapRoute(file, request, response) {
         var mdl = require('./../controllers/'+file);
-        // pass the db to the controller
-        var controller = new mdl.controller(db);
+
+        if (file === 'JobController.js') {
+            // pass db and scheduler to jobs controller
+            var controller = new mdl.controller(db, jobScheduler);
+        } else {
+            // pass the db to the controller
+            var controller = new mdl.controller(db);
+        }
 
         // build action parameter
         if( !request.params.action ) {

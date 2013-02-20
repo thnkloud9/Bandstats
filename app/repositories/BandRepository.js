@@ -42,8 +42,8 @@ BandRepository.prototype.insert = function(value, options, callback) {
     });
 }
 
-BandRepository.prototype.update = function(query, value, callback) {
-    BaseRepository.prototype.update.call(this, query, value, function(err, bands) {
+BandRepository.prototype.update = function(query, value, options, callback) {
+    BaseRepository.prototype.update.call(this, query, value, options, function(err, bands) {
         callback(err, bands);
     });
 }
@@ -64,6 +64,53 @@ BandRepository.prototype.remove = function(query, options, callback) {
  * Band specific functions
  */
 
+BandRepository.prototype.updateRunningStat = function(query, stat, value, callback) {
+    var db = this.db;
+    var collection = this.collection
+    var today = moment().format('YYYY-MM-DD');
+    var now = moment().format('YYYY-MM-DD HH:mm:ss');
+   
+    // add toays stat with upsert to overwrite in case it was already collected today
+    async.series({
+        deleteToday: function(cb) {
+            var runningStat = {};
+            runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today };
+            var set = { $pull: runningStat };
+            db.collection(collection).update(query, set, {"multi":true}, function(err, result) {
+                cb(err, result);
+            });
+        },
+        updateToday: function(cb) {
+            var runningStat = {};
+            var setFields = {};
+            runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value };
+            setFields["running_stats." + stat + ".current"] = value;
+            setFields["running_stats." + stat + ".last_udpated"] = now;
+            var set = { 
+                $addToSet: runningStat,
+                $set: setFields 
+            };
+            
+            db.collection(collection).update(query, set, {"multi":true}, function(err, result) {
+                cb(err, result);
+            });
+        },
+        deleteOld: function(cb) {
+            var expire = moment().subtract('months', 6).calendar();
+            var expireStat = {};
+            expireStat["running_stats." + stat + ".daily_stats"] = { "date":  expire };
+            var set = { $pull: expireStat };
+            db.collection('bands').update(query, set, {"multi":true}, function(err, result) {
+                cb(err, result);
+            });
+        },
+    },
+    function(err, results) {
+        callback(err, results);
+    });
+
+}
+
 /**
  * inserts or updates facebook_likes daily_stats for
  * the current day, also cleans any records older than
@@ -72,6 +119,7 @@ BandRepository.prototype.remove = function(query, options, callback) {
 BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) {
     var db = this.db;
     var collection = this.collection
+    var now = moment().format('YYYY-MM-DD HH:mm:ss');
 
     // add toays stat with upsert to overwrite in case it was already collected today
     async.series({
@@ -86,7 +134,8 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
             var today = moment().format('YYYY-MM-DD');
             var set = { 
                 $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } },
-                $set: {"running_stats.facebook_likes.current": likes }
+                $set: {"running_stats.facebook_likes.current": likes },
+                $set: {"running_stats.facebook_likes.last_updated": now }
             };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
@@ -113,6 +162,7 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
 BandRepository.prototype.updateLastfmListeners = function(query, listeners, callback) {
     var db = this.db;
     var collection = this.collection;
+    var now = moment().format('YYYY-MM-DD HH:mm:ss');
 
     async.series({
         deleteToday: function(cb) {
@@ -126,7 +176,8 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
             var today = moment().format('YYYY-MM-DD');
             var set = { 
                 $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } },
-                $set: {"running_stats.lastfm_listeners.current": listeners }
+                $set: {"running_stats.lastfm_listeners.current": listeners },
+                $set: {"running_stats.lastfm_listeners.last_updated": now }
             };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);

@@ -1,0 +1,17 @@
+<div class="job-sub-menu">
+  <div>
+    <ul class="navlist">
+      <li><a href="/job/0/edit">New Job</a></li>
+      <li><a href="/job/failed">Failed Log</a></li>
+      <li><a href="/job/running">Running Now</a></li>
+      <li><a href="/job/scheduled">Scheduled</a></li>
+      <li><a href="/job">Edit Fields</a></li>
+    </ul>
+  </div>
+  <div>
+    <form action="/job">
+      <input type="test" name="search" value="">
+      <button id="search">Search</button>
+    </form>
+  </div>
+</div>
