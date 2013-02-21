@@ -33,5 +33,9 @@
         "channel_url": "//www.thedelimagazine.com/bandstats/channel.html",
         "jssdk_src": "//connect.facebook.net/en_US/all.js",
         "domain": "https://graph.facebook.com"
+    },
+    "soundcloud": {
+        "client_id": "OtYaDuMCqKGZn5IiRU2EKg",
+        "domain": "http://api.soundcloud.com"
     }
 }

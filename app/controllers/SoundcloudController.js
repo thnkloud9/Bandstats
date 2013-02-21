@@ -1,5 +1,5 @@
 /**
- * Echonest Controller
+ * Soundcloud Controller
  *
  * author: Mark Lewis
  */
@@ -11,20 +11,20 @@ var _ = require('underscore');
 var fs = require('fs');
 
 var BandRepository = require('./../repositories/BandRepository.js');
-var EchonestManager = require('./../lib/EchonestManager.js');
+var SoundcloudManager = require('./../lib/SoundcloudManager.js');
 
 /**
  * constructor
  */
-var EchonestController = function(db) {
+var SoundcloudController = function(db) {
 
     this.bandRepository = new BandRepository({'db': db});
-    this.echonestManager = new EchonestManager();
+    this.soundcloudManager = new SoundcloudManager();
 
     /**
      * takes a band name as query param
      * and returns search results from 
-     * echonest api
+     * soundcloud api
      */
     this.searchAction = function(req, res) {
         if (!req.query.search) {
@@ -32,7 +32,7 @@ var EchonestController = function(db) {
             return false;
         }
         
-        this.echonestManager.search(req.query.search, function(err, results) {
+        this.soundcloudManager.search(req.query.search, function(err, results) {
             if (err) {
                 res.send({"status": "error", "error": err});
                 return false;
@@ -43,7 +43,7 @@ var EchonestController = function(db) {
 
     /**
      * takes a bands query and loops through each result and maps
-     * to a echoenst manager function using external_ids.echonest_id (or
+     * to a echoenst manager function using external_ids.soundcloud_id (or
      * band_name if lookupFunction is search
      */
     this.lookupAction = function(req, res) {
@@ -67,15 +67,15 @@ var EchonestController = function(db) {
                 // get all bands without echoenst ids
                 query = {
                     $or: [
-                        {"external_ids.echoenest_id": null},
-                        {"external_ids.echoenest_id": ""}
+                        {"external_ids.soundcloud_id": null},
+                        {"external_ids.soundcloud_id": ""}
                     ]
                 };
             } else {
                 query = {
                     $and: [
-                        {"external_ids.echonest_id": {$ne: null}},
-                        {"external_ids.echonest_id": {$ne: ""}}
+                        {"external_ids.soundcloud_id": {$ne: null}},
+                        {"external_ids.soundcloud_id": {$ne: ""}}
                     ]
                 };
             }
@@ -104,7 +104,7 @@ var EchonestController = function(db) {
                 if (resource === 'search') {
                     searchItem.search = band.band_name;
                 } else {
-                    searchItem.search = band.external_ids.echonest_id;
+                    searchItem.search = band.external_ids.soundcloud_id;
                 }
 
                 searchObj.push(searchItem);
@@ -122,8 +122,8 @@ var EchonestController = function(db) {
                     return false;
                 }
 
-                // call echonest lookup
-                parent.echonestManager.lookup(searchObj, lookupFunction, function(err, results) {
+                // call soundcloud lookup
+                parent.soundcloudManager.lookup(searchObj, lookupFunction, function(err, results) {
                     if (err) {
                         var response = {
                             "status": "error", 
@@ -145,7 +145,7 @@ var EchonestController = function(db) {
             return false;
         }
 
-        this.echonestManager.getProfile(req.params.id, function(err, results) {
+        this.soundcloudManager.getProfile(req.params.id, function(err, results) {
             if (err) {
                 res.send({"status": "error", "error": err});
                 return false;
@@ -154,59 +154,13 @@ var EchonestController = function(db) {
         });
     }
 
-    this.termsAction = function(req, res) {
+    this.tracksAction = function(req, res) {
         if (req.params.id === "terms") {
             res.send({"status": "error", "error": "must be called with id param"});
             return false;
         }
 
-        this.echonestManager.getTerms(req.params.id, function(err, results) {
-            if (err) {
-                res.send({"status": "error", "error": err});
-                return false;
-            }
-            res.send(results);
-        });
-    }
-
-    this.biographiesAction = function(req, res) {
-        if (req.params.id === "biographies") {
-            res.send({"status": "error", "error": "must be called with id param"});
-            return false;
-        }
-
-        this.echonestManager.getBiographies(req.params.id, function(err, results) {
-            if (err) {
-                res.send({"status": "error", "error": err});
-                return false;
-            }
-            res.send(results);
-        });
-    }
-
-    this.hotttnesssAction = function(req, res) {
-        if (req.params.id === "hotttnesss") {
-            res.send({"status": "error", "error": "must be called with id param"});
-            return false;
-        }
-
-        this.echonestManager.getHotttnesss(req.params.id, function(err, results) {
-            if (err) {
-                res.send({"status": "error", "error": err});
-                return false;
-            }
-            res.send(results);
-            
-        });
-    }
-
-    this.imagesAction = function(req, res) {
-        if (req.params.id === "images") {
-            res.send({"status": "error", "error": "must be called with id param"});
-            return false;
-        }
-        
-        this.echonestManager.getImages(req.params.id, function(err, results) {
+        this.soundcloudManager.getTracks(req.params.id, function(err, results) {
             if (err) {
                 res.send({"status": "error", "error": err});
                 return false;
@@ -218,4 +172,4 @@ var EchonestController = function(db) {
 }
 
 /* export the class */
-exports.controller = EchonestController;
+exports.controller = SoundcloudController;

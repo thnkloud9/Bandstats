@@ -24,6 +24,7 @@
             }
                 
 			var oTable = $('#bands').dataTable( {
+                "sScrollX": "100%",
 				"bProcessing": true,
                 "bServerSide": true,
 				"sAjaxSource": bandDataUrl,

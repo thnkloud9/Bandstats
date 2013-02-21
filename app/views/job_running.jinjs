@@ -1,0 +1,16 @@
+{% extends "./base.jinjs" %}
+{% block title %}Running Jobs{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for job in running_jobs %}
+    <li>{{job.pid}} {{job.job_id}} <a href="/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

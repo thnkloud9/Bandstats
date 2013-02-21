@@ -1,0 +1,30 @@
+{% extends "./base.jinjs" %}
+{% block title %}Settings Edit{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<form id="setting-edit-form">
+</form>
+
+<button id="bs-setting-update">Update</button>
+
+{{error}}
+
+<script type="text/javascript">
+
+    var config = JSON.parse({{config}});
+
+    for (var key in config) {
+        var group = config[key];
+        $('#setting-edit-form').append("<h3>" + key + "</h4>");
+
+        for (var field in group) {
+            var value = group[field]
+            $('#setting-edit-form').append(field + ": <input type='text' class='setting-edit' name='" + field + "' value='" + value + "' size='40'><br />");
+        }
+    }
+</script>
+
+{% endblock %}

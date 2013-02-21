@@ -10,6 +10,7 @@ var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 
 /**
  * Constructor
@@ -101,7 +102,7 @@ FacebookManager.prototype.search = function(query, callback) {
            
             // now lets get the details for each music page 
             async.forEach(musicPageIds, function(musicPageId, cb) {
-                console.log('requesting facebook page ' + musicPageId);
+                util.log('requesting facebook page ' + musicPageId);
                 var options = {
                     url: api + "/" + musicPageId + '?access_token=' + accessToken,
                     json: true
@@ -160,7 +161,7 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
             callback(err, searchResults);
             return false;
         };
-        console.log('facebook lookup done with all');
+        util.log('facebook lookup done with all');
         callback(null, searchResults);
     });
 };
@@ -272,7 +273,7 @@ FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
         json: true
     };
 
-    console.log('requesting facebook likes for ' + facebookId);
+    util.log('requesting facebook likes for ' + facebookId);
 
     request(options, function (err, response, body) {
         if (err || response.statusCode != 200) {
@@ -281,6 +282,10 @@ FacebookManager.prototype.getPageLikes = function(facebookId, callback) {
         }
         if (!body.likes) {
             callback("error, no results from facebook");
+            return false;
+        }
+        if (body.likes.data) {
+            callback("error, this is a old facebook page");
             return false;
         }
 

@@ -7,6 +7,8 @@ var Lookup = function(provider, resource, service) {
     this.resource = resource;
     this.service = service;
 
+    this.bandId = null; 
+
     this.search = [];
     this.matches = [];
     this.cache = {};
@@ -23,10 +25,13 @@ var Lookup = function(provider, resource, service) {
         this.resource = resource;
     };
 
-    this.lookup = function(provider, resource, service, search) {
+    this.lookup = function(provider, resource, service, search, bandId) {
         this.setProvider(provider);
         this.setResource(resource);
         this.setService(service);
+        if (bandId) {
+            this.bandId = bandId;
+        }
 
         if (this.service === 'search') {
             this.getMatches(search);
@@ -102,6 +107,10 @@ var Lookup = function(provider, resource, service) {
             this.showEchonestMatches();
             return true;
         }
+        if (this.provider === "soundcloud") {
+            this.showSoundcloudMatches();
+            return true;
+        }
 
         console.log('could not find show function for ' + this.provider);
         return false;
@@ -110,6 +119,80 @@ var Lookup = function(provider, resource, service) {
     this.getCloseButton = function() {
         return "<div class='bs-lookup-close'><a class='bs-lookup-matches-close' href='#'>close</a></div>";
     };
+
+    this.showSoundcloudMatches = function(id) {
+        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var response = this.matches;
+        var output = this.getCloseButton();
+
+        output += "<ul>";
+        $(displayElement).empty();
+        for (var r in response) {
+            var result = response[r];
+            
+            // skip if no matches
+            if (!result.results.length) {
+                continue;
+            }
+
+            if (result.band_name) {
+                var resultDisplay = result.band_name;
+            } else {
+                var resultDisplay = result.search;
+            }
+
+            if (result.band_id) {
+                var bandId = result.band_id;
+            } else {
+                if (this.bandId) {
+                    var bandId = this.bandId;
+                } else {
+                    var bandId = '';
+                }
+            }
+
+            output += "<li class='bs-lookup-match-group'>";
+            output += "<strong>" + resultDisplay + "</strong>";
+            output += "<ol>"
+            
+            for (var m in result.results) {
+                var match = result.results[m];
+                
+                output += "<li data-band-id='" + bandId + "' data-provider='soundcloud' data-external-id='" + match.id + "' class='bs-lookup-match'>";
+                var src = "";
+                if (match.avatar_url) {
+                    src = match.avatar_url;
+                }
+                output += "<img class='image-draggable' src='" + src + "'>";
+                output += "<strong>" + match.username + "</strong> (" + match.id + ")";
+                if (match.city) {
+                    output += "<p>" + match.city;
+                    if (match.country) {
+                        output += ", " + match.country;
+                    }
+                    output += "</p>";
+                }
+                if (match.uri) {
+                    output += "<p><a href='" + match.uri + "' target='_blank'>soundcloud page</a></p>";
+                }
+                if (match.website) {
+                    output += "<p><a href='" + match.website + "' target='_blank'>" + match.website + "</a></p>";
+                }
+                if (match.description) {
+                    output += "<p>" + match.description + "</p>";
+                }
+                if (match.followers_count) {
+                    output += "<p><strong>followers:</strong>" + match.followers_count + "</p>";
+                }
+                output += "</li>";
+            }
+            output += "</ol>"
+            output += "</li>";
+        }
+        output += "</ul>";
+        $(displayElement).html(output);
+        $(displayElement).show();
+    }
 
     this.showEchonestMatches = function(id) {
         var displayElement = '#bs-lookup-matches-' + this.provider;
@@ -135,7 +218,11 @@ var Lookup = function(provider, resource, service) {
             if (result.band_id) {
                 var bandId = result.band_id;
             } else {
-                var bandId = '';
+                if (this.bandId) {
+                    var bandId = this.bandId;
+                } else {
+                    var bandId = '';
+                }
             }
 
             output += "<li class='bs-lookup-match-group'>";
@@ -145,7 +232,7 @@ var Lookup = function(provider, resource, service) {
             for (var m in result.results) {
                 var match = result.results[m];
                 
-                output += "<li data-band-id='" + bandId + "' data-facebook-id='" + match.id + "' class='bs-lookup-match'>";
+                output += "<li data-band-id='" + bandId + "' data-provider='echonest' data-external-id='" + match.id + "' class='bs-lookup-match'>";
                 var src = "";
                 output += "<img class='image-draggable' src='" + src + "'>";
                 output += "<strong>" + match.name + "</strong> (" + match.id + ")";
@@ -199,7 +286,11 @@ var Lookup = function(provider, resource, service) {
             if (result.band_id) {
                 var bandId = result.band_id;
             } else {
-                var bandId = '';
+                if (this.bandId) {
+                    var bandId = this.bandId;
+                } else {
+                    var bandId = '';
+                }
             }
 
             output += "<li class='bs-lookup-match-group'>";
@@ -209,7 +300,7 @@ var Lookup = function(provider, resource, service) {
             for (var m in result.results) {
                 var match = result.results[m];
                 
-                output += "<li data-band-id='" + bandId + "' data-facebook-id='" + match.id + "' class='bs-lookup-match'>";
+                output += "<li data-band-id='" + bandId + "' data-provider='lastfm' data-external-id='" + match.id + "' class='bs-lookup-match'>";
                 var src = "";
                 if (match.image) {
                     for (var i in match.image) {
@@ -257,7 +348,11 @@ var Lookup = function(provider, resource, service) {
             if (result.band_id) {
                 var bandId = result.band_id;
             } else {
-                var bandId = '';
+                if (this.bandId) {
+                    var bandId = this.bandId;
+                } else {
+                    var bandId = '';
+                }
             }
 
             output += "<li class='bs-lookup-match-group'>";
@@ -267,7 +362,7 @@ var Lookup = function(provider, resource, service) {
             for (var m in result.results) {
                 var match = result.results[m];
                 
-                output += "<li data-band-id='" + bandId + "' data-facebook-id='" + match.id + "' class='bs-lookup-match'>";
+                output += "<li data-band-id='" + bandId + "' data-provider='facebook' data-external-id='" + match.id + "' class='bs-lookup-match'>";
                 var src = "";
                 if (match.cover) {
                     src = match.cover.source;
@@ -296,9 +391,28 @@ var Lookup = function(provider, resource, service) {
         $(displayElement).show();
     };
 
-    this.saveMatch = function(type, match) {
+    this.saveMatch = function(provider, bandId, externalId) {
         //TODO: add save function that works
         // with all lookup types
+        var set = {};
+        set['external_ids.' + provider + '_id'] = externalId;
+
+        url = '/band/' + bandId + '/update';
+        type = 'put';
+
+        $.ajax({
+            url: url,
+            type: type,
+            data: {values: set},
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });            
+        
     };
 };
 
@@ -313,8 +427,9 @@ $(function() {
         var resource = $(this).attr('data-resource');
         var service = $(this).attr('data-service');
         var search = $(this).attr('data-search');
+        var bandId = $(this).attr('data-band-id');
 
-        externalLookup.lookup(provider, resource, service, search);
+        externalLookup.lookup(provider, resource, service, search, bandId);
 
         //return false;
     });
@@ -324,10 +439,46 @@ $(function() {
     });
 
     $('.bs-lookup-match').live('click', function() {
+        var bandId = $(this).attr('data-band-id');
+        var provider = $(this).attr('data-provider');
+        var externalId = $(this).attr('data-external-id');
+
         if ($(this).hasClass('active')) {
             $(this).removeClass('active');
+            // show all other matches for this band
+            $('.bs-lookup-match').each(function() {
+                if ($(this).attr('data-band-id') === bandId) {
+                    $(this).removeClass('hidden');
+                    $(this).show();
+                };
+            });
+
+            // remove save button
+            $(this).find('.bs-match-save').remove();
         } else {
             $(this).addClass('active');
+            // hide all other matches for this band
+            $('.bs-lookup-match').each(function() {
+                if ($(this).attr('data-band-id') === bandId) {
+                    if (!$(this).hasClass('active')) {
+                        $(this).addClass('hidden');
+                        $(this).hide();
+                    }
+                };
+            });
+            
+            // add save button
+            $(this).append("<button data-band-id='" + bandId + "' data-provider='" + provider + "' data-external-id='" + externalId + "' class='bs-match-save'>Save</button>");
         }
+    });
+
+    $('.bs-match-save').live('click', function() {
+        var bandId = $(this).attr('data-band-id');
+        var provider = $(this).attr('data-provider');
+        var externalId = $(this).attr('data-external-id');
+
+        externalLookup.saveMatch(provider, bandId, externalId);
+        // remove this from the lookup list
+        $(this).parent().parent().parent().hide();
     });
 });

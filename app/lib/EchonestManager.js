@@ -10,6 +10,7 @@ var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 
 /**
  * Constructor
@@ -48,6 +49,51 @@ EchonestManager.prototype.search = function(query, callback) {
 
 };
 
+/**
+ * lookup
+ * takes a searchObj with a search parameter and loops through
+ * sending the search parameter to a function
+ * searchObj should not exceed 600 elements
+ * in order to stay within echonest api rate limit
+ */
+EchonestManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
+    var searchResults = [];
+    var parent = this;
+    var lookupFunction = eval('parent.'+lookupFunction);
+
+    async.forEach(searchObj, function(searchItem, cb) {
+        var bandId = searchItem.band_id;
+        var bandName = searchItem.band_name;
+        var searchTerm = searchItem.search;
+
+        lookupFunction.call(parent, searchTerm, function(err, results) {
+            if (err) {
+                //just give err as result and move on
+                results = err;
+            };
+
+            var searchResult = {
+                "band_id": bandId,
+                "band_name": bandName,
+                "search": searchTerm,
+                "results": results
+            };
+
+            searchResults.push(searchResult); 
+            
+            cb(null, searchResults);
+        });
+    },
+    function(err, results) {
+        if (err) {
+            callback(err, searchResults);
+            return false;
+        };
+        util.log('echonest lookup done with all');
+        callback(null, searchResults);
+    });
+};
+
 EchonestManager.prototype.getProfile = function(echonestId, callback) {
     var buckets = [ 'biographies', 'blogs', 'familiarity', 'hotttnesss', 'images', 'artist_location', 'news', 'reviews', 'terms', 'urls', 'years_active'];
     var url =  this.apiDomain +'/artist/profile?id=' + echonestId + '&api_key=' + this.apiKey + '&format=json';
@@ -66,7 +112,6 @@ EchonestManager.prototype.getProfile = function(echonestId, callback) {
             return false;
         }
         if (!body.response.artist) {
-            console.log(body);
             callback('error, could not find info for ' + echonestId);
             return false;
         }
@@ -124,14 +169,12 @@ EchonestManager.prototype.getBiographies = function(echonestId, callback) {
     };
 
     request(options, function (err, response, body) {
-            console.log(body);
         if (err || response.statusCode != 200) {
             callback('error, bad response from echonest ' + err);
             return false;
         }
 
         if (!body.response) {
-            console.log(body);
             callback('error, could not find biographies for ' + echonestId);
             return false;
         }

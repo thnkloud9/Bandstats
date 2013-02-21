@@ -183,6 +183,10 @@ function getAllFacebookLikes(callback) {
                     if (!facebookId) {
                         cb('no facebook id');
                         return false;
+                    }
+                    if (likes.data) {
+                        cb('old page, can not get likes');
+                        return false;
                     } 
                     bandRepository.updateFacebookLikes(query, likes, function(err, results) {
                         processed++;

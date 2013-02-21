@@ -1,0 +1,17 @@
+{% extends "./base.jinjs" %}
+{% block title %}Scheduled Jobs{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for job in scheduled_jobs %}
+    <li>{{job.job_id}} <a href="/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
+    {{job.schedule}} 
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

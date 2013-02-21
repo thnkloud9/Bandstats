@@ -8,6 +8,7 @@ var request = require('request');
 var async = require('async');
 var _ = require('underscore');
 var xml2js = require('xml2js');
+var util = require('util');
 
 var JobRepository = require('./../repositories/JobRepository.js');
 
@@ -19,6 +20,7 @@ var JobController = function(db, jobScheduler) {
     /**
      * Load the job repo for mongo connectivity
      */
+    this.db = db;
     this.jobRepository = new JobRepository({'db': db});
     this.jobScheduler = jobScheduler;
     this.data = {"section": "job"};
@@ -38,23 +40,38 @@ var JobController = function(db, jobScheduler) {
     }
 
     this.runningAction = function(req, res) {
+        var data = this.data;
         var runningJobs = this.jobScheduler.getRunningJobs();
-        res.send(runningJobs);
+        _.extend(data, { 'running_jobs': runningJobs });
+        var template = require('./../views/job_running');
+        res.send(template.render(data));
+    }
+
+    this.logAction = function(req, res) {
+        var data = this.data;
+        this.db.collection('job_log').find({}, {}).toArray(function(err, results) {
+            if (err) res.send(err);
+            _.extend(data, { 'job_logs': results });
+            var template = require('./../views/job_log');
+            res.send(template.render(data));
+        });
     }
 
     this.scheduledAction = function(req, res) {
-        var data = [];
+        var data = this.data;
+        var jobs = [];
         var scheduledJobs = this.jobScheduler.getScheduledJobs();
         for (var j in scheduledJobs) {
             var job = scheduledJobs[j];
-            data.push({ 
+            jobs.push({ 
                 "job_name": job.job_name, 
                 "job_id": job.job_id, 
                 "schedule": job.cronTime.source
             });
         }
-        res.send(data);
-
+        _.extend(data, { 'scheduled_jobs': jobs });
+        var template = require('./../views/job_scheduled');
+        res.send(template.render(data));
     } 
 
     this.editAction = function(req, res) {
@@ -104,7 +121,7 @@ var JobController = function(db, jobScheduler) {
             var scheduledJobs = parent.jobScheduler.getScheduledJobs();
             for (var j in scheduledJobs) {
                 var job = scheduledJobs[j];
-                console.log('stopping job scheduled for ' + job.cronTime.source);
+                util.log('stopping job scheduled for ' + job.cronTime.source);
                 job.stop();
             }
             parent.jobScheduler.initSchedule();
@@ -116,6 +133,7 @@ var JobController = function(db, jobScheduler) {
     }
 
     this.removeAction = function(req, res) {
+        var parent = this;
         if ((req.route.method != "delete") || (!req.params.id)) {
             var data = {
                 status: "error",
@@ -132,11 +150,22 @@ var JobController = function(db, jobScheduler) {
                 res.send({status: "error", error: err});
                 return false;
             }
+
+            // update the job scheduler
+            var scheduledJobs = parent.jobScheduler.getScheduledJobs();
+            for (var j in scheduledJobs) {
+                var job = scheduledJobs[j];
+                util.log('stopping job scheduled for ' + job.cronTime.source);
+                job.stop();
+            }
+            parent.jobScheduler.initSchedule();
+
             res.send({status: "success", id: req.params.id, removed: removed});
         });
     }
 
     this.createAction = function(req, res) {
+        var parent = this;
         if ((req.route.method != "post") || (!req.body.values)) {
             var data = {
                 status: "error",
@@ -147,6 +176,15 @@ var JobController = function(db, jobScheduler) {
             res.send(data);
         }    
         this.jobRepository.insert(req.body.values, {}, function(err, job) {
+            // update the job scheduler
+            var scheduledJobs = parent.jobScheduler.getScheduledJobs();
+            for (var j in scheduledJobs) {
+                var job = scheduledJobs[j];
+                util.log('stopping job scheduled for ' + job.cronTime.source);
+                job.stop();
+            }
+            parent.jobScheduler.initSchedule();
+
             res.send({status: "success", job: job});
         });
     }

@@ -13,6 +13,7 @@ var nconf = require('nconf');
 var express = require('express');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 
 require("jinjs").registerExtension(".jinjs");
 
@@ -67,5 +68,5 @@ require('./app/lib/Router.js').initRoutes(app, db, jobScheduler);
  * Start Server
  */
 app.listen(node_port);
-console.log(nconf.get('app:title') + ' listening on ' + nconf.get('app:port') + ' with ' + nconf.get('db:host') + ':' + nconf.get('db:port') + '/' + nconf.get('db:database') + ' database');
+util.log(nconf.get('app:title') + ' listening on ' + nconf.get('app:port') + ' with ' + nconf.get('db:host') + ':' + nconf.get('db:port') + '/' + nconf.get('db:database') + ' database');
 

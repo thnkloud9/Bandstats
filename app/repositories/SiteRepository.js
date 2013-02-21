@@ -7,6 +7,7 @@
 var request = require('request');
 var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
+var util = require('util');
 
 /**
  * constructor
@@ -69,7 +70,7 @@ SiteRepository.prototype.remove = function(query, options, callback) {
  */
 SiteRepository.prototype.getNewArticles = function(site, callback) {
     var parent = this;
-    console.log('getting articles from ' + site.site_url);
+    util.log('getting articles from ' + site.site_url);
     var options = {
         url: site.site_url,
     };

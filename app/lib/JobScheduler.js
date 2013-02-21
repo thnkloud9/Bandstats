@@ -13,6 +13,7 @@ var path = require('path');
 var cronJob = require('cron').CronJob;
 var child_process = require('child_process');
 var moment = require('moment');
+var util = require('util');
 
 var JobRepository = require('./../repositories/JobRepository.js');
 
@@ -44,7 +45,7 @@ JobScheduler.prototype.initSchedule = function() {
 
     // clear out job pids from database
     parent.jobRepository.update({}, { $set: {"pids": []}}, {"multi": true}, function(err, updated) {
-        console.log('removing pids from all jobs');
+        util.log('removing pids from all jobs');
     });
     
     // get job schedule from the database
@@ -59,7 +60,7 @@ JobScheduler.prototype.initSchedule = function() {
                     onTick: function() {
                         var args = job.job_arguments.split(' ');
 
-                        console.log('starting job ' + job.job_name + ' child process ' + job.job_command + ' ' + job.job_arguments);
+                        util.log('starting job ' + job.job_name + ' child process ' + job.job_command + ' ' + job.job_arguments);
 
                         // start the child process
                         var cp = child_process.spawn('./bin/'+job.job_command, args);
@@ -69,14 +70,22 @@ JobScheduler.prototype.initSchedule = function() {
                         var now = moment().format('YYYY-MM-DD HH:mm:ss');
                         var runningJob = {
                             "pid": cpid,
+                            "job_id": job.job_id,
                             "job_name": job.job_name,
-                            "started": now,
+                            "job_arguments": job.job_arguments,
+                            "action": "started",
+                            "time": now
                         }
-                        parent.runningJobs.push(runningJob);
+                        parent.runningJobs.push(_.extend(cp, runningJob));
+                        // add to the job log
+                        parent.db.collection('job_log').insert(runningJob, {}, function(err, inserted) {
+                            if (err) util.log(err);
+                        });
 
                         // ad event listener to remove from runningJobs on exit
                         cp.on('exit', function() {
-                            console.log('child ' + cpid + ' has exited');
+                            var now = moment().format('YYYY-MM-DD HH:mm:ss');
+                            util.log('child ' + cpid + ' has exited');
 
                             // remove the job from the runningJobs array
                             for (var i = 0; i < parent.runningJobs.length; i++) {
@@ -87,13 +96,25 @@ JobScheduler.prototype.initSchedule = function() {
                             };
                             // remove from the jobs pids in the database
                             parent.jobRepository.update({"job_id": job.job_id}, { $pull: {"pids": cpid} }, {"multi": true}, function(err, updated) {
-                                console.log('removing pid ' + cpid + ' from job_id ' + job.job_id);
+                                util.log('removing pid ' + cpid + ' from job_id ' + job.job_id);
+                            });
+                            // add to the job log
+                            var exitedJob = {
+                                "pid": cpid,
+                                "job_id": job.job_id,
+                                "job_name": job.job_name,
+                                "job_arguments": job.job_arguments,
+                                "action": "ended",
+                                "time": now
+                            }
+                            parent.db.collection('job_log').insert(exitedJob, {}, function (err, inserted) {
+                                if (err) util.log(err);
                             });
                         });
 
                         // add the pid to the jobs pid array in the database 
                         parent.jobRepository.update({"job_id": job.job_id}, { $addToSet: {"pids": cpid} }, {"multi": true}, function(err, updated) {
-                            console.log('adding pid ' + cpid + ' to job_id ' + job.job_id);
+                            util.log('adding pid ' + cpid + ' to job_id ' + job.job_id);
                         });
                     },
                     start: true
@@ -102,9 +123,9 @@ JobScheduler.prototype.initSchedule = function() {
                 parent.scheduledJobs[count].job_name = job.job_name;
                 parent.scheduledJobs[count].job_id = job.job_id;
 
-                console.log('started ' + job.job_name + ' with schedule ' + job.job_schedule);
+                util.log('started ' + job.job_name + ' with schedule ' + job.job_schedule);
             } catch (err) {
-                console.log('cron pattern not valid for ' + job.job_name);
+                util.log('cron pattern not valid for ' + job.job_name);
                 cb(err)
                 return false;
             }
@@ -113,9 +134,9 @@ JobScheduler.prototype.initSchedule = function() {
         },
         function (err, results) {
             if (err) {
-                console.log(err);
+                util.log(err);
             }
-            console.log('added all scheduled jobs');
+            util.log('added all scheduled jobs');
         });
     });
 };

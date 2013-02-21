@@ -10,6 +10,7 @@ var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 
 /**
  * Constructor
@@ -88,7 +89,7 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
             callback(err, searchResults);
             return false;
         };
-        console.log('lastfm lookup done with all');
+        util.log('lastfm lookup done with all');
         callback(null, searchResults);
     });
 };
@@ -182,7 +183,6 @@ LastfmManager.prototype.getBio = function(lastfmId, callback) {
     };
 
     request(options, function (err, response, body) {
-        console.log(body);
         if (err || response.statusCode != 200) {
             callback('error, bad response from lastfm ' + err);
             return false;

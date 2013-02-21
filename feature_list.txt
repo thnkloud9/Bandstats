@@ -48,6 +48,17 @@ users:
 4. mark as incorrectly match
 5. save tag prefs
 
+facebook:
+
+1. what my friends are listening to
+2. shows in my area
+3. chart by my friends (listening, sharing, liking, attending)
+4. what shows are my friends going to
+5. ignore bands list
+6. ignore friends list
+7. charting for bands you've liked on facebook
+8. info on bands you've liked on fb
+
 charts:
 
 1. by region

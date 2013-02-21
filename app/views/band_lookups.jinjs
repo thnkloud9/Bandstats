@@ -14,7 +14,7 @@
   </li>
 
   <li>
-    <a class='bs-lookup' data-provider='lastfm' data-resource='pageids' data-service='lookup' href="#">Lookup Lastfm Ids</a> (missing {{missing_lastfm_count}})
+    <a class='bs-lookup' data-provider='lastfm' data-resource='search' data-service='lookup' href="#">Lookup Lastfm Ids</a> (missing {{missing_lastfm_count}})
     <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
   </li>
 
@@ -34,7 +34,7 @@
   </li>
 
   <li>
-    <a href="#">Lookup Echonest Ids</a> (missing {{missing_echonest_count}})
+    <a class='bs-lookup' data-provider='echonest' data-resource='search' data-service='lookup' href="#">Lookup Echonest Ids</a> (missing {{missing_echonest_count}})
     <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
   </li>
 

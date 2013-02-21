@@ -208,7 +208,7 @@ function collectLookups(query, provider, resource, bandField, callback) {
                             var set = {};
                             set[bandField] = matchId;
                             
-                            bandRepository.update({"band_id": bandId}, set, {}, function(err, updated) {
+                            bandRepository.update({"band_id": bandId}, {$set: set}, {}, function(err, updated) {
                                 if (err) {
                                     console.log(err); 
                                 }

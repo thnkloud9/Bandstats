@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class='band-image'>
-    <img class='image-droppable image draggable' src="">
+    <img id='bs-band-main-image' class='image-droppable image draggable' src="">
 </div>
 
 <div class='band-edit-main'>
@@ -21,13 +21,13 @@
         {{band.genres}}
     </form>
 
-    <form id="bs-band-edit">
+    <form id="bs-band-edit-form">
         <fieldset>
         band_id: <input type="hidden" name="band_id" value="{{band.band_id}}">{{band.band_id}}<br />
-        band_name: <input type="text" name="band_name" value="{{band.band_name}}"><br />
-        band_url: <input type="text" name="band_url" value="{{band.band_url}}"><br />
-        created: <input type="text" name="created" value="{{band.created}}"><br />
-        last_updated: <input type="text" name="last_updated" value="{{band.last_updated}}"><br />
+        band_name: <input class='bs-band-edit' type="text" name="band_name" value="{{band.band_name}}"><br />
+        band_url: <input class='bs-band-edit' type="text" name="band_url" value="{{band.band_url}}"><br />
+        created: <input type="hidden" name="created" value="{{band.created}}">{{band.created}}<br />
+        last_updated: <input type="hidden" name="last_updated" value="{{band.last_updated}}">{{band.last_updated}}<br />
         </fieldset>
     </form>
     <button id="bs-band-update">Update</button>
@@ -53,8 +53,8 @@
     <div id='tabs-1'>
       <div class='bs-external-ids-form'>
         <form id='bs-facebook-form'>
-            facebook_id: <input type='text' name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
-            <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            facebook_id: <input class='bs-band-edit' type='text' name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
+            <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
         </form>
 
@@ -64,7 +64,7 @@
         
         <h4>Tools</h4>
         <ul>
-            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids.facebook_id}}' class='bs-lookup' href='#'>Get Likes</a></li>
+            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids.facebook_id}}' data-band-id='{{band.band_id}}'  class='bs-lookup' href='#'>Get Likes</a></li>
         </ul>
       </div>
 
@@ -78,8 +78,8 @@
     <div id='tabs-2'>
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
-            <input type='text' name='external_ids.lastfm_id' value='{{band.external_ids.lastfm_id}}'>
-            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" class='bs-lookup' href='#'>lookup</a><br />
+            <input class='bs-band-edit' type='text' name='external_ids.lastfm_id' value="{{band.external_ids.lastfm_id}}">
+            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" data-band-id='{{band.band_id}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
         </form>
 
@@ -96,8 +96,8 @@
     <!-- Bandcamp Section -->
     <div id='tabs-3'>
         <form id='bs-bandcamp-form'>
-            <input type='text' name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
-            <a data-provider='bandcamp' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <input class='bs-band-edit' type='text' name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
+            <a data-provider='bandcamp' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
         </form>
     </div>
@@ -105,8 +105,8 @@
     <!-- Soundcloud Section -->
     <div id='tabs-4'>
         <form id='bs-soundcloud-form'>
-            <input type='text' name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
-            <a data-provider='soundcloud' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <input class='bs-band-edit' type='text' name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
+            <a data-provider='soundcloud' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}'  class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
         </form>
     </div>
@@ -114,8 +114,8 @@
     <!-- Musicbrainz Section -->
     <div id='tabs-5'>
         <form id='bs-musicbrainz-form'>
-            <input type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
-            <a data-provider='musicbrainz' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <input class='bs-band-edit' type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
+            <a data-provider='musicbrainz' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
         </form>
     </div>
@@ -123,10 +123,14 @@
     <!-- Echonest Section -->
     <div id='tabs-6'>
         <form id='bs-echonest-form'>
-            <input type='text' name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
-            <a data-provider='echonest' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' class='bs-lookup' href='#'>lookup</a><br />
+            <input class='bs-band-edit' type='text' name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
+            <a data-provider='echonest' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
         </form>
+
+      <!-- Echonest Profile -->
+      <div id='bs-echonest-profile' class='bs-external-ids-profile echonest-profile'>
+      </div> 
     </div>
 
     <!-- Youtube Section -->
@@ -151,8 +155,15 @@
 
 $(function() {
     var band = {{json.band}};
-    var articles = {};
-    var currentArticle = 1;
+
+    // used to hold api data about the band
+    var bandImages = [];
+    var bandBios = [];
+    var bandTerms = [];
+    var bandReviews = [];
+    var bandEvents = [];
+    var bandUrls = [];
+    var bandBlogs = []
 
     showChart('bs-facebook-likes-chart', band.running_stats.facebook_likes.daily_stats);
     showChart('bs-lastfm-listeners-chart', band.running_stats.lastfm_listeners.daily_stats);
@@ -163,6 +174,9 @@ $(function() {
     if (band.external_ids.lastfm_id) {
         showLastfmProfile(band.external_ids.lastfm_id);
     }
+    if (band.external_ids.echonest_id) {
+        showEchonestProfile(band.external_ids.echonest_id);
+    }
 
     /**
      * functions
@@ -170,6 +184,38 @@ $(function() {
      * these should go somewhere at some point
      * maybe backbone makes sense
      */
+    function showMainImage() {
+        if (bandImages.length) {
+            $('#bs-band-main-image').attr('src', bandImages[0]);    
+            $('#bs-band-main-image').attr('data-image-index', 0);    
+        }
+    }
+
+    function nextMainImage() {
+        var currentImage = $('#bs-band-main-image').attr('data-image-index');
+        var next = parseInt(currentImage) + 1;
+
+        if (bandImages[next]) {
+            $('#bs-band-main-image').attr('src', bandImages[next]);    
+            $('#bs-band-main-image').attr('data-image-index', next);    
+        } else {
+            $('#bs-band-main-image').attr('src', bandImages[0]);    
+            $('#bs-band-main-image').attr('data-image-index', 0);    
+        }
+    }
+
+    function prevMainImage() {
+        var currentImage = $('#bs-band-main-image').attr('data-image-index');
+        var next = parseInt(currentImage) - 1;
+        if (bandImages[next]) {
+            $('#bs-band-main-image').attr('src', bandImages[next]);    
+            $('#bs-band-main-image').attr('data-image-index', next);    
+        } else {
+            $('#bs-band-main-image').attr('src', bandImages[bandImages.length-1]);    
+            $('#bs-band-main-image').attr('data-image-index', 0);    
+        }
+    }
+
     function showChart(id, dataset) {
         var data = []
         var options = {
@@ -180,12 +226,95 @@ $(function() {
         };
         // format the data for the chart
         var data = []
+        var incrData = []
+        var previousValue = null;
         for (var p in dataset) {
-            var point = dataset[p]; 
-            data.push([new Date(point.date), point.value]);
+            var point = dataset[p];
+            var value = parseInt(point.value);
+            if (!previousValue) {
+                previousValue = value;
+            }
+            var incrValue = value - previousValue; 
+            
+            // push total
+            data.push([new Date(point.date), value]);
+            // push incr
+            incrData.push([new Date(point.date), incrValue]);
+
+            previousValue = parseInt(point.value);
         };
-        $.plot($('#' + id), [data], options);
+        $.plot($('#' + id), [data, incrData], options);
     };
+
+    function showEchonestProfile(echonestId) {
+        $.ajax({
+            url: '/echonest/' + encodeURIComponent(echonestId) + '/profile',
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var output = "";
+                if (response.images) {
+                    var first = true;
+                    for (var i in response.images) {
+                        var image = response.images[i];
+                        if (first && image.url) {
+                            output += "<img class='image-draggable lastfm-profile-img' src='" + image.url + "'>";
+                            first = false;
+                        }
+                        // add all images to the bands.images 
+                        bandImages.push(image.url);
+                    }
+                }
+                output += "<div><h3>" + response.name + "</h3></div>";
+
+                output += "<div class='clearright'>"; 
+                if (response.urls) {
+                    for (var u in response.urls) { 
+                        output += "<p><strong>url:</strong><a href='" + response.urls[u] + "'>" + u + "</a></p>";
+                        bandUrls.push(response.urls[u]);
+                    }
+                }
+                if (response.id) {
+                    output += "<p><strong>id:</strong> " + response.id + "</p>";
+                }
+                if (response.terms) {
+                    var terms = [];
+                    for (var t in response.terms) {
+                        var term = response.terms[t];
+                        terms.push(term.name);
+                        bandTerms.push(term.name);
+                    }
+                    
+                    output += "<p><strong>terms:</strong> " + terms.join(', ') + "</p>";
+                }
+                if (response.biographies) {
+                    // loop through bios
+                    var first = true;
+                    for (var b in response.biographies) {
+                        var bio = response.biographies[b];
+                        
+                        if (first && bio.text) {
+                            output += "<p><strong>bio:</strong> " + bio.text + "</p>";
+                            first = false;
+                        }
+                        bandBios.push(bio);
+                    }
+                }
+
+                output += "<p><strong>hotttnesss:</strong> " + response.hotttnesss + "</p>";
+                output += "<p><strong>familiarity:</strong> " + response.familiarity + "</p>";
+                output += "</div>"; 
+                $('#bs-echonest-profile').html(output);
+               
+                // update main band image 
+                showMainImage();
+                
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });
+    }
     
     function showLastfmProfile(lastfmId) {
         $.ajax({
@@ -199,7 +328,7 @@ $(function() {
                         var image = response.image[i];
                         if ((image.size === 'extralarge') && (image['#text'])) {
                             output += "<img class='image-draggable lastfm-profile-img' src='" + image['#text'] + "'>";
-                            
+                            bandImages.push(image['#text']);
                         }
                     }
                 }
@@ -216,23 +345,34 @@ $(function() {
                     var tags = [];
                     for (var tl in response.tags) {
                         var taglist = response.tags[tl];
-                        for (var t in taglist) {
-                            var tag = taglist[t];
-                            tags.push(tag.name);
+                        if (taglist.name) {
+                            tags.push(taglist.name);
+                            bandTerms.push(taglist.name);
+                        } else {
+                            for (var t in taglist) {
+                                var tag = taglist[t];
+                                if (tag.name) {
+                                    tags.push(tag.name);
+                                    bandTerms.push(tag.name);
+                                }
+                            }
                         }
                     }
                     
                     output += "<p><strong>tags:</strong> " + tags.join(', ') + "</p>";
                 }
-                if (response.bio.summary) {
+                if (response.bio) {
                     output += "<p><strong>bio:</strong> " + response.bio.summary + "</p>";
                 }
-
-                output += "<p><strong>listeners:</strong> " + response.stats.listeners + "</p>";
-                output += "<p><strong>plays:</strong> " + response.stats.playcount + "</p>";
+                if (response.stats) {
+                    output += "<p><strong>listeners:</strong> " + response.stats.listeners + "</p>";
+                    output += "<p><strong>plays:</strong> " + response.stats.playcount + "</p>";
+                }
                 output += "</div>"; 
                 $('#bs-lastfm-profile').html(output);
 
+                // update main band image 
+                showMainImage();
                 
             },
             error: function(err, status, msg) {
@@ -250,6 +390,7 @@ $(function() {
                 var output = "";
                 if (response.cover) {
                     output += "<img class='image-draggable facebook-profile-img' src='" + response.cover.source + "'>";
+                    bandImages.push(response.cover.source);
                 }
            
                 output += "<div><h3>" + response.name + "</h3></div>";
@@ -276,6 +417,9 @@ $(function() {
                 }
                 output += "</div>"; 
                 $('#bs-facebook-profile').html(output);
+
+                // update main band image 
+                showMainImage();
             },
             error: function(err, status, msg) {
                 console.log(err);
@@ -284,6 +428,11 @@ $(function() {
     };
 
     /* event listeners */
+   
+    //scroll through main images
+    $('#bs-band-main-image').live('click', function() {
+        nextMainImage();
+    });
     
     // delete record
     $('#bs-band-delete').live('click', function() {
@@ -308,8 +457,10 @@ $(function() {
     $('#bs-band-update').live('click', function() {
         var url = '';
         var type = '';
+        // unset external ids object
+        band.external_ids = undefined;
         // update locally
-        $('#bs-band-edit input').each(function() {
+        $('.bs-band-edit').each(function() {
             var name = $(this).attr('name');
             var value = $(this).val();
             band[name] = value;

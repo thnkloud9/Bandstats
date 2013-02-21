@@ -41,7 +41,7 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   }
 
 .content {
-  padding: 5px;
+  padding: 5px 5px 200px 5px;
   margin-bottom: 55px;
   height: 100%;
   }
@@ -71,6 +71,15 @@ a:hover, a:active {text-decoration: underline; outline:none;}
 
 .clearright {
   clear: right;
+  }
+
+.hidden {
+  height: 0px
+  width: 0px;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
   }
 
 /*navigation */
@@ -209,6 +218,10 @@ nav.external-ids {
   min-height: 80px;
   border-bottom: dashed 1px #adadad;
   padding: 5px;
+  -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
+  transition-duration: 0.5s;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -o-border-radius: 5px;

@@ -80,9 +80,9 @@ var FacebookController = function(db) {
             }
         };
         
-        // only send 500 due to rate limits (600 max)
+        // only send 100 due to rate limits (600 max)
         var options = {
-            "limit": 500
+            "limit": 100
         };
 
         // loop through bands and make search object to send to lookups

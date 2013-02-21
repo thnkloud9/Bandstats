@@ -9,6 +9,7 @@ var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
 var async = require('async');
 var moment = require('moment');
+var util = require('util');
 
 /**
  * constructor
@@ -120,6 +121,7 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
     var db = this.db;
     var collection = this.collection
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
+    var likes = parseInt(likes);
 
     // add toays stat with upsert to overwrite in case it was already collected today
     async.series({
@@ -134,8 +136,10 @@ BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) 
             var today = moment().format('YYYY-MM-DD');
             var set = { 
                 $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } },
-                $set: {"running_stats.facebook_likes.current": likes },
-                $set: {"running_stats.facebook_likes.last_updated": now }
+                $set: {
+                    "running_stats.facebook_likes.current": likes,
+                    "running_stats.facebook_likes.last_updated": now
+                }
             };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
@@ -163,6 +167,7 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
     var db = this.db;
     var collection = this.collection;
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
+    var listeners = parseInt(listeners);
 
     async.series({
         deleteToday: function(cb) {
@@ -176,8 +181,10 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
             var today = moment().format('YYYY-MM-DD');
             var set = { 
                 $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } },
-                $set: {"running_stats.lastfm_listeners.current": listeners },
-                $set: {"running_stats.lastfm_listeners.last_updated": now }
+                $set: {
+                    "running_stats.lastfm_listeners.current": listeners,
+                    "running_stats.lastfm_listeners.last_updated": now 
+                }
             };
             db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
                 cb(err, result);
@@ -202,7 +209,7 @@ BandRepository.prototype.getBandsIndex = function(query, callback) {
 
     this.db.collection(collection).find(query, {'band_name':1, 'band_id':1}).toArray(function(err, results) {
         if (err) {
-            console.log(err);
+            util.log(err);
             return false;
         }
        
@@ -275,7 +282,7 @@ BandRepository.prototype.count = function(query, callback) {
     var collection = this.collection;
     db.collection(collection).count(query, function(err, results) {
         if (err) {
-            console.log(err);
+            util.log(err);
             return false;
         }
        

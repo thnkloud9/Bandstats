@@ -86,8 +86,6 @@ var BandController = function(db) {
             $orderby: orderby
         }
 
-        console.log(orderedQuery);
-
         this.bandRepository.count(query, function(err, count) {
             parent.bandRepository.find(orderedQuery, options, function(err, bands) {
                 var results = {
@@ -189,7 +187,7 @@ var BandController = function(db) {
         var values = req.body.values;
         var bandRepository = this.bandRepository
 
-        bandRepository.update(query, values, {"multi": true}, function(err, updated) {
+        bandRepository.update(query, {$set: values}, {"multi": true}, function(err, updated) {
             if ((err) || (!updated)) {
                 res.send({status: "error", error: err});
                 return false;
