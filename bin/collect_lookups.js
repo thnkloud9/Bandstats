@@ -15,6 +15,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var nconf = require('nconf');
+var SoundcloudManager = require(path.join(__dirname, './../app/lib/SoundcloudManager.js'));
 var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'));
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
@@ -34,6 +35,7 @@ var bandRepository = new BandRepository({'db': db});
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
 var echonestManager = new EchonestManager();
+var soundcloudManager = new SoundcloudManager();
 
 /**
  * command parameters
@@ -189,6 +191,10 @@ function collectLookups(query, provider, resource, bandField, callback) {
                         var exactName = null;
                         for (var v in values) {
                             var value = values[v];
+                            // if soundcloud use username instead of name
+                            if (provider === "soundcloud") {
+                                value.name = value.username
+                            }
                             if (value.name) {
                                 var sanitizedValueName = sanitizeSearchString(value.name);
 

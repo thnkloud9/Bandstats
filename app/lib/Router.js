@@ -14,6 +14,7 @@ exports.initRoutes = function(app, db, jobScheduler) {
             if (/.js$/.test(file)) {
 
                 // add get route
+                // TODO: add authentication middle wear here
                 app.all('/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
                     mapRoute(file, request, response);
                 });

@@ -38,19 +38,19 @@
 <div id='bs-extneral-ids-tabs' class='tabs'>
     <nav class='external-ids'>
         <ul>
-            <li><a href='#tabs-1' rel='tabs-1' class='bs-tab'>Facebook</a></li>
-            <li><a href='#tabs-2' rel='tabs-2' class='bs-tab'>Lastfm</a></li>
-            <li><a href='#tabs-3' rel='tabs-3' class='bs-tab'>Bandcamp</a></li>
-            <li><a href='#tabs-4' rel='tabs-4' class='bs-tab'>Soundcloud</a></li>
-            <li><a href='#tabs-5' rel='tabs-5' class='bs-tab'>Musicbrainz</a></li>
-            <li><a href='#tabs-6' rel='tabs-6' class='bs-tab'>Echonest</a></li>
-            <li><a href='#tabs-7' rel='tabs-7' class='bs-tab'>Youtube</a></li>
-            <li><a href='#tabs-8' rel='tabs-8' class='bs-tab'>Articles</a></li>
+            <li><a href='#tabs-facebook' rel='tabs-facebook' class='bs-tab'>Facebook</a></li>
+            <li><a href='#tabs-lastfm' rel='tabs-lastfm' class='bs-tab'>Lastfm</a></li>
+            <li><a href='#tabs-bandcamp' rel='tabs-bandcamp' class='bs-tab'>Bandcamp</a></li>
+            <li><a href='#tabs-soundcloud' rel='tabs-soundcloud' class='bs-tab'>Soundcloud</a></li>
+            <li><a href='#tabs-musicbrainz' rel='tabs-musicbrainz' class='bs-tab'>Musicbrainz</a></li>
+            <li><a href='#tabs-echonest' rel='tabs-echonest' class='bs-tab'>Echonest</a></li>
+            <li><a href='#tabs-youtube' rel='tabs-youtube' class='bs-tab'>Youtube</a></li>
+            <li><a href='#tabs-articles' rel='tabs-articles' class='bs-tab'>Articles</a></li>
         </ul>
     </nav>
 
     <!-- Facebook Section -->
-    <div id='tabs-1'>
+    <div id='tabs-facebook'>
       <div class='bs-external-ids-form'>
         <form id='bs-facebook-form'>
             facebook_id: <input class='bs-band-edit' type='text' name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Lastfm Section -->
-    <div id='tabs-2'>
+    <div id='tabs-lastfm'>
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
             <input class='bs-band-edit' type='text' name='external_ids.lastfm_id' value="{{band.external_ids.lastfm_id}}">
@@ -94,7 +94,7 @@
     </div>
 
     <!-- Bandcamp Section -->
-    <div id='tabs-3'>
+    <div id='tabs-bandcamp'>
         <form id='bs-bandcamp-form'>
             <input class='bs-band-edit' type='text' name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
             <a data-provider='bandcamp' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
@@ -103,16 +103,20 @@
     </div>
 
     <!-- Soundcloud Section -->
-    <div id='tabs-4'>
+    <div id='tabs-soundcloud'>
         <form id='bs-soundcloud-form'>
             <input class='bs-band-edit' type='text' name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
             <a data-provider='soundcloud' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}'  class='bs-lookup' href='#'>lookup</a><br />
             <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
         </form>
+
+      <!-- Soundcloud Profile -->
+      <div id='bs-soundcloud-profile' class='bs-external-ids-profile soundcloud-profile'>
+      </div> 
     </div>
 
     <!-- Musicbrainz Section -->
-    <div id='tabs-5'>
+    <div id='tabs-musicbrainz'>
         <form id='bs-musicbrainz-form'>
             <input class='bs-band-edit' type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
             <a data-provider='musicbrainz' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
@@ -121,7 +125,7 @@
     </div>
 
     <!-- Echonest Section -->
-    <div id='tabs-6'>
+    <div id='tabs-echonest'>
         <form id='bs-echonest-form'>
             <input class='bs-band-edit' type='text' name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
             <a data-provider='echonest' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
@@ -134,12 +138,12 @@
     </div>
 
     <!-- Youtube Section -->
-    <div id='tabs-7'>
+    <div id='tabs-youtube'>
         <p>not implemented yet</p>
     </div>
 
     <!-- Article Mentions Section -->
-    <div id='tabs-8'>
+    <div id='tabs-articles'>
         <h4>Article Mentions</h2>
         <ul>
         {% for stat in band.mentions %}
@@ -176,6 +180,9 @@ $(function() {
     }
     if (band.external_ids.echonest_id) {
         showEchonestProfile(band.external_ids.echonest_id);
+    }
+    if (band.external_ids.soundcloud_id) {
+        showSoundcloudProfile(band.external_ids.soundcloud_id);
     }
 
     /**
@@ -219,10 +226,13 @@ $(function() {
     function showChart(id, dataset) {
         var data = []
         var options = {
-            legend: { show: false },
-            lines: { show: true },
-            points: { show: true },
-            xaxis: { mode: "time" }
+            legend: { show: true },
+            //points: { show: true },
+            xaxis: {
+                mode: "time",
+                timeformat: "%m/%d"
+            },
+            yaxes: [ { }, { position: "right", min: 0 } ]
         };
         // format the data for the chart
         var data = []
@@ -233,18 +243,82 @@ $(function() {
             var value = parseInt(point.value);
             if (!previousValue) {
                 previousValue = value;
+            } else {
+                var incrValue = (value - previousValue); 
+                // push incr
+                incrData.push([new Date(point.date), incrValue]);
+                previousValue = parseInt(point.value);
             }
-            var incrValue = value - previousValue; 
             
             // push total
             data.push([new Date(point.date), value]);
-            // push incr
-            incrData.push([new Date(point.date), incrValue]);
-
-            previousValue = parseInt(point.value);
         };
-        $.plot($('#' + id), [data, incrData], options);
+        console.log(data);
+        console.log(incrData);
+        $.plot($('#' + id), [
+            {
+                data: data,
+                lines: { show: true },
+                points: { show: true}
+            }, 
+            { 
+                data: incrData,
+                bars: { 
+                    show: true, 
+                    barWidth: 24*60*60*1000, 
+                },
+                yaxis: 2
+            }
+        ], options);
     };
+
+    function showSoundcloudProfile(soundcloudId) {
+        $.ajax({
+            url: '/soundcloud/' + encodeURIComponent(soundcloudId) + '/profile',
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var output = "";
+                if (response.avatar_url) {
+                    output += "<img class='image-draggable lastfm-profile-img' src='" + response.avatar_url + "'>";
+                    bandImages.push(response.avatar_url);
+                }
+                output += "<div><h3>" + response.username + "</h3></div>";
+                output += "<p><strong>" + response.full_name + "</strong></p>";
+
+                output += "<div class='clearright'>"; 
+                if (response.permalink_url) {
+                    output += "<p><strong>url:</strong><a href='" + response.permalink_url + "'>" + response.permalink_url + "</a></p>";
+                    bandUrls.push(response.uri);
+                }
+                if (response.id) {
+                    output += "<p><strong>id:</strong> " + response.id + "</p>";
+                }
+                if (response.city) {
+                    output += "<p>" + response.city;
+                    if (response.country) {
+                        output += ", " + response.country;
+                    }
+                    output += "</p>";
+                }
+                if (response.description) {
+                    output += "<p><strong>bio:</strong> " + response.description + "</p>";
+                    bandBios.push(response.description);
+                }
+
+                output += "<p><strong>followers:</strong> " + response.followers_count + "</p>";
+                output += "</div>"; 
+                $('#bs-soundcloud-profile').html(output);
+               
+                // update main band image 
+                showMainImage();
+                
+            },
+            error: function(err, status, msg) {
+                console.log(err);
+            }
+        });
+    }
 
     function showEchonestProfile(echonestId) {
         $.ajax({

@@ -131,7 +131,7 @@ LastfmManager.prototype.getListeners = function(lastfmId, callback) {
             return false;
         }
 
-        callback(null, body.artist.stats.listeners);
+        callback(null, parseInt(body.artist.stats.listeners));
     });
 
 }

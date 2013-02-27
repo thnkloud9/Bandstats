@@ -15,6 +15,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var nconf = require('nconf');
+var util = require('util');
 var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'));
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
@@ -57,7 +58,7 @@ program
         var all_start = new Date().getTime();
 
         if (!program.field || !program.provider || !program.resource) {
-            console.log('you must provide provider, resoruce, and field options');
+            util.log('you must provide provider, resoruce, and field options');
             process.exit(1);
         }
 
@@ -82,9 +83,9 @@ program
         
         collectRunningStats(query, program.provider, program.resource, program.field, function(err, results) {
             if (err) {
-                console.log(err);
+                util.log(err);
             }
-            console.log('done with all');
+            util.log('done with all');
             process.exit();
         })
     });
@@ -97,7 +98,7 @@ program
     .description('gets new likes from facebook graph api display, but does not save the value in mongo')
     .action(function() {
 
-        console.log('view not implemented');
+        util.log('view not implemented');
         process.exit(1);
     });
 
@@ -124,7 +125,7 @@ function sanitizeSearchString(text) {
 function collectRunningStats(query, provider, resource, runningStat, callback) {
     var lookupFunction = resource;
 
-    console.log('starting ' + runningStat + ' collection using ' + resource);
+    util.log('starting ' + runningStat + ' collection using ' + resource);
 
     var options = {
         "band_id": 1,
@@ -175,29 +176,28 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                     return false;
                 }
 
-                console.log('finished ' + runningStat + ' collection using ' + resource);
+                util.log('finished ' + runningStat + ' collection using ' + resource);
 
                 // save results here
                 async.forEach(results, function(result, rcb) {
-                    //var result = results[r];
                     var bandId = result.band_id;
                     var bandName = result.band_name;
                     var search = result.search;
                     var value = result.results;
 
-                    console.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value');
+                    util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value');
 
                     // save the record 
                     bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, function(err, updated) {
                         if (err) {
-                            console.log(err); 
+                            util.log(err); 
                         }
                         rcb(null, updated);
                     });
                      
                 },
                 function (err, finalResult) {
-                    console.log('finished ' + runningStat + ' collection database updates');
+                    util.log('finished ' + runningStat + ' collection database updates');
                     callback();
                 });
             });
