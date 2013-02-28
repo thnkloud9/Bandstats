@@ -1,0 +1,23 @@
+{% extends "./base.jinjs" %}
+{% block title %}Band Failed Lookups{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+<h3>Running Stats</h3>
+<ul>
+
+  <li>
+    <a href='/band/bad-facebook-ids'>Facebook Likes</a> (failed {{failed_facebook_likes_count}}) 
+    <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
+  </li>
+
+  <li>
+    <a href='/band/bad-lastfm-ids'>Lastfm Listeners</a> (failed {{failed_lastfm_listeners_count}})
+    <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
+  </li>
+
+</ul>
+
+{% endblock %}

@@ -29,7 +29,7 @@ var BandController = function(db) {
         var data = this.data;
         var template = require('./../views/band_index');
         res.send(template.render(_.extend(data, {"search": req.query.search})));
-    }
+    } 
 
     /**
      * server-side implementation to support
@@ -55,6 +55,11 @@ var BandController = function(db) {
                     {"band_url": search},
                 ]
             };
+        }
+
+        // if quey is present, override search
+        if (req.query.query) {
+            query = query;
         }
 
         var options = {
@@ -99,9 +104,59 @@ var BandController = function(db) {
         });
     }
 
+    this.failedAction = function(req, res) {
+        var data = this.data;
+        var parent = this;
+        // TODO get this list from nconf
+        var running_stats = ['facebook_likes', 'lastfm_listeners'];
+
+        // get number of failed ids for all running_stats 
+        async.forEach(running_stats, function(stat, cb) {
+            var statId = "running_stats." + stat + ".current";
+            var countId = "failed_" + stat + "_count";
+            var errorQuery = {};
+            var stringQuery ={};
+            errorQuery[statId] = /^error.*/;
+            stringQuery[statId] = {$type: 1};
+
+            var query = {
+                $or: [
+                    errorQuery,
+                    stringQuery 
+                ]
+            };
+
+            parent.bandRepository.count(query, function(err, results) {
+                var result = {};
+                result[countId] = results;
+                _.extend(data, result);
+                cb(err);
+            });
+        },
+        function (err) {
+            var template = require('./../views/band_failed');
+            res.send(template.render(data));
+        });
+    }
+
+    this.badLastfmIdsAction = function(req, res) {
+        this.bandRepository.getBadLastfmIds(function(err, results) {
+            res.send(results);
+
+        }); 
+    }
+
+    this.badFacebookIdsAction = function(req, res) {
+        this.bandRepository.getBadFacebookIds(function(err, results) {
+            res.send(results);
+
+        }); 
+    }
+
     this.lookupsAction = function(req, res) {
         var data = this.data;
         var parent = this;
+        // TODO get this list from nconf
         var apis = ['facebook', 'lastfm', 'musicbrainz', 'soundcloud', 'bandcamp', 'echonest'];
 
         // get number of missing ids for all external apis

@@ -1,11 +1,15 @@
-// really simple routing
+// simple rails style routing
 exports.initRoutes = function(app, db, jobScheduler) {
    
     var fs = require('fs');
 
     // Convert dash to camel string (by James Roberts)
     function dashToCamel(str) {
-        return str.replace(/(\-[a-z])/g, function($1) { return $1.toUpperCase().replace('-',''); });
+        if (str) {
+            return str.replace(/(\-[a-z])/g, function($1) { return $1.toUpperCase().replace('-',''); });
+        } else {
+            return str;
+        }
     };
    
     // get all js files in controllers subfolder
@@ -38,8 +42,8 @@ exports.initRoutes = function(app, db, jobScheduler) {
         // build action parameter
         if( !request.params.action ) {
             // see if action is first 
-            if (typeof controller[request.params.id + "Action"] === "function") {
-                request.params.action = request.params.id + "Action";
+            if (typeof controller[dashToCamel(request.params.id) + "Action"] === "function") {
+                request.params.action = dashToCamel(request.params.id) + "Action";
             } else {
                 request.params.action = "indexAction"; 
             }

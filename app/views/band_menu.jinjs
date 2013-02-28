@@ -2,7 +2,7 @@
   <div>
     <ul class="navlist">
       <li><a href="/band/0/edit">New Band</a></li>
-      <li><a href="/band/failed-lookups">Failed Lookups</a></li>
+      <li><a href="/band/failed">Failed Lookups</a></li>
       <li><a href="/band/dups">Duplicates</a></li>
       <li><a href="/bandi/fields">Edit Fields</a></li>
       <li><a href="/band/lookups">Lookups</a></li>

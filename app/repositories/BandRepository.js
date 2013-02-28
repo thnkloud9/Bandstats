@@ -203,6 +203,69 @@ BandRepository.prototype.updateLastfmListeners = function(query, listeners, call
     });
 };
 
+BandRepository.prototype.getBadLastfmIds = function(callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var query = {
+        $or: [
+            {"running_stats.lastfm_listeners.current": /^error.*/},
+            {"running_stats.lastfm_listeners.current": {$type: 1 }} 
+        ]
+    };
+    var options = {
+        "band_name": 1,
+        "band_id": 1,
+        "external_ids.lastfm_id": 1,
+        "running_stats.lastfm_listeners.current": 1
+    };
+
+    this.db.collection(collection).find(query, options).toArray(function(err, results) {
+        if (err) {
+            util.log(err);
+            return false;
+        }
+       
+        if (!results.length > 0) {
+            callback('no bands found', null);
+            return false;
+        }
+
+        callback(null, results);
+    });
+}
+
+
+BandRepository.prototype.getBadFacebookIds = function(callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var query = {
+        $or: [
+            {"running_stats.facebook_likes.current": /^error.*/},
+            {"running_stats.facebook_likes.current": {$type: 1 }} 
+        ]
+    };
+    var options = {
+        "band_name": 1,
+        "band_id": 1,
+        "external_ids.facebook_id": 1,
+        "running_stats.facebook_likes.current": 1
+    };
+
+    this.db.collection(collection).find(query, options).toArray(function(err, results) {
+        if (err) {
+            util.log(err);
+            return false;
+        }
+       
+        if (!results.length > 0) {
+            callback('no bands found', null);
+            return false;
+        }
+
+        callback(null, results);
+    });
+}
+
 BandRepository.prototype.getBandsIndex = function(query, callback) {
     var db = this.db;
     var collection = this.collection;
