@@ -54,8 +54,7 @@
       <div class='bs-external-ids-form'>
         <form id='bs-facebook-form'>
             facebook_id: <input class='bs-band-edit' type='text' name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
-            <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
+            <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
         <h4>Facebook Likes</h4>
@@ -64,7 +63,7 @@
         
         <h4>Tools</h4>
         <ul>
-            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids.facebook_id}}' data-band-id='{{band.band_id}}'  class='bs-lookup' href='#'>Get Likes</a></li>
+            <li><a data-provider='facebook' data-service='likes' data-resource='{{band.external_ids.facebook_id}}' data-band-id='{{band.band_id}}'  class='bs-lookup modal' href='#'>Get Likes</a></li>
         </ul>
       </div>
 
@@ -79,8 +78,7 @@
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
             <input class='bs-band-edit' type='text' name='external_ids.lastfm_id' value="{{band.external_ids.lastfm_id}}">
-            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" data-band-id='{{band.band_id}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
+            <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" data-band-id='{{band.band_id}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
         <h4>Lastfm Listeners</h4>
@@ -97,8 +95,7 @@
     <div id='tabs-bandcamp'>
         <form id='bs-bandcamp-form'>
             <input class='bs-band-edit' type='text' name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
-            <a data-provider='bandcamp' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-bandcamp' class='bs-lookup-matches'></div>
+            <a data-provider='bandcamp' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
     </div>
 
@@ -106,8 +103,7 @@
     <div id='tabs-soundcloud'>
         <form id='bs-soundcloud-form'>
             <input class='bs-band-edit' type='text' name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
-            <a data-provider='soundcloud' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}'  class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-soundcloud' class='bs-lookup-matches'></div>
+            <a data-provider='soundcloud' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}'  class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
       <!-- Soundcloud Profile -->
@@ -119,8 +115,7 @@
     <div id='tabs-musicbrainz'>
         <form id='bs-musicbrainz-form'>
             <input class='bs-band-edit' type='text' name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
-            <a data-provider='musicbrainz' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-musicbrainz' class='bs-lookup-matches'></div>
+            <a data-provider='musicbrainz' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
     </div>
 
@@ -128,8 +123,7 @@
     <div id='tabs-echonest'>
         <form id='bs-echonest-form'>
             <input class='bs-band-edit' type='text' name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
-            <a data-provider='echonest' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup' href='#'>lookup</a><br />
-            <div id='bs-lookup-matches-echonest' class='bs-lookup-matches'></div>
+            <a data-provider='echonest' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
       <!-- Echonest Profile -->
@@ -274,7 +268,7 @@ $(function() {
 
     function showSoundcloudProfile(soundcloudId) {
         $.ajax({
-            url: '/soundcloud/' + encodeURIComponent(soundcloudId) + '/profile',
+            url: '/admin/soundcloud/' + encodeURIComponent(soundcloudId) + '/profile',
             type: 'get',
             dataType: 'json',
             success: function(response) {
@@ -322,7 +316,7 @@ $(function() {
 
     function showEchonestProfile(echonestId) {
         $.ajax({
-            url: '/echonest/' + encodeURIComponent(echonestId) + '/profile',
+            url: '/admin/echonest/' + encodeURIComponent(echonestId) + '/profile',
             type: 'get',
             dataType: 'json',
             success: function(response) {
@@ -392,7 +386,7 @@ $(function() {
     
     function showLastfmProfile(lastfmId) {
         $.ajax({
-            url: '/lastfm/' + encodeURIComponent(lastfmId) + '/info',
+            url: '/admin/lastfm/' + encodeURIComponent(lastfmId) + '/info',
             type: 'get',
             dataType: 'json',
             success: function(response) {
@@ -457,7 +451,7 @@ $(function() {
 
     function showFacebookProfile(facebookId) {
         $.ajax({
-            url: '/facebook/' + facebookId + '/page',
+            url: '/admin/facebook/' + facebookId + '/page',
             type: 'get', 
             dataType: 'json',
             success: function(response) {
@@ -515,7 +509,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '../' + band.band_id + '/remove',
+            url: '/admin/band/' + band.band_id + '/remove',
             type: 'delete',
             dataType: 'json',
             success: function(response) {
@@ -541,10 +535,10 @@ $(function() {
         });
         // update on server
         if (!band.band_id) {
-            url = '../create';
+            url = '/admin/band/create';
             type = 'post';
         } else {
-            url = '../' + band.band_id + '/update';
+            url = '/admin/band/' + band.band_id + '/update';
             type = 'put';
         }  
         $.ajax({

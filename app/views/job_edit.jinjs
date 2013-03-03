@@ -37,7 +37,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '../' + job.job_id + '/remove',
+            url: '/admin/job/' + job.job_id + '/remove',
             type: 'delete',
             dataType: 'json',
             success: function(response) {
@@ -61,10 +61,10 @@ $(function() {
         });
         // update on server
         if (!job.job_id) {
-            url = '../create';
+            url = '/admin/job/create';
             type = 'post';
         } else {
-            url = '../' + job.job_id + '/update';
+            url = '/admin/job/' + job.job_id + '/update';
             type = 'put';
         }  
         $.ajax({

@@ -1,14 +1,14 @@
 <div class="site-sub-menu">
   <div>
     <ul class="navlist">
-      <li><a href="/site/0/edit">New Site</a></li>
-      <li><a href="/site/failed">Failed Lookups</a></li>
-      <li><a href="/site/dups">Duplicates</a></li>
-      <li><a href="/site">Edit Fields</a></li>
+      <li><a href="/admin/site/0/edit">New Site</a></li>
+      <li><a href="/admin/site/failed">Failed Lookups</a></li>
+      <li><a href="/admin/site/dups">Duplicates</a></li>
+      <li><a href="/admin/site">Edit Fields</a></li>
     </ul>
   </div>
   <div>
-    <form action="/site">
+    <form action="/admin/site">
       <input type="test" name="search" value="">
       <button id="search">Search</button>
     </form>

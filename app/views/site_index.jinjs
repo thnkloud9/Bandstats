@@ -8,7 +8,7 @@
 
 <ul>
 {% for site in sites %}
-    <li>{{site.site_id}} <a href="/site/{{site.site_id}}/edit">{{ site.site_name }}</a></li>
+    <li>{{site.site_id}} <a href="/admin/site/{{site.site_id}}/edit">{{ site.site_name }}</a></li>
 {% endfor %}
 </ul>
 

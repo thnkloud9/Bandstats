@@ -44,7 +44,7 @@ $(function() {
         }
 
         $.ajax({
-            url: '../' + site.site_id + '/remove',
+            url: '/admin/site/' + site.site_id + '/remove',
             type: 'delete',
             dataType: 'json',
             success: function(response) {
@@ -68,10 +68,10 @@ $(function() {
         });
         // update on server
         if (!site.site_id) {
-            url = '../create';
+            url = '/admin/site/create';
             type = 'post';
         } else {
-            url = '../' + site.site_id + '/update';
+            url = '/admin/site/' + site.site_id + '/update';
             type = 'put';
         }  
         $.ajax({
@@ -92,7 +92,7 @@ $(function() {
     $('#bs-view-article').live('click', function() {
         if ($.isEmptyObject(articles)) {
             $.ajax({
-                url: '../' + site.site_id + '/articles',
+                url: '/admin/site/' + site.site_id + '/articles',
                 type: 'get',
                 dataType: 'json',
                 success: function(response) {

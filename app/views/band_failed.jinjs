@@ -9,12 +9,12 @@
 <ul>
 
   <li>
-    <a href='/band/bad-facebook-ids'>Facebook Likes</a> (failed {{failed_facebook_likes_count}}) 
+    <a href='/admin/band/bad-facebook-ids'>Facebook Likes</a> (failed {{failed_facebook_likes_count}}) 
     <div id='bs-lookup-matches-facebook' class='bs-lookup-matches'></div>
   </li>
 
   <li>
-    <a href='/band/bad-lastfm-ids'>Lastfm Listeners</a> (failed {{failed_lastfm_listeners_count}})
+    <a href='/admin/band/bad-lastfm-ids'>Lastfm Listeners</a> (failed {{failed_lastfm_listeners_count}})
     <div id='bs-lookup-matches-lastfm' class='bs-lookup-matches'></div>
   </li>
 

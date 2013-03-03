@@ -8,7 +8,7 @@
 
 <ul>
 {% for job in jobs %}
-    <li>{{job.job_id}} <a href="/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
+    <li>{{job.job_id}} <a href="/admin/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
         {{job.job_schedule}} 
     </li>
 {% endfor %}

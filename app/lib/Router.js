@@ -18,9 +18,8 @@ exports.initRoutes = function(app, db, jobScheduler) {
             if (/.js$/.test(file)) {
 
                 // add get route
-                // TODO: add authentication middle wear here
                 app.all('/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
-                    mapRoute(file, request, response);
+                    mapRoute('./../controllers/', file, request, response);
                 });
                 
             }
@@ -28,8 +27,24 @@ exports.initRoutes = function(app, db, jobScheduler) {
         });
     });
 
-    function mapRoute(file, request, response) {
-        var mdl = require('./../controllers/'+file);
+    // get all js files in controllers/admin subfolder
+    fs.readdir(__dirname + '/../controllers/admin/', function(err, files) {
+        files.forEach(function(file) {
+            if (/.js$/.test(file)) {
+
+                // add get route
+                // TODO: add authentication middle wear here
+                app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
+                    mapRoute('./../controllers/admin/', file, request, response);
+                });
+                
+            }
+
+        });
+    });
+
+    function mapRoute(path, file, request, response) {
+        var mdl = require(path + file);
 
         if (file === 'JobController.js') {
             // pass db and scheduler to jobs controller

@@ -46,7 +46,7 @@ var Lookup = function(provider, resource, service) {
 
     this._send = function(search, callback) {
         var parent = this;
-        var url = '/' + this.provider + '/' + this.resource + '/' + this.service;
+        var url = '/admin/' + this.provider + '/' + this.resource + '/' + this.service;
         if (search) {
             url += '?search=' + search;
         };
@@ -73,17 +73,16 @@ var Lookup = function(provider, resource, service) {
     };
 
     this.showLikes = function() {
-        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var displayElement = '#modal';
         var response = this.matches;
-        var output = this.getCloseButton();
 
-        output += "<div>";
+        $(displayElement).removeClass('loading');
+        output = "<div>";
         output += "<h4>Facebook Likes:</h4>";
         output += response;
         output += "</div>";
 
-        $(displayElement).html(output);
-        $(displayElement).show();
+        $(displayElement).append(output);
     }
 
     this.getMatches = function(search) {
@@ -116,17 +115,12 @@ var Lookup = function(provider, resource, service) {
         return false;
     };
 
-    this.getCloseButton = function() {
-        return "<div class='bs-lookup-close'><a class='bs-lookup-matches-close' href='#'>close</a></div>";
-    };
-
     this.showSoundcloudMatches = function(id) {
-        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var displayElement = '#modal';
         var response = this.matches;
-        var output = this.getCloseButton();
+        var output = "<ul>";
 
-        output += "<ul>";
-        $(displayElement).empty();
+        $(displayElement).removeClass('loading');
         for (var r in response) {
             var result = response[r];
             
@@ -190,17 +184,15 @@ var Lookup = function(provider, resource, service) {
             output += "</li>";
         }
         output += "</ul>";
-        $(displayElement).html(output);
-        $(displayElement).show();
+        $(displayElement).append(output);
     }
 
     this.showEchonestMatches = function(id) {
-        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var displayElement = '#modal';
         var response = this.matches;
-        var output = this.getCloseButton();
+        var output = "<ul>";
 
-        output += "<ul>";
-        $(displayElement).empty();
+        $(displayElement).removeClass('loading');
         for (var r in response) {
             var result = response[r];
             
@@ -258,17 +250,15 @@ var Lookup = function(provider, resource, service) {
             output += "</li>";
         }
         output += "</ul>";
-        $(displayElement).html(output);
-        $(displayElement).show();
+        $(displayElement).append(output);
     }
 
     this.showLastfmMatches = function(id) {
-        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var displayElement = '#modal';
         var response = this.matches;
-        var output = this.getCloseButton();
+        var output = "<ul>";
 
-        output += "<ul>";
-        $(displayElement).empty();
+        $(displayElement).removeClass('loading');
         for (var r in response) {
             var result = response[r];
             
@@ -320,17 +310,15 @@ var Lookup = function(provider, resource, service) {
             output += "</li>";
         }
         output += "</ul>";
-        $(displayElement).html(output);
-        $(displayElement).show();
+        $(displayElement).append(output);
     };
 
     this.showFacebookMatches = function(id) {
-        var displayElement = '#bs-lookup-matches-' + this.provider;
+        var displayElement = '#modal';
         var response = this.matches;
-        var output = this.getCloseButton();
+        var output = "<ul>";
 
-        output += "<ul>";
-        $(displayElement).empty();
+        $(displayElement).removeClass('loading');
         for (var r in response) {
             var result = response[r];
 
@@ -387,8 +375,7 @@ var Lookup = function(provider, resource, service) {
             output += "</li>";
         }
         output += "</ul>";
-        $(displayElement).html(output);
-        $(displayElement).show();
+        $(displayElement).append(output);
     };
 
     this.saveMatch = function(provider, bandId, externalId) {
@@ -430,7 +417,6 @@ $(function() {
         var bandId = $(this).attr('data-band-id');
 
         externalLookup.lookup(provider, resource, service, search, bandId);
-
         //return false;
     });
 

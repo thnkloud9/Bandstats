@@ -1,0 +1,12 @@
+<html>
+<body>
+  <h4>Bandstats Admin User Login</h4> 
+  <form id="user-add-form" action="/login/login" method="post">
+    <fieldset>
+      username: <input type="text" id="username" name="username"><br />
+      password: <input type="password" id="password" name="password"><br />
+      <button>Subtmit</button>
+    </fieldset>
+  </form>
+</body>
+</html>

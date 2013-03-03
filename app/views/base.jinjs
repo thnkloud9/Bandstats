@@ -24,4 +24,6 @@
         &copy; Copyright 2013 by <a href="http://domain.invalid/">yo momma</a>.
         {% endblock %}
     </div>
+    <div id="overlay"></div>
+    <div id="modal"></div>
 </body>

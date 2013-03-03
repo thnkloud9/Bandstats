@@ -14,6 +14,7 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var passport = require('passport');
 
 require("jinjs").registerExtension(".jinjs");
 
@@ -23,6 +24,30 @@ require("jinjs").registerExtension(".jinjs");
 nconf.file(path.join(__dirname, 'app/config/app.json'));
 
 /**
+ * auth strategy
+ */
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    /*
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+    */
+    return done(null, {"username": "fake_admin"});
+  }
+));
+
+/**
  * web server 
  */
 var node_port = nconf.get('app:port');
@@ -30,6 +55,8 @@ var app = module.exports.app = express()
 app.configure(function() {
     app.set('title', nconf.get('app:title'));
     app.use(express.bodyParser());
+    app.use(express.cookieParser());
+    app.use(express.methodOverride());
 
     // use jinjs for templates
     //app.set("view options", { jinjs_pre_compile: function (str) { return parse_pwilang(str); } });
@@ -39,6 +66,12 @@ app.configure(function() {
 
     // setup public folder
     app.use(express.static(__dirname + '/public'));
+
+    // authentication and sessions
+    app.use(express.session({ secret: 'bandstats tracks'}));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
 })
 
 /**
