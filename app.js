@@ -14,6 +14,7 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var flash = require('connect-flash');
 var passport = require('passport');
 
 require("jinjs").registerExtension(".jinjs");
@@ -24,27 +25,48 @@ require("jinjs").registerExtension(".jinjs");
 nconf.file(path.join(__dirname, 'app/config/app.json'));
 
 /**
+ * database
+ */
+var db = require('mongoskin').db(nconf.get('db:host'), {
+    port: nconf.get('db:port'),
+    database: nconf.get('db:database'),
+    safe: true,
+    strict: false
+});
+
+/**
  * auth strategy
  */
+var UserRepository = require('./app/repositories/UserRepository.js');
+var userRepository = new UserRepository({"db": db});
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    /*
-    User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+passport.serializeUser(function(user, done) {
+    done(null, user.user_id);
+});
+
+passport.deserializeUser(function(user_id, done) {
+    userRepository.findOne({"user_id": user_id }, function (err, user) {
+        done(err, user);
     });
-    */
-    return done(null, {"username": "fake_admin"});
-  }
+});
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        userRepository.findOne({"username": username}, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) {
+                return done(null, false, { message: 'Incorrect username.' });
+            }
+            userRepository.validPassword(user, password, function(err, isMatch) {
+                if (!isMatch) {
+                    return done(null, false, { message: 'Incorrect password.' });
+                }
+                return done(null, user);
+            });
+        });
+    }
 ));
 
 /**
@@ -68,21 +90,12 @@ app.configure(function() {
     app.use(express.static(__dirname + '/public'));
 
     // authentication and sessions
+    app.use(flash());
     app.use(express.session({ secret: 'bandstats tracks'}));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);
 })
-
-/**
- * database
- */
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
 
 /**
  * Load the JobSchedule
@@ -95,7 +108,7 @@ jobScheduler.initSchedule();
  * Load Router, which will autoload additional
  * controllers in app/controllers
  */
-require('./app/lib/Router.js').initRoutes(app, db, jobScheduler);
+require('./app/lib/Router.js').initRoutes(app, passport, db, jobScheduler);
 
 /**
  * Start Server

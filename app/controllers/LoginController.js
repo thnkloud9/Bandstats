@@ -1,6 +1,8 @@
 /**
  * Login Controller
  *
+ * login form and login post are defined in app/lib/Router.js
+ *
  * author: Mark Lewis
  */
 
@@ -20,48 +22,6 @@ var LoginController = function(db) {
      */
     this.userRepository = new UserRepository({'db': db});
     this.data = {"section": "user"};
-
-    // show the login form
-    this.indexAction = function(req, res) {
-        var data = this.data;
-        var template = require('./../views/login');
-        res.send(template.render(data));
-    }
-
-    this.loginAction = function(req, res) {
-        if ((req.route.method != "post") || (!req.body)) {
-            var data = {
-                status: "error",
-                error: "insert must be post action and must include values",
-                method: req.route.method,
-                body: req.body
-            };
-            res.send(data);
-        }
-        var parent = this;
-        var query = {
-            "username": req.body.username
-        }
-        this.userRepository.findOne(query, function(err, user) {
-            if ((err) || (!user)) {
-               res.send({status: "error", error: "user not found"});
-               return false;
-            }
-            parent.userRepository.validPassword(user, req.body.password, function(err, isMatch) {
-                if (isMatch) {
-                    res.send('passwords matched');
-                } else {
-                    var data = {
-                        status: "error",
-                        error: "incorrect password",
-                        method: req.route.method,
-                        body: req.body
-                    };
-                    res.send(data);
-                }
-            });
-        }); 
-    }
 
     this.registerAction = function(req, res) {
         var userRepository = this.userRepository;

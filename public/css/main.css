@@ -37,6 +37,11 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   padding-right: 20px;
  }
 
+#logout {
+  float: right;
+  margin-top: -10px;
+  }
+
 .submenu {
   }
 

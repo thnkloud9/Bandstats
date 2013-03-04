@@ -28,6 +28,7 @@ var BandController = function(db) {
     this.indexAction = function(req, res) {
         var data = this.data;
         var template = require(this.viewPath + 'band_index');
+        console.log(req.user);
         res.send(template.render(_.extend(data, {"search": req.query.search})));
     } 
 

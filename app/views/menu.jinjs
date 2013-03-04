@@ -4,3 +4,6 @@
     <li><a href="/admin/setting">Settings</a></li>
     <li><a href="/admin/job">Jobs</a></li>
 </ul>
+<div id="logout">
+    <a id="logout" href="/logout">logout</a>
+</div>

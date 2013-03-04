@@ -247,8 +247,6 @@ $(function() {
             // push total
             data.push([new Date(point.date), value]);
         };
-        console.log(data);
-        console.log(incrData);
         $.plot($('#' + id), [
             {
                 data: data,

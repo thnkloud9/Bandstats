@@ -1,17 +1,23 @@
 // simple rails style routing
-exports.initRoutes = function(app, db, jobScheduler) {
+exports.initRoutes = function(app, passport, db, jobScheduler) {
    
     var fs = require('fs');
 
-    // Convert dash to camel string (by James Roberts)
-    function dashToCamel(str) {
-        if (str) {
-            return str.replace(/(\-[a-z])/g, function($1) { return $1.toUpperCase().replace('-',''); });
-        } else {
-            return str;
-        }
-    };
-   
+    // login stuff first
+    app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
+        res.redirect('/admin/band');
+    });
+
+    app.get('/login', function(req, res){
+        var template = require('./../views/login');
+        res.send(template.render({}));
+    });
+
+    app.get('/logout', function(req, res){
+        req.logout();
+        res.redirect('/login');
+    });
+
     // get all js files in controllers subfolder
     fs.readdir(__dirname + '/../controllers/', function(err, files) {
         files.forEach(function(file) {
@@ -34,7 +40,7 @@ exports.initRoutes = function(app, db, jobScheduler) {
 
                 // add get route
                 // TODO: add authentication middle wear here
-                app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
+                app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', ensureAuthenticated, function(request, response) {
                     mapRoute('./../controllers/admin/', file, request, response);
                 });
                 
@@ -73,5 +79,19 @@ exports.initRoutes = function(app, db, jobScheduler) {
             response.send(request.params.action + ' is not a controller action');
         }
         delete controller;
-    };
-};
+    }
+
+    function ensureAuthenticated(req, res, next) {
+        if (req.isAuthenticated()) { return next(); }
+        res.redirect('/login')
+    }
+
+    // Convert dash to camel string (by James Roberts)
+    function dashToCamel(str) {
+        if (str) {
+            return str.replace(/(\-[a-z])/g, function($1) { return $1.toUpperCase().replace('-',''); });
+        } else {
+            return str;
+        }
+    }
+}
