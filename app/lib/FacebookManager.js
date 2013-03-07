@@ -137,6 +137,7 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
         var bandId = searchItem.band_id;
         var bandName = searchItem.band_name;
         var searchTerm = searchItem.search;
+        var previous = searchItem.previous;
 
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
@@ -148,7 +149,8 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
                 "band_id": bandId,
                 "band_name": bandName,
                 "search": searchTerm,
-                "results": results
+                "results": results,
+                "previous": previous
             };
 
             searchResults.push(searchResult); 

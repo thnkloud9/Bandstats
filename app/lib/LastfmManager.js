@@ -76,7 +76,8 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
                 "band_id": bandId,
                 "band_name": bandName,
                 "search": searchTerm,
-                "results": results
+                "results": results,
+                "previous": previous 
             };
 
             searchResults.push(searchResult); 

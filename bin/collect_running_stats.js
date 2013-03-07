@@ -16,6 +16,7 @@ var fs = require('fs');
 var path = require('path');
 var nconf = require('nconf');
 var util = require('util');
+var moment = require('moment');
 var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'));
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
@@ -128,6 +129,7 @@ function sanitizeSearchString(text) {
 function collectRunningStats(query, provider, resource, runningStat, callback) {
     var jobStats = {};
     var lookupFunction = resource;
+    var yesterday = moment().subtract('days', 1).format('YYYY-MM-DD');
 
     util.log('starting ' + runningStat + ' collection using ' + resource);
 
@@ -137,6 +139,7 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
         "_id": 0,
     };
     options['external_ids.' + provider + '_id'] = 1;
+    options['running_stats.' + runningStat + '.daily_stats'] = 1;
 
     if (program.limit) {
         options.limit = program.limit;
@@ -159,9 +162,20 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
  
         // build searchObj
         async.forEach(results, function(band, cb) {
+            // find yesterdays stat
+            var previous = 0;
+            var existingRunningStats = band.running_stats[runningStat].daily_stats;
+            for (var s in existingRunningStats) {
+                var stat = existingRunningStats[s];
+                if (stat.date == yesterday) {
+                   previous = stat.value;
+                } 
+            }
+
             var searchItem = {
                 "band_id": band.band_id,
                 "band_name": band.band_name,
+                "previous": previous,
                 "search": band.external_ids[provider + '_id']
             };
 
@@ -194,12 +208,13 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                     var bandName = result.band_name;
                     var search = result.search;
                     var value = result.results;
-
-                    util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value');
+                    var previous = result.previous;
+                    console.log(result);
+                    util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value and previous ' + previous);
                     jobStats.processed++;
 
                     // save the record 
-                    bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, function(err, updated) {
+                    bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, previous, function(err, updated) {
                         if (err) {
                             jobStats.errors++;
                             util.log(err); 

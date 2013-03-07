@@ -36,7 +36,7 @@ var jobRepository = new JobRepository({'db': db});
 var siteRepository = new SiteRepository({"db": db});
 var bandRepository = new BandRepository({"db": db});
 var processStart = new Date().getTime();
-
+var processed = 0;
 /**
  * command parameters
  */
@@ -80,6 +80,7 @@ program
                         var query = {"job_id": program.job_id};
                         var values = {
                             $set: {
+                                "job_processed": processed,
                                 "job_last_run": new Date(),
                                 "job_duration": duration
                             }
@@ -138,6 +139,7 @@ program
                         var query = {"job_id": program.job_id};
                         var values = {
                             $set: {
+                                "job_processed": processed,
                                 "job_last_run": new Date(),
                                 "job_duration": duration
                             }
@@ -166,6 +168,7 @@ program
                     var query = {"job_id": program.job_id};
                     var values = {
                         $set: {
+                            "job_processed": processed,
                             "job_last_run": new Date(),
                             "job_duration": duration
                         }
@@ -201,6 +204,7 @@ function parseSiteArticles(site, save, callback) {
             }
             // loop through articles
             async.forEachSeries(articles, function(article, scb) {
+                processed++;
                 // loop through bands 
                 async.forEachSeries(bands, function(band, cb) {
                     var match = articleHasMatch(site, article, band);
