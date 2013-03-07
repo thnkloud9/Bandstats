@@ -138,6 +138,8 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
         var bandName = searchItem.band_name;
         var searchTerm = searchItem.search;
         var previous = searchItem.previous;
+        var totalStats = searchItem.total_stats;
+        var incrementalTotal = searchItem.incremental_total;
 
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
@@ -150,6 +152,8 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
                 "band_name": bandName,
                 "search": searchTerm,
                 "results": results,
+                "total_stats": totalStats,
+                "incremental_total": incrementalTotal,
                 "previous": previous
             };
 

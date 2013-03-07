@@ -164,18 +164,24 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
         async.forEach(results, function(band, cb) {
             // find yesterdays stat
             var previous = 0;
+            var incrementalTotal = 0;
+            var totalStats = 0;
             var existingRunningStats = band.running_stats[runningStat].daily_stats;
             for (var s in existingRunningStats) {
                 var stat = existingRunningStats[s];
                 if (stat.date == yesterday) {
                    previous = stat.value;
-                } 
+                }
+                incrementalTotal += stat.incremental; 
+                totalStats++;
             }
 
             var searchItem = {
                 "band_id": band.band_id,
                 "band_name": band.band_name,
                 "previous": previous,
+                "total_stats": totalStats,
+                "incremental_total": incrementalTotal,
                 "search": band.external_ids[provider + '_id']
             };
 
@@ -209,12 +215,17 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                     var search = result.search;
                     var value = result.results;
                     var previous = result.previous;
-                    console.log(result);
+                    var totalStats = result.total_stats;
+                    var incrementalTotal = result.incremental_total;
+                    var incremental = parseInt(value) - parseInt(previous);
+                    incrementalTotal += incremental;
+                    var incrementalAvg = Math.round(incrementalTotal / totalStats);
+
                     util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value and previous ' + previous);
                     jobStats.processed++;
 
                     // save the record 
-                    bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, previous, function(err, updated) {
+                    bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
                         if (err) {
                             jobStats.errors++;
                             util.log(err); 

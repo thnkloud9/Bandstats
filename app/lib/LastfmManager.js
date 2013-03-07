@@ -65,6 +65,9 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
         var bandId = searchItem.band_id;
         var bandName = searchItem.band_name;
         var searchTerm = searchItem.search;
+        var previous = searchItem.previous;
+        var totalStats = searchItem.total_stats;
+        var incrementalTotal = searchItem.incremental_total;
 
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
@@ -77,7 +80,9 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
                 "band_name": bandName,
                 "search": searchTerm,
                 "results": results,
-                "previous": previous 
+                "previous": previous,
+                "total_stats": totalStats,
+                "incremental_total": incrementalTotal
             };
 
             searchResults.push(searchResult); 

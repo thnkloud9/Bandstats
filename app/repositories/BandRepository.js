@@ -65,12 +65,12 @@ BandRepository.prototype.remove = function(query, options, callback) {
  * Band specific functions
  */
 
-BandRepository.prototype.updateRunningStat = function(query, stat, value, previous, callback) {
+BandRepository.prototype.updateRunningStat = function(query, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
     var db = this.db;
     var collection = this.collection
     var today = moment().format('YYYY-MM-DD');
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
-    var incremental = parseInt(value) - parseInt(previous);
+
     // add toays stat with upsert to overwrite in case it was already collected today
     async.series({
         deleteToday: function(cb) {
@@ -86,7 +86,8 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, previo
             var setFields = {};
             runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value, "incremental": incremental };
             setFields["running_stats." + stat + ".current"] = value;
-            setFields["running_stats." + stat + ".incremental"] = incremental;
+            setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
+            setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
             setFields["running_stats." + stat + ".last_udpated"] = now;
             var set = { 
                 $addToSet: runningStat,
