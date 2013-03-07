@@ -11,19 +11,31 @@
 var program = require('commander');
 var request = require('request');
 var async = require('async');
+var _ = require('underscore');
 var moment = require('moment');
-var xml2js = require('xml2js');
+var fs = require('fs');
+var path = require('path');
+var nconf = require('nconf');
+var util = require('util');
+var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
+var SiteRepository = require(path.join(__dirname,'/../app/repositories/SiteRepository.js'));
+var BandRepository = require(path.join(__dirname,'/../app/repositories/BandRepository.js'));
 
-var db = require('mongoskin').db('localhost:27017', {
-  database: 'bandstats',
-  safe: true,
-  strict: false,
+/**
+ * config, db, and app stuff
+ */
+nconf.file(path.join(__dirname, '/../app/config/app.json'));
+var db = require('mongoskin').db(nconf.get('db:host'), {
+    port: nconf.get('db:port'),
+    database: nconf.get('db:database'),
+    safe: true,
+    strict: false
 });
 
-var SiteRepository = require('./../app/repositories/SiteRepository.js');
+var jobRepository = new JobRepository({'db': db}); 
 var siteRepository = new SiteRepository({"db": db});
-var BandRepository = require('./../app/repositories/BandRepository.js');
 var bandRepository = new BandRepository({"db": db});
+var processStart = new Date().getTime();
 
 /**
  * command parameters
@@ -31,6 +43,7 @@ var bandRepository = new BandRepository({"db": db});
 program
     .version('0.0.1')
     .option('-i, --site_id <site_id>', 'site id (numeric)')
+    .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-n, --site_name <site_name>', 'site name')
 
 /**
@@ -40,7 +53,7 @@ program
     .command('update')
     .description('gets new articles from site, checks all bands for matches and saves matches in mongo')
     .action(function() {
-        console.log('updating');
+        util.log('updating');
         if (program.site_id) {
             var query = { 'site_id': program.site_id };
         } else if (program.site_name) {
@@ -51,19 +64,34 @@ program
             siteRepository.find(query, {}, function(err, sites) {
                 async.forEachSeries(sites, function(site, cb) {
                     parseSiteArticles(site, true, function(err) {
-                        console.log('processing ' + site.site_name);
                         if (err) {
-                            console.log(err);
+                            util.log(err);
                         } 
                         cb();
                     });
                 },
                 function(err) {
                     if (err) {
-                        console.log(err);
+                        util.log(err);
                     }
-                    console.log('done with all');
-                    process.exit(1);
+                    var processEnd = new Date().getTime();
+                    var duration = (processEnd - processStart);
+                    if (program.job_id) {
+                        var query = {"job_id": program.job_id};
+                        var values = {
+                            $set: {
+                                "job_last_run": new Date(),
+                                "job_duration": duration
+                            }
+                        }
+                        jobRepository.update(query, values, function(err, result) {
+                            util.log('done with all');
+                            process.exit(1);
+                        });
+                    } else {
+                        util.log('done with all');
+                        process.exit(1);
+                    }
                 }); 
             });
             return false;
@@ -93,19 +121,35 @@ program
             siteRepository.find(query, {}, function(err, sites) {
                 async.forEachSeries(sites, function(site, cb) {
                     parseSiteArticles(site, false, function(err) {
-                        console.log('processing ' + site.site_name);
+                        util.log('processing ' + site.site_name);
                         if (err) {
-                            console.log(err);
+                            util.log(err);
                         } 
                         cb();
                     });
                 },
                 function(err) {
                     if (err) {
-                        console.log(err);
+                        util.log(err);
                     }
-                    console.log('done with all');
-                    process.exit(1);
+                    var processEnd = new Date().getTime();
+                    var duration = (processEnd - processStart);
+                    if (program.job_id) {
+                        var query = {"job_id": program.job_id};
+                        var values = {
+                            $set: {
+                                "job_last_run": new Date(),
+                                "job_duration": duration
+                            }
+                        }
+                        jobRepository.update(query, values, function(err, result) {
+                            util.log('done with all');
+                            process.exit(1);
+                        });
+                    } else {
+                        util.log('done with all');
+                        process.exit(1);
+                    }
                 }); 
             });
             return false;
@@ -114,9 +158,26 @@ program
         siteRepository.findOne(query, function(err, site) {
             parseSiteArticles(site, false, function(err, results) {
                 if (err) {
-                    console.log(err);
+                    util.log(err);
                 }
-                process.exit(1);
+                var processEnd = new Date().getTime();
+                var duration = (processEnd - processStart);
+                if (program.job_id) {
+                    var query = {"job_id": program.job_id};
+                    var values = {
+                        $set: {
+                            "job_last_run": new Date(),
+                            "job_duration": duration
+                        }
+                    }
+                    jobRepository.update(query, values, function(err, result) {
+                        util.log('done with all');
+                        process.exit(1);
+                    });
+                } else {
+                    util.log('done with all');
+                    process.exit(1);
+                }
             });
         });
     });
@@ -129,10 +190,15 @@ program.parse(process.argv);
  * TODO: move these to modules
  */
 function parseSiteArticles(site, save, callback) {
+    util.log("processing " + site.site_name);
     // get band list
     bandRepository.getBandsIndex({"band_name": { $ne: "" } }, function(err, bands) {
         // get new articles  
-        siteRepository.getNewArticles(site, function(err, articles) {
+        siteRepository.getNewArticles(site, function(err, meta, articles) {
+            if (err || !articles) {
+                callback();
+                return false;
+            }
             // loop through articles
             async.forEachSeries(articles, function(article, scb) {
                 // loop through bands 
@@ -144,7 +210,7 @@ function parseSiteArticles(site, save, callback) {
                         return false;
                     }
                     
-                    console.log('match ' + band.band_name + ' ' + article[site.link_field]);
+                    util.log('match ' + band.band_name + ' ' + article[site.link_field]);
 
                     if (save) {
                         bandRepository.updateMentions({ 'band_id': band.band_id }, site, article, function(err, results) {
@@ -157,17 +223,23 @@ function parseSiteArticles(site, save, callback) {
                 },
                 function(err, results) {
                     if (err) {
-                        console.log(err);
+                        util.log(err);
                     }
                     scb();
                 });
             },
             function(err, results) {
                 if (err) {
-                    console.log(err);
+                    util.log(err);
                 }
-                console.log('done with all');
-                callback();
+                if (save && meta) {
+                    siteRepository.update({"site_id": site.site_id}, {$set: {"last_entry": meta.pubdate }}, function(err, results) {
+                        util.log('done with ' + site.site_name);
+                        callback();
+                    });
+                } else {
+                    callback();
+                }
             });
         });
     });
@@ -195,8 +267,8 @@ function articleHasMatch(site, article, band) {
 
         return false;
     } else {
-        console.log('could not parse article for band ' + band.band_name + '(' + band.band_id + ')');
-        console.log(band);
+        util.log('could not parse article for band ' + band.band_name + '(' + band.band_id + ')');
+        util.log(band);
         return false;
     }
 }

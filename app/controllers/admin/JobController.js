@@ -8,7 +8,8 @@ var request = require('request');
 var async = require('async');
 var _ = require('underscore');
 var util = require('util');
-
+var later = require('later').later;
+var cron = require('later').cronParser;
 var JobRepository = require('./../../repositories/JobRepository.js');
 
 /**
@@ -51,7 +52,13 @@ var JobController = function(db, jobScheduler) {
     this.logAction = function(req, res) {
         var parent = this;
         var data = this.data;
-        this.db.collection('job_log').find({}, {}).toArray(function(err, results) {
+        var query = {
+            $query: {},
+            $orderby: {
+                "time": -1
+            }
+        }
+        this.db.collection('job_log').find(query, {}).toArray(function(err, results) {
             if (err) res.send(err);
             _.extend(data, { 'job_logs': results });
             var template = require(parent.viewPath + 'job_log');
@@ -62,16 +69,47 @@ var JobController = function(db, jobScheduler) {
     this.scheduledAction = function(req, res) {
         var data = this.data;
         var jobs = [];
+        var scheduledEvents = [];
         var scheduledJobs = this.jobScheduler.getScheduledJobs();
         for (var j in scheduledJobs) {
             var job = scheduledJobs[j];
+            // build events from 
+            cSched = cron().parse(job.cronTime.source, true);
+            var start = new Date();
+            start.setDate(start.getDate() - 7);
+            var eventSchedule = later(10).get(cSched, 100, start);
+
             jobs.push({ 
                 "job_name": job.job_name, 
                 "job_id": job.job_id, 
-                "schedule": job.cronTime.source
+                "schedule": job.cronTime.source,
+                "event_schedule": eventSchedule,
+                "duration": job.job_duration
             });
+
+            for (var e in eventSchedule) {
+                var jobDuration = parseInt(job.job_duration);
+                var scheduledEventStart = new Date(eventSchedule[e]);
+                var scheduledEventEnd = new Date(eventSchedule[e]);
+                if (!jobDuration || jobDuration < (30 * 60 * 1000)) {
+                    jobDuration = (30 * 60 * 1000);
+                }
+                console.log(jobDuration);
+                scheduledEventEnd.setMilliseconds(scheduledEventEnd.getMilliseconds() + jobDuration);
+                scheduledEvents.push({
+                    "title": job.job_name,
+                    "id": job.job_id,
+                    "start": scheduledEventStart,
+                    "end": scheduledEventEnd,
+                    "schedule": job.cronTime.source,
+                });
+            }
         }
-        _.extend(data, { 'scheduled_jobs': jobs });
+
+        _.extend(data, { 
+            "scheduled_jobs": jobs,
+            "scheduled_events": JSON.stringify(scheduledEvents) 
+        });
         var template = require(this.viewPath + 'job_scheduled');
         res.send(template.render(data));
     } 
@@ -103,6 +141,30 @@ var JobController = function(db, jobScheduler) {
         }
     }
 
+    this.startAction = function(req, res) {
+        if ((req.route.method != "get")) {
+            res.send({status: "error", error: "start must be get action and must include values"});
+            return false;
+        }
+        var parent = this;
+        var query = {'job_id': req.params.id};
+        var jobRepository = this.jobRepository
+
+        jobRepository.findOne(query, function(err, job) {
+            if ((err) || (!job)) {
+                res.send({status: "error", error: err});
+                return false;
+            }
+
+            // update the job scheduler
+            var scheduledJobs = parent.jobScheduler.getScheduledJobs();
+            parent.jobScheduler.startJob(job);
+ 
+            // send updated job back
+            res.send({status: "success", job: job});        
+        });
+    }
+
     this.updateAction = function(req, res) {
         if ((req.route.method != "put") || (!req.body.values)) {
             res.send({status: "error", error: "update must be put action and must include values"});
@@ -131,7 +193,6 @@ var JobController = function(db, jobScheduler) {
             // send updated job back
             res.send({status: "success", updated: updated});        
         });
-
     }
 
     this.removeAction = function(req, res) {
@@ -177,7 +238,7 @@ var JobController = function(db, jobScheduler) {
             };
             res.send(data);
         }    
-        this.jobRepository.insert(req.body.values, {}, function(err, job) {
+        this.jobRepository.insert(req.body.values, {}, function(err, newJob) {
             // update the job scheduler
             var scheduledJobs = parent.jobScheduler.getScheduledJobs();
             for (var j in scheduledJobs) {
@@ -187,7 +248,7 @@ var JobController = function(db, jobScheduler) {
             }
             parent.jobScheduler.initSchedule();
 
-            res.send({status: "success", job: job});
+            res.send({status: "success", job: newJob});
         });
     }
 }

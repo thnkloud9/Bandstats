@@ -20,6 +20,7 @@ var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
+var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 
 /**
  * config, db, and app stuff
@@ -32,10 +33,12 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
     strict: false
 });
 var bandRepository = new BandRepository({'db': db}); 
+var jobRepository = new JobRepository({'db': db}); 
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
 var echonestManager = new EchonestManager();
 var soundcloudManager = new SoundcloudManager();
+var processStart = new Date().getTime();
 
 /**
  * command parameters
@@ -43,6 +46,7 @@ var soundcloudManager = new SoundcloudManager();
 program
     .version('0.0.1')
     .option('-p, --provider <provider>', 'facebook, lastfm, echonest, soundcloud, bandcamp')
+    .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-i, --band_id <band_id>', 'bandstats bandId Id (numeric)')
     .option('-n, --band_name <band_name>', 'band name')
     .option('-r, --resource <resource>', 'a valid api provider function')
@@ -86,8 +90,24 @@ program
             if (err) {
                 console.log(err);
             }
-            console.log('done with all');
-            process.exit();
+            var processEnd = new Date().getTime();
+            var duration = (processEnd - processStart);
+            if (program.job_id) {
+                var query = {"job_id": program.job_id};
+                var values = {
+                    $set: {
+                        "job_last_run": new Date(),
+                        "job_duration": duration
+                    }
+                }
+                jobRepository.update(query, values, function(err, result) {
+                    console.log('done with all');
+                    process.exit();
+                });
+            } else {
+                console.log('done with all');
+                process.exit();
+            }
         })
     });
 

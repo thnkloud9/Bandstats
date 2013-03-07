@@ -2,16 +2,63 @@
 {% block title %}Job Edit{% endblock %}
 {% block head %}
     {{ super() }}
+    <style type="text/css" title="currentStyle">
+        @import "/js/libs/datatables/media/css/demo_page.css";
+        @import "/js/libs/datatables/media/css/demo_table.css";
+    </style>
+    <script type="text/javascript" src="/js/libs/datatables/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+			var oTable = $('#jobs').dataTable();
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
 
-<ul>
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="jobs">
+	<thead>
+		<tr>
+			<th width="2%">Id</th>
+			<th width="10%">Name</th>
+			<th width="3%">Schedule</th>
+			<th width="20%">Last Run</th>
+			<th width="5%">Duration</th>
+			<th width="3%">Processed</th>
+			<th width="3%">Failed</th>
+			<th width="3%">Active</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for job in jobs %}
-    <li>{{job.job_id}} <a href="/admin/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
-        {{job.job_schedule}} 
-    </li>
+    {% if loop.index % 2 == 0 %}
+        <tr class="even">
+    {% else %}
+        <tr class="odd">
+    {% endif %}
+            <td>{{job.job_id}}</td>
+            <td><a href="/admin/job/{{job.job_id}}/edit">{{ job.job_name }}</a></td> 
+            <td>{{job.job_schedule}}</td> 
+            <td>{{job.job_last_run}}</td> 
+            <td>{{((job.job_duration / 1000) / 60)|round(2)}} mins</td> 
+            <td>{{job.job_processed}}</td> 
+            <td>{{job.job_failed}}</td> 
+            <td>{{job.job_active}}</td> 
+        </tr>
 {% endfor %}
-</ul>
+    </tbody>
+    <tfoot>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Schedule</th>
+			<th>Last Run</th>
+			<th>Duration</th>
+			<th>Processed</th>
+			<th>Failed</th>
+			<th>Active</th>
+        </tr>
+    </tfoot>
+</table>
 
 {% endblock %}

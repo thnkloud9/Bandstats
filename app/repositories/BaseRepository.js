@@ -46,6 +46,7 @@ BaseRepository.prototype.insert = function(values, options, callback) {
     // get a new sequential id first
     this.db.collection('counters').findAndModify(query, sort, update, options, function(err, result) {
         values[collection.replace(/s$/, "") + "_id"] = result.seq.toString();
+        values['created'] = new Date();
         db.collection(collection).insert(values, options, function(err, results) {
             if (err) throw err;
 
@@ -55,10 +56,15 @@ BaseRepository.prototype.insert = function(values, options, callback) {
 }
 
 BaseRepository.prototype.update = function(query, value, options, callback) {
+    var parent = this;
     this.db.collection(this.collection).update(query, value, options, function(err, results) {
         if (err) throw err;
 
-        callback(null, results);
+        var update = { $set: { "last_updated": new Date() }}
+        parent.db.collection(parent.collection).update(query, update, options, function(err, lastUpdatedResults) {
+
+            callback(null, results);
+        });
     });
 }
 

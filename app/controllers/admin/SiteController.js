@@ -7,7 +7,6 @@
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
-var xml2js = require('xml2js');
 
 var SiteRepository = require('./../../repositories/SiteRepository.js');
 
@@ -65,6 +64,24 @@ var SiteController = function(db) {
         }
     }
 
+    this.metaAction = function(req, res) {
+        var query = {'site_id': req.params.id};
+        var siteRepository = this.siteRepository;
+        var data = this.data;
+
+        this.siteRepository.findOne(query, function(err, site) {
+            if ((err) || (!site)) {
+                res.send({status: "error", error: "site not found"});
+                return false;
+            }
+            // get site metadata
+            siteRepository.getNewArticles(site, function(err, meta, articles) {
+                    res.send(meta);
+            });
+        });
+        
+    }
+
     this.articlesAction = function(req, res) {
         var query = {'site_id': req.params.id};
         var siteRepository = this.siteRepository;
@@ -76,7 +93,7 @@ var SiteController = function(db) {
                 return false;
             }
             // get articles
-            siteRepository.getNewArticles(site, function(err, articles) {
+            siteRepository.getNewArticles(site, function(err, meta, articles) {
                     data.articles = articles;
                     res.send(data);
             });

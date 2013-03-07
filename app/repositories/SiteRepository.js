@@ -8,6 +8,7 @@ var request = require('request');
 var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
 var util = require('util');
+var feedparser = require('feedparser');
 
 /**
  * constructor
@@ -64,72 +65,32 @@ SiteRepository.prototype.remove = function(query, options, callback) {
  */
 
 /**
- * TODO: move to a RSSManager class?
  * don't think this really belongs in the repository class,
  * but leaving it here for now.
  */
 SiteRepository.prototype.getNewArticles = function(site, callback) {
     var parent = this;
-    util.log('getting articles from ' + site.site_url);
-    var options = {
-        url: site.site_url,
-    };
-    request(options, function(err, response, body) {
-        if (err) throw err;
-        
-        if (response.statusCode == 200) {
-            // convert xml to json
-            var parser = new xml2js.Parser();
-            parser.parseString(body, function(err, results) { 
-                var articles = [];
-
-                /**
-                 * TODO: find out if there is a better way to parse rss items
-                 */
-                if (results.rss) {
-                    for (var i in results.rss.channel) {
-                        var items = results.rss.channel[i];
-                        for (var a in items.item) {
-                            var article = items.item[a];
-                            articles.push(article);
-                        }
-                    }
-                } else if (results['rdf:RDF']) {
-                    for (var i in results['rdf:RDF']['item']) {
-                        var article = results['rdf:RDF']['item'][i];
-                        articles.push(article);
-                    }
-
-                } else if (results.feed) {
-                    if (results.feed.entry) {
-                        for (var a in results.feed.entry) {
-                            var article = results.feed.entry[a];
-                            articles.push(article);
-                        }
-                    } else {
-                        callback('could not parse response from ' + site.site_url);
-                        return false;
-                    }
-                } else {
-                    callback('could not parse response from ' + site.sit_url);
-                    return false;
-                }
-                
-                // make sure we actually have real string values
-                // for each article field
-                var parsed_articles = [];
-                for (var a in articles) {
-                    var article = articles[a];
-                    parsed_article = parent.sanitizeArticle(article);
-                    parsed_articles.push(parsed_article); 
-                }
-
-                callback(null, parsed_articles);
-            });
-        } else {
-            callback('could not get ' + site.site_url + ', statusCode: '+ response.statusCode)
+    var req = {
+        uri: site.site_url,
+        headers: {
+            'If-Modified-Since': site.last_entry
         }
-    }); 
+    }
+    feedparser.parseUrl(req, function(err, meta, articles) {
+        // update site.last_entry so we don't reparse already read articles
+        if (err || !meta) {
+            callback(err);
+        }
+        // make sure we actually have real string values
+        // for each article field
+        var parsed_articles = [];
+        for (var a in articles) {
+            var article = articles[a];
+            parsed_article = parent.sanitizeArticle(article);
+            parsed_articles.push(parsed_article); 
+        }
+        callback(err, meta, parsed_articles);
+    });
 }
 
 /**
@@ -141,32 +102,6 @@ SiteRepository.prototype.sanitizeArticle = function(article) {
     var parsed_article = {};
     for (var field in article) {
         var value = article[field];
-        if (typeof value === 'object') {
-            if (value[0]) { 
-                if (typeof value[0]['_'] === 'string') {
-                    value = value[0]['_'];
-                } else {
-                    if (typeof value === 'string') {
-                        continue;
-                    }
-                    for (var i in value) {
-                        if (typeof value[i] === 'string') {
-                            value = value[i];
-                            continue;
-                        } else {
-                            for (var j in value[i]) {
-                                if (typeof value[i][j] === 'string') {
-                                    value = value[i][j];
-                                    continue;
-                                }
-                            }
-                        } 
-                        //console.log("NEED TO PARSE " + field + ' = ' + value);
-                    }
-                }
-            }
-        }
-
         // get rid of html
         if ((typeof value === 'string') && (field != 'link')) {
             value = value.replace(/<.p>/gi, '')

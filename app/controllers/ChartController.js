@@ -7,7 +7,6 @@
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
-var xml2js = require('xml2js');
 
 var BandRepository = require('./../repositories/BandRepository.js');
 
@@ -56,11 +55,21 @@ var ChartController = function(db) {
         }
 
         // dont show failed lookups or bands without score 
-        orderBys = orderByList.split(',');
+        if (orderByList) {
+            var orderBys = orderByList.split(',');
+        } else {
+            var orderBys = [];
+            orderBys.push("running_stats.lastfm_listeners.current");
+            orderBys.push("running_stats.facebook_likes.current");
+        }
         for (var o in orderBys) {
             var condition =  {};
             condition[orderBys[o]] = {$not: {$type: 2}};
             conditions.push(condition);
+        }
+
+        if(!limit) {
+            limit = 400;
         }
 
         query = {
@@ -75,6 +84,7 @@ var ChartController = function(db) {
             "external_ids": 1,
             "regions": 1,
             "genres": 1,
+            "limit": limit
         };
 
         // add sorting

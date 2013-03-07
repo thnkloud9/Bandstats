@@ -36,6 +36,11 @@ a:hover, a:active {text-decoration: underline; outline:none;}
   list-style-type: none;
   padding-right: 20px;
  }
+ .navlist + form {
+    position: absolute;
+    right: 10px;
+    top: 3px;
+    }
 
 #logout {
   float: right;
@@ -135,8 +140,40 @@ nav.external-ids {
       display: block;
       }
 
+/* login page elements */
+.flash-message {
+  color: red;
+  width: 400px;
+  padding: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+.login-form {
+  width: 200px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  }
+  .login-form fieldset {
+    border-radius: 10px;
+    border: solid 3px #999;
+    box-shadow: 0 0 3px #000;
+
+    }
+.login-menu {
+  background-color: #000;
+  color: #fff;
+  padding: 1px 10px 1px 10px;
+  margin-bottom: 30px;
+  }
+
 /** Job Page Elements **/
 .job-sub-menu {
+  position: relative;
   text-align: right;
   background-color: #ccc;
   line-height: 10px;
@@ -146,13 +183,13 @@ nav.external-ids {
     color: #000;
     }
   .job-sub-menu .navlist {
-    float: left;
     line-height: 24px;
-    width: 935px;
+    margin-right: 220px;
     }
 
 /** Site Page Elements **/
 .site-sub-menu {
+  position: relative;
   text-align: right;
   background-color: #ccc;
   line-height: 10px;
@@ -162,13 +199,13 @@ nav.external-ids {
     color: #000;
     }
   .site-sub-menu .navlist {
-    float: left;
     line-height: 24px;
-    width: 935px;
+    margin-right: 220px;
     }
 
 /** Band Page Elements **/
 .band-sub-menu {
+  position: relative;
   text-align: right;
   background-color: #ccc;
   line-height: 10px;
@@ -178,9 +215,8 @@ nav.external-ids {
     color: #000;
     }
   .band-sub-menu .navlist {
-    float: left;
     line-height: 24px;
-    width: 935px;
+    margin-right: 220px;
     }
 
 .band-image {
@@ -212,9 +248,6 @@ nav.external-ids {
   -moz-border-radius: 5px;
   -o-border-radius: 5px;
  }
-
-.bs-lookup-match-group {
-  }
 
 .bs-lookup-match {
   margin-left: 40px;
@@ -328,14 +361,20 @@ nav.external-ids {
   box-shadow: 0 0 3px #000;
   position: absolute;
   overflow-x: hidden;
-  top: 10%;
-  bottom: 10%;
+  top: 10%; 
+  /* bottom: 10%; */
   max-height: 80%;
-  width: 50%;
+  width: calc(50% - 10px);
   left: 50%;
   margin: 0 0 0 -25%;
   z-index: 200;
+  padding: 5px;
   }
+  #modal.alert {
+    text-align: center;
+    width: 290px;
+    margin-left: -150px;
+    }
   #modal.loading {
     background: url(../images/bg_loading.gif) center center no-repeat #fff;
     }

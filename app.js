@@ -20,7 +20,7 @@ var passport = require('passport');
 require("jinjs").registerExtension(".jinjs");
 
 /**
- * Configuration
+ * configuration
  */
 nconf.file(path.join(__dirname, 'app/config/app.json'));
 
@@ -37,37 +37,7 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
 /**
  * auth strategy
  */
-var UserRepository = require('./app/repositories/UserRepository.js');
-var userRepository = new UserRepository({"db": db});
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-
-passport.serializeUser(function(user, done) {
-    done(null, user.user_id);
-});
-
-passport.deserializeUser(function(user_id, done) {
-    userRepository.findOne({"user_id": user_id }, function (err, user) {
-        done(err, user);
-    });
-});
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        userRepository.findOne({"username": username}, function (err, user) {
-            if (err) { return done(err); }
-            if (!user) {
-                return done(null, false, { message: 'Incorrect username.' });
-            }
-            userRepository.validPassword(user, password, function(err, isMatch) {
-                if (!isMatch) {
-                    return done(null, false, { message: 'Incorrect password.' });
-                }
-                return done(null, user);
-            });
-        });
-    }
-));
 
 /**
  * web server 

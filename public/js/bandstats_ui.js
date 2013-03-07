@@ -45,13 +45,7 @@ function domSetup() {
      * modal window
      */
     $('.modal').live('click', function() {
-        $('#modal').empty();
-        $('#modal').append("<a href='#' id='modal-close'>Close</a>");
-        $('#modal').addClass('loading');
-        $('#overlay').fadeIn(function() {
-            $('#modal').fadeIn();
-            return false;
-        });
+        openModal();
     });
     
     $('#modal-close').live('click', function() {
@@ -60,4 +54,22 @@ function domSetup() {
             return false;
         });
     });
+
+}
+
+function openModal() {
+    $('#modal').empty();
+    $('#modal').append("<a href='#' id='modal-close'>Close</a>");
+    $('#modal').addClass('loading');
+    $('#overlay').fadeIn(function() {
+        $('#modal').fadeIn();
+        return false;
+    });
+}
+
+function alertModal(message) {
+    $('#modal').addClass('alert');
+    openModal();
+    $('#modal').removeClass('loading');
+    $('#modal').append('<p>' + message + '</p>');
 }

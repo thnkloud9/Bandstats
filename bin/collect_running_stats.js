@@ -20,6 +20,7 @@ var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
+var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 
 /**
  * config, db, and app stuff
@@ -32,9 +33,11 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
     strict: false
 });
 var bandRepository = new BandRepository({'db': db}); 
+var jobRepository = new JobRepository({'db': db}); 
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
 var echonestManager = new EchonestManager();
+var processStart = new Date().getTime();
 
 /**
  * command parameters
@@ -42,6 +45,7 @@ var echonestManager = new EchonestManager();
 program
     .version('0.0.1')
     .option('-p, --provider <provider>', 'facebook, lastfm, echonest, soundcloud, bandcamp')
+    .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-i, --band_id <band_id>', 'bandstats bandId Id (numeric)')
     .option('-n, --band_name <band_name>', 'band name')
     .option('-r, --resource <resource>', 'a valid api provider function')
@@ -55,7 +59,6 @@ program
     .command('update')
     .description('runs an api function for bands and saves the value in mongo')
     .action(function() {
-        var all_start = new Date().getTime();
 
         if (!program.field || !program.provider || !program.resource) {
             util.log('you must provide provider, resoruce, and field options');
@@ -123,6 +126,7 @@ function sanitizeSearchString(text) {
 }
 
 function collectRunningStats(query, provider, resource, runningStat, callback) {
+    var jobStats = {};
     var lookupFunction = resource;
 
     util.log('starting ' + runningStat + ' collection using ' + resource);
@@ -146,7 +150,13 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
             callback(err);
             return false;
         }
-    
+  
+        // init job stats 
+        jobStats.matched = results.length;
+        jobStats.processed = 0;
+        jobStats.errors = 0;
+        jobStats.success = 0;
+ 
         // build searchObj
         async.forEach(results, function(band, cb) {
             var searchItem = {
@@ -186,11 +196,19 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                     var value = result.results;
 
                     util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value');
+                    jobStats.processed++;
 
                     // save the record 
                     bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, function(err, updated) {
                         if (err) {
+                            jobStats.errors++;
                             util.log(err); 
+                        }
+
+                        if (typeof value == "string") {
+                            jobStats.errors++;
+                        } else {
+                            jobStats.success++;
                         }
                         rcb(null, updated);
                     });
@@ -198,7 +216,24 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                 },
                 function (err, finalResult) {
                     util.log('finished ' + runningStat + ' collection database updates');
-                    callback();
+                    var processEnd = new Date().getTime();
+                    var duration = (processEnd - processStart);
+                    if (program.job_id) {
+                        var query = {"job_id": program.job_id};
+                        var values = {
+                            $set: {
+                                "job_processed": jobStats.processed,
+                                "job_failed": jobStats.errors,
+                                "job_last_run": new Date(),
+                                "job_duration": duration
+                            }
+                        }
+                        jobRepository.update(query, values, function(err, result) {
+                            callback();
+                        });
+                    } else {
+                        callback();
+                    }
                 });
             });
         });

@@ -14,21 +14,43 @@
     arguments: <input type="text" name="job_arguments" value="{{job.job_arguments}}"><br />
     schedule: <input type="text" name="job_schedule" value="{{job.job_schedule}}"><br />
     description: <input type="text" name="job_description" value="{{job.job_description}}"><br />
-    last_run: <input type="text" name="job_last_run" value="{{job.job_last_run}}"><br />
-    processed: <input type="text" name="job_processed" value="{{job.job_processed}}"><br />
-    failed: <input type="text" name="job_failed" value="{{job.job_failed}}"><br />
-    created: <input type="text" name="created" value="{{job.created}}"><br />
-    last_updated: <input type="text" name="last_updated" value="{{job.last_updated}}"><br />
+    last_run: <input type="hidden" name="job_last_run" value="{{job.job_last_run}}">{{job.job_last_run}} <br />
+    duration: <input type="hidden" name="job_duration" value="{{job.job_duration}}">{{((job.job_duration / 1000) / 60)|round(2)}} mins <br />
+    processed: <input type="hidden" name="job_processed" value="{{job.job_processed}}">{{job.job_processed}}<br />
+    failed: <input type="hidden" name="job_failed" value="{{job.job_failed}}">{{job.job_failed}}<br />
+    created: <input type="hidden" name="created" value="{{job.created}}">{{job.created}}<br />
+    last_updated: <input type="hidden" name="last_updated" value="{{job.last_updated}}">{{job.last_updated}}<br />
     </fieldset>
 </form>
 
 <button id="bs-job-update">Update</button>
 <button id="bs-job-delete">Delete</button>
+<button id="bs-job-run">Run</button>
 
 <script type="text/javascript">
 
 $(function() {
     var job = {{json.job}};
+
+    // run job
+    $('#bs-job-run').live('click', function() {
+        if (!job.job_id) {
+            return false;
+        }
+        $.ajax({
+            url: '/admin/job/' + job.job_id + '/start',
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                window.location = "/admin/job"; 
+            },
+            error: function(err, status, msg) {
+                console.log(err); 
+            }
+        });
+
+    });
 
     // delete record
     $('#bs-job-delete').live('click', function() {
@@ -42,6 +64,7 @@ $(function() {
             dataType: 'json',
             success: function(response) {
                 console.log(response);
+                window.location = "/admin/job"; 
             },
             error: function(err, status, msg) {
                 console.log(err); 
@@ -74,6 +97,8 @@ $(function() {
             dataType: 'json',
             success: function(response) {
                 console.log(response);
+                alertModal(job.job_name + ' saved successully');
+                return false;        
             },
             error: function(err, status, msg) {
                 console.log(err);
