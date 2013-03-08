@@ -60,38 +60,8 @@ program
     .command('update')
     .description('runs an api function for bands and saves the value in mongo')
     .action(function() {
-
-        if (!program.field || !program.provider || !program.resource) {
-            util.log('you must provide provider, resoruce, and field options');
-            process.exit(1);
-        }
-
-        if (program.band_id) {
-            var query = { 'band_id': program.band_id };
-        } else if (program.band_name) {
-            var query = { 'band_name': program.band_name };
-        } else { 
-            var nullQuery = {};
-            var emptyQuery = {};
-            var conditions = [];
-            nullQuery['external_ids.' + program.provider + '_id'] = {$ne: null};
-            emptyQuery['external_ids.' + program.provider + '_id'] = {$ne: ""};
-
-            conditions.push(nullQuery);
-            conditions.push(emptyQuery);
-
-            query = {
-                $and: conditions
-            };
-        }
-        
-        collectRunningStats(query, program.provider, program.resource, program.field, function(err, results) {
-            if (err) {
-                util.log(err);
-            }
-            util.log('done with all');
-            process.exit();
-        })
+        var save = true;
+        start(save);
     });
 
 /**
@@ -101,9 +71,8 @@ program
     .command('view')
     .description('gets new likes from facebook graph api display, but does not save the value in mongo')
     .action(function() {
-
-        util.log('view not implemented');
-        process.exit(1);
+        var save = false;
+        start(save);
     });
 
 // process command line args
@@ -113,6 +82,39 @@ program.parse(process.argv);
  * Function
  * TODO: move these to a lib 
  */
+function start(save) {
+    if (!program.field || !program.provider || !program.resource) {
+        util.log('you must provide provider, resoruce, and field options');
+        process.exit(1);
+    }
+
+    if (program.band_id) {
+        var query = { 'band_id': program.band_id };
+    } else if (program.band_name) {
+        var query = { 'band_name': program.band_name };
+    } else { 
+        var nullQuery = {};
+        var emptyQuery = {};
+        var conditions = [];
+        nullQuery['external_ids.' + program.provider + '_id'] = {$ne: null};
+        emptyQuery['external_ids.' + program.provider + '_id'] = {$ne: ""};
+
+        conditions.push(nullQuery);
+        conditions.push(emptyQuery);
+
+        query = {
+            $and: conditions
+        };
+    }
+    
+    collectRunningStats(save, query, program.provider, program.resource, program.field, function(err, results) {
+        if (err) {
+            util.log(err);
+        }
+        util.log('done with all');
+        process.exit();
+    });
+}
 
 function sanitizeSearchString(text) {
     sanitized_text = text.toLowerCase();
@@ -126,7 +128,7 @@ function sanitizeSearchString(text) {
     return sanitized_text;
 }
 
-function collectRunningStats(query, provider, resource, runningStat, callback) {
+function collectRunningStats(save, query, provider, resource, runningStat, callback) {
     var jobStats = {};
     var lookupFunction = resource;
     var yesterday = moment().subtract('days', 1).format('YYYY-MM-DD');
@@ -221,24 +223,37 @@ function collectRunningStats(query, provider, resource, runningStat, callback) {
                     incrementalTotal += incremental;
                     var incrementalAvg = Math.round(incrementalTotal / totalStats);
 
-                    util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' value and previous ' + previous);
                     jobStats.processed++;
 
                     // save the record 
-                    bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
-                        if (err) {
-                            jobStats.errors++;
-                            util.log(err); 
-                        }
+                    if (save) {
+                        util.log('updating ' + bandName + ' using id ' + search + ' with ' + value);
+                        bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
+                            if (err) {
+                                jobStats.errors++;
+                                util.log(err); 
+                            }
 
-                        if (typeof value == "string") {
-                            jobStats.errors++;
-                        } else {
-                            jobStats.success++;
+                            if (typeof value == "string") {
+                                jobStats.errors++;
+                            } else {
+                                jobStats.success++;
+                            }
+                            rcb(null, updated);
+                        });
+                    } else {
+                        var output = {
+                            "band_id": bandId,
+                            "band_name": bandName,
+                            "value": value,
+                            "incremental": incremental,
+                            "incremental_total": incrementalTotal,
+                            "incremental_avg": incrementalAvg,
+                            "total_stats": totalStats 
                         }
-                        rcb(null, updated);
-                    });
-                     
+                        console.log(output);
+                        rcb();
+                    }
                 },
                 function (err, finalResult) {
                     util.log('finished ' + runningStat + ' collection database updates');
