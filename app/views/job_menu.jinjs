@@ -4,7 +4,7 @@
     <li><a href="/admin/job/log">Job Log</a></li>
     <li><a href="/admin/job/running">Running Now</a></li>
     <li><a href="/admin/job/scheduled">Scheduled</a></li>
-    <li><a href="/admin/job">Edit Fields</a></li>
+    <li><a href="/admin/job">Dashboard</a></li>
   </ul>
   <form action="/admin/job">
     <input type="test" name="search" value="">

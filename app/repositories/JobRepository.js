@@ -5,7 +5,9 @@
  * author: Mark Lewis
  */
 var request = require('request');
-var xml2js = require('xml2js');
+var fs = require('fs');
+var util = require('util');
+var async = require('async');
 var BaseRepository = require('./../repositories/BaseRepository.js');
 
 /**
@@ -61,5 +63,21 @@ JobRepository.prototype.remove = function(query, options, callback) {
 /**
  * Job specific functions
  */
+JobRepository.prototype.getAvailableCommands = function(callback) {
+    var commands = [];
+    fs.readdir(__dirname + '/../../bin/', function(err, files) {
+        if (err) util.log(err);
+
+        async.forEach(files, function(file, cb) {
+            if (/.js$/.test(file)) {
+                commands.push(file);
+            }
+            cb();
+        }, 
+        function(err, results) {
+            callback(null, commands);
+        });
+    });
+}
 
 module.exports = JobRepository;

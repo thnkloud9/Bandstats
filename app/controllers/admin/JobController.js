@@ -44,8 +44,12 @@ var JobController = function(db, jobScheduler) {
     this.runningAction = function(req, res) {
         var data = this.data;
         var runningJobs = this.jobScheduler.getRunningJobs();
-        _.extend(data, { 'running_jobs': runningJobs });
         var template = require(this.viewPath + 'job_running');
+
+        _.extend(data, { 
+            'running_jobs': runningJobs,
+            'running_jobs_json': JSON.stringify(runningJobs) 
+        });
         res.send(template.render(data));
     }
 
@@ -68,46 +72,11 @@ var JobController = function(db, jobScheduler) {
 
     this.scheduledAction = function(req, res) {
         var data = this.data;
-        var jobs = [];
-        var scheduledEvents = [];
         var scheduledJobs = this.jobScheduler.getScheduledJobs();
-        for (var j in scheduledJobs) {
-            var job = scheduledJobs[j];
-            // build events from 
-            cSched = cron().parse(job.cronTime.source, true);
-            var start = new Date();
-            start.setDate(start.getDate() - 7);
-            var eventSchedule = later(10).get(cSched, 100, start);
-
-            jobs.push({ 
-                "job_name": job.job_name, 
-                "job_id": job.job_id, 
-                "schedule": job.cronTime.source,
-                "event_schedule": eventSchedule,
-                "duration": job.job_duration
-            });
-
-            for (var e in eventSchedule) {
-                var jobDuration = parseInt(job.job_duration);
-                var scheduledEventStart = new Date(eventSchedule[e]);
-                var scheduledEventEnd = new Date(eventSchedule[e]);
-                if (!jobDuration || jobDuration < (30 * 60 * 1000)) {
-                    jobDuration = (30 * 60 * 1000);
-                }
-                console.log(jobDuration);
-                scheduledEventEnd.setMilliseconds(scheduledEventEnd.getMilliseconds() + jobDuration);
-                scheduledEvents.push({
-                    "title": job.job_name,
-                    "id": job.job_id,
-                    "start": scheduledEventStart,
-                    "end": scheduledEventEnd,
-                    "schedule": job.cronTime.source,
-                });
-            }
-        }
+        var scheduledEvents = this.jobScheduler.getScheduledEvents();
 
         _.extend(data, { 
-            "scheduled_jobs": jobs,
+            "scheduled_jobs": scheduledJobs,
             "scheduled_events": JSON.stringify(scheduledEvents) 
         });
         var template = require(this.viewPath + 'job_scheduled');
@@ -119,13 +88,19 @@ var JobController = function(db, jobScheduler) {
         var query = {'job_id': req.params.id};
         var jobRepository = this.jobRepository;
         var template = require(this.viewPath + 'job_edit');
+
         _.extend(data, {json: {}});
 
         if (req.params.id === "0") {
             // this is a new record
-            data.job = {};
-            data.json.job = JSON.stringify({});
-            res.send(template.render(data));
+            jobRepository.getAvailableCommands(function(err, commands) {
+                if (err) util.log(err);
+
+                data.commands = commands; 
+                data.job = {};
+                data.json.job = JSON.stringify({});
+                res.send(template.render(data));
+            });
         } else {
             // get the record from the db
             this.jobRepository.findOne(query, function(err, job) {

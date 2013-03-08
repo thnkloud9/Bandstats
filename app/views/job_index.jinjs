@@ -9,8 +9,11 @@
     <script type="text/javascript" src="/js/libs/datatables/media/js/jquery.dataTables.js"></script>
 	<script type="text/javascript" charset="utf-8">
 		$(document).ready(function() {
-			var oTable = $('#jobs').dataTable();
-        }
+			var oTable = $('#jobs').dataTable({
+                "sScrollX": "100%",
+                "bFilter": false
+            });
+        });
     </script>
 {% endblock %}
 

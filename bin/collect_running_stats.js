@@ -39,6 +39,7 @@ var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
 var echonestManager = new EchonestManager();
 var processStart = new Date().getTime();
+var jobStats = {};
 
 /**
  * command parameters
@@ -112,7 +113,9 @@ function start(save) {
             util.log(err);
         }
         util.log('done with all');
-        process.exit();
+        updateJob(function() {
+            process.exit();
+        });
     });
 }
 
@@ -129,7 +132,6 @@ function sanitizeSearchString(text) {
 }
 
 function collectRunningStats(save, query, provider, resource, runningStat, callback) {
-    var jobStats = {};
     var lookupFunction = resource;
     var yesterday = moment().subtract('days', 1).format('YYYY-MM-DD');
 
@@ -257,28 +259,31 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                 },
                 function (err, finalResult) {
                     util.log('finished ' + runningStat + ' collection database updates');
-                    var processEnd = new Date().getTime();
-                    var duration = (processEnd - processStart);
-                    if (program.job_id) {
-                        var query = {"job_id": program.job_id};
-                        var values = {
-                            $set: {
-                                "job_processed": jobStats.processed,
-                                "job_failed": jobStats.errors,
-                                "job_last_run": new Date(),
-                                "job_duration": duration
-                            }
-                        }
-                        jobRepository.update(query, values, function(err, result) {
-                            callback();
-                        });
-                    } else {
-                        callback();
-                    }
+                    callback();
                 });
             });
         });
     });
+}
 
-};
+function updateJob(callback) {
+    var processEnd = new Date().getTime();
+    var duration = (processEnd - processStart);
+    if (program.job_id) {
+        var query = {"job_id": program.job_id};
+        var values = {
+            $set: {
+                "job_processed": jobStats.processed,
+                "job_failed": jobStats.errors,
+                "job_last_run": new Date(),
+                "job_duration": duration
+            }
+        }
+        jobRepository.update(query, values, function(err, result) {
+            callback(err, result);
+        });
+    } else {
+        callback();
+    }
+} 
 

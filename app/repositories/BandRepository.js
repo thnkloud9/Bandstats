@@ -88,7 +88,7 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, increm
             setFields["running_stats." + stat + ".current"] = value;
             setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
             setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
-            setFields["running_stats." + stat + ".last_udpated"] = now;
+            setFields["running_stats." + stat + ".last_updated"] = now;
             var set = { 
                 $addToSet: runningStat,
                 $set: setFields 

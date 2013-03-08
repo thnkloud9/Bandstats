@@ -11,6 +11,8 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var cronJob = require('cron').CronJob;
+var later = require('later').later;
+var cron = require('later').cronParser;
 var child_process = require('child_process');
 var moment = require('moment');
 var util = require('util');
@@ -24,14 +26,59 @@ function JobScheduler(db) {
 
     this.scheduledJobs = [];
     this.runningJobs = [];
+    this.children = [];
 };
 
 JobScheduler.prototype.getScheduledJobs = function() {
     return this.scheduledJobs;
 }
 
+/**
+ * this function gets future events based on the crontab style scheduling
+ */
+JobScheduler.prototype.getScheduledEvents = function() {
+    var scheduledEvents = [];
+    var scheduledJobs = this.scheduledJobs;
+    for (var j in scheduledJobs) {
+        var job = scheduledJobs[j];
+        // build events from 
+        cSched = cron().parse(job.cronTime.source, true);
+        var start = new Date();
+        start.setDate(start.getDate() - 7);
+        var eventSchedule = later(10).get(cSched, 100, start);
+
+        for (var e in eventSchedule) {
+            var jobDuration = parseInt(job.job_duration);
+            var scheduledEventStart = new Date(eventSchedule[e]);
+            var scheduledEventEnd = new Date(eventSchedule[e]);
+            if (!jobDuration || jobDuration < (30 * 60 * 1000)) {
+                jobDuration = (30 * 60 * 1000);
+            }
+            scheduledEventEnd.setMilliseconds(scheduledEventEnd.getMilliseconds() + jobDuration);
+            scheduledEvents.push({
+                "title": job.job_name,
+                "id": job.job_id,
+                "start": scheduledEventStart,
+                "end": scheduledEventEnd,
+                "schedule": job.cronTime.source,
+            });
+        }
+    }
+
+    return scheduledEvents;
+}
+
 JobScheduler.prototype.getRunningJobs = function() {
-    return this.runningJobs;
+    var updatedRunningJobs = [];
+    for (var j in this.runningJobs) {
+        var job = this.runningJobs[j];
+        var start = new Date(job.time).getTime();
+        var now = new Date().getTime();
+        var runningTime = (now - start);
+        job.running_time = runningTime;
+        updatedRunningJobs.push(job);
+    }
+    return updatedRunningJobs;
 }
 
 JobScheduler.prototype.getJobs = function(query, options, callback) {
@@ -54,13 +101,18 @@ JobScheduler.prototype.startJob = function(job) {
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
     var runningJob = {
         "pid": cpid,
+        "output": "started\n",
         "job_id": job.job_id,
         "job_name": job.job_name,
         "job_arguments": job.job_arguments,
+        "job_description": job.job_description,
+        "job_last_duration": job.job_duration,
+        "job_duration": 0,
         "action": "started",
         "time": now
     }
-    parent.runningJobs.push(_.extend(cp, runningJob));
+    parent.runningJobs.push(runningJob);
+    parent.children.push(_.extend(cp, runningJob));
     // add to the job log
     parent.db.collection('job_log').insert(runningJob, {}, function(err, inserted) {
         if (err) util.log(err);
@@ -69,6 +121,7 @@ JobScheduler.prototype.startJob = function(job) {
     // ad event listener to remove from runningJobs on exit
     cp.on('exit', function() {
         var now = moment().format('YYYY-MM-DD HH:mm:ss');
+        
         util.log('child ' + cpid + ' has exited');
 
         // remove the job from the runningJobs array
@@ -89,11 +142,25 @@ JobScheduler.prototype.startJob = function(job) {
             "job_name": job.job_name,
             "job_arguments": job.job_arguments,
             "action": "ended",
+            "job_duration": job.job_duration,
+            "job_processed": job.job_processed,
+            "job_failed": job.job_failed,
             "time": now
         }
         parent.db.collection('job_log').insert(exitedJob, {}, function (err, inserted) {
             if (err) util.log(err);
         });
+    });
+
+    // log childs output
+    cp.stdout.on('data', function(data) {
+        for (var i = 0; i < parent.runningJobs.length; i++) {
+            if (parent.runningJobs[i].pid === cpid) {
+                var job = parent.runningJobs[i];
+                job.output += data;
+                break;
+            } 
+        };
     });
 
     // add the pid to the jobs pid array in the database 

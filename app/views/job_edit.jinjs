@@ -7,19 +7,62 @@
 
 <form id="job-edit">
     <fieldset>
-    id: <input type="hidden" name="job_id" value="{{job.job_id}}">{{job.job_id}}<br />
-    name: <input type="text" name="job_name" value="{{job.job_name}}"><br />
-    active: <input type="text" name="job_active" value="{{job.job_active}}"><br />
-    command: <input type="text" name="job_command" value="{{job.job_command}}"><br />
-    arguments: <input type="text" name="job_arguments" value="{{job.job_arguments}}"><br />
-    schedule: <input type="text" name="job_schedule" value="{{job.job_schedule}}"><br />
-    description: <input type="text" name="job_description" value="{{job.job_description}}"><br />
-    last_run: <input type="hidden" name="job_last_run" value="{{job.job_last_run}}">{{job.job_last_run}} <br />
-    duration: <input type="hidden" name="job_duration" value="{{job.job_duration}}">{{((job.job_duration / 1000) / 60)|round(2)}} mins <br />
-    processed: <input type="hidden" name="job_processed" value="{{job.job_processed}}">{{job.job_processed}}<br />
-    failed: <input type="hidden" name="job_failed" value="{{job.job_failed}}">{{job.job_failed}}<br />
-    created: <input type="hidden" name="created" value="{{job.created}}">{{job.created}}<br />
-    last_updated: <input type="hidden" name="last_updated" value="{{job.last_updated}}">{{job.last_updated}}<br />
+      <div>
+        <label for="job_id">Id</label>
+          <input type="text" id="job_id" name="job_id" value="{{job.job_id}}">
+      </div>
+      <div>
+        <label for="job_name">Name</label>
+          <input type="text" id="job_name" name="job_name" value="{{job.job_name}}">
+      </div>
+      <div>
+        <label for="job_active">Active</label>
+          <input type="text" id="job_active" name="job_active" value="{{job.job_active}}">
+      </div>
+      <div>
+        <label for="job_command">Command</label>
+          <select name="job_command" id="job_command">
+            {% for command in  commands %}
+                <option value="{{command}}">{{command}}</option>
+            {% endfor %}
+          </select>
+      </div>
+      <div>
+        <label for="job_arguments">Arguments</label>
+          <input type="text" id="job_arguments" name="job_arguments" value="{{job.job_arguments}}">
+      </div>
+      <div>
+        <label for="job_schedule">Schedule</label>
+          <input type="text" id="job_schedule" name="job_schedule" value="{{job.job_schedule}}">
+      </div>
+      <div>
+        <label for="job_description">Description</label>
+          <textarea id="job_description" name="job_description" rows="5" cols="50">{{job.job_description}}</textarea>
+      </div>
+      <div>
+        <label for="job_last_run">Last Run</label>
+          <input type="text" id="job_last_run" name="job_last_run" value="{{job.job_last_run}}" disabled>
+      </div>
+      <div>
+        <label for="job_duration">Duration</label>
+          <input type="text" id="job_duration" name="job_duration" value="{{job.job_duration}}" disabled><span>({{((job.job_duration / 1000) / 60)|round(2)}} mins)</span> 
+      </div>
+      <div>
+        <label for="job_processed">Processed</label>
+          <input type="text" id="job_processed" name="job_processed" value="{{job.job_processed}}" disabled>
+      </div>
+      <div>
+        <label for="job_failed">Failed</label>
+          <input type="text" id="job_failed" name="job_failed" value="{{job.job_failed}}" disabled>
+      </div>
+      <div>
+        <label for="created">Created</label>
+          <input type="text" id="created" name="created" value="{{job.created}}" disabled>
+      </div>
+      <div>
+        <label for="last_update">Last Updated</label>
+          <input type="text" id="last_updated" name="last_updated" value="{{job.last_updated}}" disabled>
+      </div>
     </fieldset>
 </form>
 

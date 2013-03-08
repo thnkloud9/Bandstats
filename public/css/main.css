@@ -21,6 +21,40 @@ a:visited {color:#666666; text-decoration: none;}
 a:focus {outline:none;}
 a:hover, a:active {text-decoration: underline; outline:none;}
 
+form fieldset {
+  border: 0;
+  }
+
+form fieldset > div {
+  position: relative;
+  margin: 0 0 10px 0;
+  }
+  form fieldset > div label {
+    position: absolute;
+    line-height: 30px;
+    left: 0;
+    }
+    form fieldset > div input,
+    form fieldset > div select,
+    form fieldset > div textarea {
+      display: block;
+      margin: 0 0 0 150px;
+      line-height: 20px;
+      font-size: inherit;
+      }
+    form fieldset > div span {
+      position: absolute;
+      }
+input[disabled] {
+  border: 0;
+  }
+
+input[type=text],
+input[type=password] {
+  width: 350px;
+  text-indent: 10px;
+  }
+
 .menu {
   background-color: #000;
   color: #fff;
@@ -377,6 +411,8 @@ nav.external-ids {
     }
   #modal.loading {
     background: url(../images/bg_loading.gif) center center no-repeat #fff;
+    width: 390px;
+    height: 200px;
     }
   #modal #modal-close {
     background: url(../images/bg_close.png) 0 0 no-repeat transparent;

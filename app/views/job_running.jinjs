@@ -2,15 +2,77 @@
 {% block title %}Running Jobs{% endblock %}
 {% block head %}
     {{ super() }}
+    <style type="text/css" title="currentStyle">
+        @import "/js/libs/datatables/media/css/demo_page.css";
+        @import "/js/libs/datatables/media/css/demo_table.css";
+    </style>
+    <script type="text/javascript" src="/js/libs/datatables/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+			var oTable = $('#jobs').dataTable({
+                "sScrollX": "100%",
+                "bFilter": false
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
 
-<ul>
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="jobs">
+	<thead>
+		<tr>
+			<th width="2%">Pid</th>
+			<th width="2%">Job Id</th>
+			<th width="5%">Job Name</th>
+			<th width="30%">Description</th>
+			<th width="10%">Started</th>
+			<th width="5%">Running Time</th>
+			<th width="5%">Duration Last Run</th>
+			<th width="5%">View Output</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for job in running_jobs %}
-    <li>{{job.pid}} {{job.job_id}} <a href="/admin/job/{{job.job_id}}/edit">{{ job.job_name }}</a> 
-    </li>
+    {% if loop.index % 2 == 0 %}
+        <tr class="even">
+    {% else %}
+        <tr class="odd">
+    {% endif %}
+
+        <td>{{job.pid}}</td> 
+        <td>{{job.job_id}}</td>
+        <td><a href="/admin/job/{{job.job_id}}/edit">{{ job.job_name }}</a></td>
+        <td>{{job.job_description}}</td>
+        <td>{{job.time}}</td>
+        <td>{{((job.running_time / 1000) / 60)|round(2)}} mins</td>
+        <td>{{((job.job_last_duration / 1000) / 60)|round(2)}} mins</td>
+        <td><a href="#" class="bs-job-pid modal" data-pid="{{job.pid}}">view</a></td>
+    </tr>
 {% endfor %}
-</ul>
+    </tbody>
+</table>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        var runningJobs = {{running_jobs_json}};
+
+        // show job output
+        $('.bs-job-pid').live('click', function() {
+            var pid = $(this).attr('data-pid');
+            for (var j in runningJobs) {
+                if (runningJobs[j].pid == pid) {
+                    var job = runningJobs[j];
+                    $('#modal').removeClass('loading');
+                    $('#modal').append("<h4>Log output for " + job.job_name + "</h4>");
+                    $('#modal').append(job.output);
+
+                    return false;
+                }
+            }            
+        });
+ 
+    });
+</script>
 
 {% endblock %}

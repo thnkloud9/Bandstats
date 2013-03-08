@@ -7,19 +7,58 @@
 
 <form id="site-edit">
     <fieldset>
-    site_id: <input type="hidden" name="site_id" value="{{site.site_id}}">{{site.site_id}}<br />
-    site_name: <input type="text" name="site_name" value="{{site.site_name}}"><br />
-    site_url: <input type="text" name="site_url" value="{{site.site_url}}"><br />
-    site_weight: <input type="text" name="site_weight" value="{{site.site_weight}}"><br />
-    link_field: <input type="text" name="link_field" value="{{site.link_field}}"><br />
-    description_field: <input type="text" name="description_field" value="{{site.description_field}}"><br />
-    publish_date_field: <input type="text" name="publish_date_field" value="{{site.publish_date_field}}"><br />
-    band_name_field: <input type="text" name="band_name_field" value="{{site.band_name_field}}"><br />
-    album_name_field: <input type="text" name="album_name_field" value="{{site.album_name_field}}"><br />
-    track_name_field: <input type="text" name="track_name_field" value="{{site.track_name_field}}"><br />
-    last_entry: <input type="text" name="last_entry" value="{{site.last_entry}}"><br />
-    created: <input type="text" name="created" value="{{site.created}}"><br />
-    last_updated: <input type="text" name="last_updated" value="{{site.last_updated}}"><br />
+    <div>
+      <label for="site_id">Id</label>
+        <input type="text" name="site_id" value="{{site.site_id}}" disabled>
+    </div>
+    <div>
+      <label for="site_name">Name</label>
+        <input type="text" name="site_name" value="{{site.site_name}}">
+    </div>
+    <div>
+      <label for="site_url">Url</label>
+        <input type="text" name="site_url" value="{{site.site_url}}">
+    </div>
+    <div>
+      <label for="site_weight">Weight</label>
+        <input type="text" name="site_weight" value="{{site.site_weight}}">
+    </div>
+    <div>
+      <label for="link_field">Link Field</label>
+        <input type="text" name="link_field" value="{{site.link_field}}">
+    </div>
+    <div>
+      <label for="description_field">Description Field</label>
+        <input type="text" name="description_field" value="{{site.description_field}}">
+    </div>
+    <div>
+      <label for="publish_date_field">Publish Date Field</label>
+        <input type="text" name="publish_date_field" value="{{site.publish_date_field}}">
+    </div>
+    <div>
+      <label for="band_name_field">Band Name Field</label>
+        <input type="text" name="band_name_field" value="{{site.band_name_field}}">
+    </div>
+    <div>
+      <label for="album_name_field">Album Name Field</label>
+        <input type="text" name="album_name_field" value="{{site.album_name_field}}">
+    </div>
+    <div>
+      <label for="track_name_field">Track Name Field</label>
+        <input type="text" name="track_name_field" value="{{site.track_name_field}}">
+    </div>
+    <div>
+      <label for="last_entry">Last Entry</label>
+        <input type="text" name="last_entry" value="{{site.last_entry}}">
+    </div>
+    <div>
+      <label for="created">Created</label>
+        <input type="text" name="created" value="{{site.created}}">
+    </div>
+    <div>
+      <label for="last_updated">Last Updated</label>
+        <input type="text" name="last_updated" value="{{site.last_updated}}">
+    </div>
     </fieldset>
 </form>
 
