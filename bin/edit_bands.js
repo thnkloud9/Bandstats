@@ -36,15 +36,16 @@ program
     .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-i, --band_id <band_id>', 'bandstats bandId Id (numeric)')
     .option('-n, --band_name <band_name>', 'band name')
-    .option('-f, --field <field_name>', 'band field name to store the values (example: facebook_likes, lastfm_listeners, etc)')
+    .option('-f, --field <field_name>', 'band field name to store the values (example: running_stats.uacebook_likes, lastfm_listeners, etc)')
+    .option('-v, --value <value>', 'initial value for field)')
     .option('-l, --limit <num>', 'limit to <num> records')
 
 /**
  * update commands
  */
 program
-    .command('update')
-    .description('recreates running stats object and recalculates totals and incrementals')
+    .command('add')
+    .description('adds a field to band document records')
     .action(function() {
 
         if (program.band_id) {
@@ -66,48 +67,6 @@ program
                     cb();
                     return false;
                 }
-                var facebookId = result.running_stats.facebook_likes.facebook_id;
-                var bandId = result.band_id;
-                var bandName = result.band_name;
-                var newDailyStats = [];
-                var newRunningStats = {};
-                var incrementalSum = 0;
-                var incrementalAvg = 0;
-                var runningStats = result.running_stats[program.field].daily_stats;
-                jobStats.processed++;
-
-                for (var s in runningStats) {
-                    var currentStat = runningStats[s];
-                    if (oldStat) {
-                        var incremental = currentStat.value - oldStat.value;
-                        var newStat = {
-                            "date": currentStat.date,
-                            "value": currentStat.value,
-                            "incremental": incremental
-                        }
-                        newDailyStats.push(newStat);
-                        incrementalSum += incremental;
-                    }
-                    var oldStat = runningStats[s];
-                    var currentStatValue = currentStat.value;
-                } 
-               
-                if (runningStats) { 
-                    incrementalAvg = Math.round(incrementalSum / runningStats.length);
-                } else {
-                    incrementalAvg = 0;
-                }
-                newRunningStats.incremental_avg = incrementalAvg;
-                newRunningStats.total_incremental = incrementalSum;
-                newRunningStats.current = currentStatValue;
-                newRunningStats.daily_stats = newDailyStats;
-                newRunningStats.last_updated = moment().format('YYYY-MM-DD HH:mm:ss');
-
-                var runningStatsSet = {};
-                runningStatsSet['running_stats.' + program.field] = newRunningStats;
-                var set = {
-                    $set: runningStatsSet
-                } 
                         
                 db.collection('bands').update({"band_id": bandId}, set, function(err, result) {
                     if (err) jobStats.errors++;
@@ -142,7 +101,7 @@ program
  * view commands
  */
 program
-    .command('view')
+    .command('delete')
     .description('not implemented')
     .action(function() {
 
