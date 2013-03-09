@@ -21,7 +21,7 @@
     </div>
     <div>
       <label for="site_weight">Weight</label>
-        <input type="text" name="site_weight" value="{{site.site_weight}}">
+        <input type="text" name="site_weight" class="input-small" value="{{site.site_weight}}">
     </div>
     <div>
       <label for="link_field">Link Field</label>
@@ -65,10 +65,8 @@
 <button id="bs-site-update">Update</button>
 <button id="bs-site-delete">Delete</button>
 
-<button id="bs-view-article">View Articles</button>
+<button id="bs-view-article" class="modal">View Articles</button>
 
-<div id='bs-site-article'>
-</div>
 <script type="text/javascript">
 
 $(function() {
@@ -157,7 +155,8 @@ $(function() {
         }
         output += "</dl>";
 
-        $('#bs-site-article').html(output);
+        $('#modal').removeClass('loading');
+        $('#modal').append(output);
 
         if (currentArticle === (articles.length-1)) {
             currentArticle = 0;

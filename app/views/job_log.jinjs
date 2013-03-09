@@ -14,12 +14,29 @@
                 "bFilter": false,
                 "aaSorting": [[ 0, "desc" ]]
             });
+
+            $('#clear-job-log').live('click', function() {
+                $.ajax({
+                    url: '/admin/job/clear-log',
+                    type: 'delete',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response);
+                        alertModal('Job Log Cleared');
+                        return false;   
+                    },
+                    error: function(err, status, msg) {
+                        console.log(err);
+                        return false;   
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}
 
 {% block content %}
-
+<button id="clear-job-log">Clear Log</a></button>
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="jobs">
 	<thead>
 		<tr>

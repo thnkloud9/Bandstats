@@ -2,6 +2,11 @@
 {% block title %}Job Edit{% endblock %}
 {% block head %}
     {{ super() }}
+<script type="text/javascript" src="/js/libs/jquery-gentleSelect/jquery-gentleSelect.js"></script>
+<script type="text/javascript" src="/js/libs/jquery-cron/jquery-cron.js"></script>
+
+<link type="text/css" href="/js/libs/jquery-gentleSelect/jquery-gentleSelect.css" rel="stylesheet" />
+<link type="text/css" href="/js/libs/jquery-cron/jquery-cron.css" rel="stylesheet" />
 {% endblock %}
 {% block content %}
 
@@ -9,7 +14,7 @@
     <fieldset>
       <div>
         <label for="job_id">Id</label>
-          <input type="text" id="job_id" name="job_id" value="{{job.job_id}}">
+          <input type="text" id="job_id" name="job_id" value="{{job.job_id}}" disabled>
       </div>
       <div>
         <label for="job_name">Name</label>
@@ -23,7 +28,11 @@
         <label for="job_command">Command</label>
           <select name="job_command" id="job_command">
             {% for command in  commands %}
-                <option value="{{command}}">{{command}}</option>
+                {% if command == job.job_command %}
+                    <option value="{{command}}" selected>{{command}}</option>
+                {% else %}
+                    <option value="{{command}}">{{command}}</option>
+                {% endif %}
             {% endfor %}
           </select>
       </div>
@@ -33,7 +42,8 @@
       </div>
       <div>
         <label for="job_schedule">Schedule</label>
-          <input type="text" id="job_schedule" name="job_schedule" value="{{job.job_schedule}}">
+          <input type="text" id="job_schedule" name="job_schedule" value="{{job.job_schedule}}" class="input-small">
+          <span><a href="#" id="job-edit-schedule" class="modal">Edit Schedule</a></span>
       </div>
       <div>
         <label for="job_description">Description</label>
@@ -74,6 +84,34 @@
 
 $(function() {
     var job = {{json.job}};
+    
+    // open cron editor
+    $('#job-edit-schedule').live('click', function() {
+        var initialSchedule = $('#job_schedule').val().replace(/^0 /,"");
+        $('#modal').removeClass('loading');
+        $('#modal').append("<h4>Edit Job Schedule</h4>");
+        $('#modal').append("<div id='job-cron-editor'></div>");
+        $('#job-cron-editor').cron({
+             customValues: {
+                "5 Minutes" : "*/5 * * * *",
+                "10 Minutes" : "*/10 * * * *",
+                "15 Minutes" : "*/15 * * * *",
+                "30 Minutes" : "*/30 * * * *",
+                "45 Minutes" : "*/45 * * * *",
+                "2 Hours" : "0 */2 * * *",
+                "4 Hours" : "0 */4 * * *",
+                "6 Hours" : "0 */6 * * *",
+                "8 Hours" : "0 */8 * * *",
+                "10 Hours" : "0 */10 * * *",
+                "12 Hours" : "0 */12 * * *"
+            },
+            //initial: initialSchedule,
+            onChange: function() {
+                $('#job_schedule').val("0 " + $(this).cron("value"));
+            }
+        });
+        return false;
+    });
 
     // run job
     $('#bs-job-run').live('click', function() {

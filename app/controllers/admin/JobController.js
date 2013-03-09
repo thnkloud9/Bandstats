@@ -84,6 +84,7 @@ var JobController = function(db, jobScheduler) {
     } 
 
     this.editAction = function(req, res) {
+        var parent = this;
         var data = this.data;
         var query = {'job_id': req.params.id};
         var jobRepository = this.jobRepository;
@@ -91,29 +92,29 @@ var JobController = function(db, jobScheduler) {
 
         _.extend(data, {json: {}});
 
-        if (req.params.id === "0") {
-            // this is a new record
-            jobRepository.getAvailableCommands(function(err, commands) {
-                if (err) util.log(err);
+        jobRepository.getAvailableCommands(function(err, commands) {
+            if (err) util.log(err);
 
-                data.commands = commands; 
+            data.commands = commands; 
+            if (req.params.id === "0") {
+                // this is a new record
                 data.job = {};
                 data.json.job = JSON.stringify({});
                 res.send(template.render(data));
-            });
-        } else {
-            // get the record from the db
-            this.jobRepository.findOne(query, function(err, job) {
-                if ((err) || (!job)) {
-                    res.send({status: "error", error: "job not found"});
-                    return false;
-                }
-                delete job._id;
-                data.job = job;
-                data.json.job = JSON.stringify(job);
-                res.send(template.render(data));
-            });
-        }
+            } else {
+                // get the record from the db
+                parent.jobRepository.findOne(query, function(err, job) {
+                    if ((err) || (!job)) {
+                        res.send({status: "error", error: "job not found"});
+                        return false;
+                    }
+                    delete job._id;
+                    data.job = job;
+                    data.json.job = JSON.stringify(job);
+                    res.send(template.render(data));
+                });
+            }
+        });
     }
 
     this.startAction = function(req, res) {
@@ -180,6 +181,7 @@ var JobController = function(db, jobScheduler) {
                 id: req.params.id
             };
             res.send(data);
+            return false;
         }
         var query = {'job_id': req.params.id};
         
@@ -224,6 +226,29 @@ var JobController = function(db, jobScheduler) {
             parent.jobScheduler.initSchedule();
 
             res.send({status: "success", job: newJob});
+        });
+    }
+
+    this.clearLogAction = function(req, res) {
+        if (req.route.method != "delete") {
+            var data = {
+                status: "error",
+                error: "clear-log must be delete action",
+                method: req.route.method,
+                values: req.body.values 
+            };
+            res.send(data);
+            return false;
+        }
+        this.db.collection('job_log').remove({}, function(err, newJob) {
+            if (err) {
+                var data = {
+                    status: "error",
+                    error: err
+                };
+                res.send(data);
+            }
+            
         });
     }
 }
