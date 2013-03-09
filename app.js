@@ -16,6 +16,7 @@ var path = require('path');
 var util = require('util');
 var flash = require('connect-flash');
 var passport = require('passport');
+var SkinStore = require('connect-mongoskin');
 
 require("jinjs").registerExtension(".jinjs");
 
@@ -61,7 +62,7 @@ app.configure(function() {
 
     // authentication and sessions
     app.use(flash());
-    app.use(express.session({ secret: 'bandstats tracks'}));
+    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db)}));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);

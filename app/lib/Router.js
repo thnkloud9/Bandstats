@@ -74,6 +74,7 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
                 // add get route
                 // TODO: add authentication middle wear here
                 app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', ensureAuthenticated, function(request, response) {
+                //app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
                     mapRoute('./../controllers/admin/', file, request, response);
                 });
                 
