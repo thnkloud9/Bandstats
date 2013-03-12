@@ -1,0 +1,77 @@
+{% extends "./base.jinjs" %}
+{% block title %}Band Duplicates{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="/js/bandstats_band.js"></script>
+    <style type="text/css" title="currentStyle">
+        @import "/js/libs/datatables/media/css/demo_page.css";
+        @import "/js/libs/datatables/media/css/demo_table.css";
+    </style>
+    <script type="text/javascript" src="/js/libs/datatables/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" charset="utf-8">
+        var adminApp = adminApp || {};
+		$(document).ready(function() {
+			adminApp.oTable = $('#jobs').dataTable({
+                "iDisplayLength": 100,
+                "scrollX": "100%",
+                "bFilter": true,
+                "aaSorting": [[ 1, "asc" ]]
+            });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+
+<h3>Band Name Duplicates</h3>
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="jobs">
+	<thead>
+		<tr>
+			<th width="2%">Id</th>
+			<th width="2%">Name</th>
+			<th width="5%">Region</th>
+			<th width="5%">Genre</th>
+			<th width="20%">Facebook Id</th>
+			<th width="5%">Facebook Likes</th>
+			<th width="5%">Lastfm Id</th>
+			<th width="5%">Lastfm Listeners</th>
+			<th width="5%">Created</th>
+			<th width="5%">Last Updated</th>
+			<th width="5%">Tools</th>
+        </tr>
+    </thead>
+    <tbody>
+
+{% for band in duplicates %}
+    {% if loop.index % 2 == 0 %}
+        <tr class="even">
+    {% else %}
+        <tr class="odd">
+    {% endif %}
+    <td>{{band.band_id}}</td>
+    <td><a href='/admin/band/{{band.band_id}}/edit'>{{band.band_name}}</a></td>
+    <td><ul class="region-list region-droppable" data-band-id="{{band.band_id}}">
+            {% for region in band.regions %}
+                <li draggable="true" class="region-draggable" data-region-name="{{region}}" data-source-band-id="{{band.band_id}}">{{region}}</li>
+            {% endfor %}
+        </ul>
+    </td>
+    <td><ul class="genre-list genre-droppable" data-band-id="{{band.band_id}}">
+            {% for genre in band.genres %}
+                <li draggable="true" class="genre-draggable" data-genre-name="{{genre}}" data-source-band-id="{{band.band_id}}">{{genre}}</li>
+            {% endfor %}
+        </ul>
+    </td>
+    <td>{{band.external_ids.facebook_id}}</td>
+    <td>{{band.running_stats.facebook_likes.current}}</td>
+    <td>{{band.external_ids.lastfm_id}}</td>
+    <td>{{band.running_stats.lastfm_listeners.current}}</td>
+    <td>{{band.created}}</td>
+    <td>{{band.last_updated}}</td>
+    <td><button data-band-id="{{band.band_id}}" class="delete-band">Delete</button></td>
+  </tr>
+{% endfor %}
+
+    </tbody>
+</table>
+
+{% endblock %}

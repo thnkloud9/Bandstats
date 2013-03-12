@@ -21,10 +21,9 @@ function domSetup() {
         }
     });
 
-    /**
+    /**************************************
      * image drag and drop
      */
-    var dragImage = null;
     $('.image-draggable').live('dragstart', function(e) {
         var source = $(this).attr('src');
         e.originalEvent.dataTransfer.setData('src', source);
@@ -40,8 +39,8 @@ function domSetup() {
         var source = e.originalEvent.dataTransfer.getData('src');
         $(this).attr('src', source); 
     });
-
-    /**
+    
+    /*********************************
      * modal window
      */
     $('.modal').live('click', function() {
@@ -49,10 +48,7 @@ function domSetup() {
     });
     
     $('#modal-close').live('click', function() {
-        $('#modal').fadeOut(function() {
-            $('#overlay').fadeOut();
-            return false;
-        });
+        closeModal();
     });
 
 }
@@ -63,6 +59,13 @@ function openModal() {
     $('#modal').addClass('loading');
     $('#overlay').fadeIn(function() {
         $('#modal').fadeIn();
+        return false;
+    });
+}
+
+function closeModal() {
+    $('#modal').fadeOut(function() {
+        $('#overlay').fadeOut();
         return false;
     });
 }

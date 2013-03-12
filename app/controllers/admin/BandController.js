@@ -5,9 +5,12 @@
  */
 
 var request = require('request');
+var util = require('util');
 var async = require('async');
 var _ = require('underscore');
-var xml2js = require('xml2js');
+var path = require('path');
+var nconf = require('nconf');
+nconf.file(path.join(__dirname, 'app/config/app.json'));
 
 var BandRepository = require('./../../repositories/BandRepository.js');
 
@@ -112,21 +115,8 @@ var BandController = function(db) {
 
         // get number of failed ids for all running_stats 
         async.forEach(running_stats, function(stat, cb) {
-            var statId = "running_stats." + stat + ".current";
             var countId = "failed_" + stat + "_count";
-            var errorQuery = {};
-            var stringQuery ={};
-            errorQuery[statId] = /^error.*/;
-            stringQuery[statId] = {$type: 1};
-
-            var query = {
-                $or: [
-                    errorQuery,
-                    stringQuery 
-                ]
-            };
-
-            parent.bandRepository.count(query, function(err, results) {
+            parent.bandRepository.getBadRunningStatCount(stat, function(err, results) {
                 var result = {};
                 result[countId] = results;
                 _.extend(data, result);
@@ -192,7 +182,19 @@ var BandController = function(db) {
         var query = {'band_id': req.params.id};
         var bandRepository = this.bandRepository;
         var template = require(this.viewPath + 'band_edit');
-        _.extend(data, {json: {}});
+        var apisEnabled = {
+            "facebook": nconf.get('facebook:enabled'),
+            "lastfm": nconf.get('lastfm:enabled'),
+            "echonest": nconf.get('echonest:enabled'),
+            "soundcloud": nconf.get('soundcloud:enabled'),
+            "bandcamp": nconf.get('bandcamp:enabled'),
+            "musicbrainz": nconf.get('musicbrainz:enabled'),
+            "youtube": nconf.get('youtube:enabled'),
+        }
+        _.extend(data, {
+            "json": {},
+            "apis_enabled": apisEnabled 
+        });
 
         if (req.params.id === "0") {
             // this is a new record
@@ -286,6 +288,65 @@ var BandController = function(db) {
         }    
         this.bandRepository.insert(req.body.values, {}, function(err, band) {
             res.send({status: "success", band: band});
+        });
+    }
+
+    this.duplicatesAction = function(req, res) {
+        var data = this.data;
+        var parent = this;
+        this.bandRepository.findDuplicates(function(err, results) {
+            if (err) res.send(err);
+            
+            var finalResults = [];
+            async.forEach(results, function(band, cb) {
+
+                parent.bandRepository.find({"band_name": band.band_name}, {}, function(err, bandResults) {
+                    if (err) util.log(err);
+
+                    for (var b in bandResults) {
+                        finalResults.push(bandResults[b]);
+                    }
+                    cb();
+                }); 
+            },
+            function(err) {
+                var template = require(parent.viewPath + 'band_duplicates');
+                _.extend(data, { 
+                    "duplicates": finalResults,
+                    "duplicates_json": JSON.stringify(finalResults)
+                });
+                res.send(template.render(data));
+            });
+        });
+    }
+
+    // NOT BEING USED YET
+    this.showAction = function(req, res) {
+        var page = req.params.id;
+        var data = this.data;
+        var template = require(this.viewPath + 'band_' + page);
+        res.send(template.render(data));
+    }
+
+    this.genresAction = function(req, res) {
+        var parent = this;
+        var data = this.data;
+
+        this.bandRepository.getDistinctValues('genres', {}, function(err, genres) {
+            if (err) util.log(err);
+
+            res.send(genres);
+        });
+    }
+
+    this.regionsAction = function(req, res) {
+        var parent = this;
+        var data = this.data;
+
+        this.bandRepository.getDistinctValues('regions', {}, function(err, regions) {
+            if (err) util.log(err);
+
+            res.send(regions);
         });
     }
 }

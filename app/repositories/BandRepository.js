@@ -37,9 +37,10 @@ BandRepository.prototype.findOne = function(query, callback) {
     });
 }
 
-BandRepository.prototype.insert = function(value, options, callback) {
-    BaseRepository.prototype.insert.call(this, value, options, function(err, bands) {
-        callback(err, bands);
+BandRepository.prototype.insert = function(band, options, callback) {
+    band = this.addDefaultValues(band);
+    BaseRepository.prototype.insert.call(this, band, options, function(err, band) {
+        callback(err, band);
     });
 }
 
@@ -64,6 +65,40 @@ BandRepository.prototype.remove = function(query, options, callback) {
 /**
  * Band specific functions
  */
+
+// TODO: use mongodb to maintain schemas
+BandRepository.prototype.addDefaultValues = function(band) {
+    var emptyObject = {};
+    var emptyArray = [];
+    band.external_ids = {
+        "lastfm_id": band.band_name,
+        "facebook_id": "",
+        "echonest_id": ""
+    }
+    band.running_stats = {
+        "facebook_likes": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "total_incremental": 0,
+            "daily_stats": emptyArray
+        },
+        "lastfm_listeners": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "total_incremental": 0,
+            "daily_stats": emptyArray
+        }
+    }
+    band.regions = emptyArray;
+    band.genres = emptyArray;
+    band.mentions = emptyArray;
+    band.last_updated = new Date();
+    return band;
+}
 
 BandRepository.prototype.updateRunningStat = function(query, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
     var db = this.db;
@@ -113,97 +148,6 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, increm
     });
 
 }
-
-/**
- * inserts or updates facebook_likes daily_stats for
- * the current day, also cleans any records older than
- * 60 days
- */
-BandRepository.prototype.updateFacebookLikes = function(query, likes, callback) {
-    var db = this.db;
-    var collection = this.collection
-    var now = moment().format('YYYY-MM-DD HH:mm:ss');
-    var likes = parseInt(likes);
-
-    // add toays stat with upsert to overwrite in case it was already collected today
-    async.series({
-        deleteToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { $pull: {"running_stats.facebook_likes.daily_stats": { "date":  today } } };
-            db.collection(collection).update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-        updateToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { 
-                $addToSet: {"running_stats.facebook_likes.daily_stats": { "date": today, "value": likes } },
-                $set: {
-                    "running_stats.facebook_likes.current": likes,
-                    "running_stats.facebook_likes.last_updated": now
-                }
-            };
-            db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
-                cb(err, result);
-            });
-        },
-        deleteOld: function(cb) {
-            var expire = moment().subtract('months', 6).calendar();
-            var set = { $pull: {"running_stats.facebook_likes.daily_stats": { "date":  expire } } };
-            db.collection('bands').update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-    },
-    function(err, results) {
-        callback(err, results);
-    });
-}
-
-/**
- * inserts or updates lastfm_listeners daily_stats for
- * the current day, also cleans any records older than
- * 60 days
- */
-BandRepository.prototype.updateLastfmListeners = function(query, listeners, callback) {
-    var db = this.db;
-    var collection = this.collection;
-    var now = moment().format('YYYY-MM-DD HH:mm:ss');
-    var listeners = parseInt(listeners);
-
-    async.series({
-        deleteToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  today } } };
-            db.collection(collection).update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-        updateToday: function(cb) {
-            var today = moment().format('YYYY-MM-DD');
-            var set = { 
-                $addToSet: {"running_stats.lastfm_listeners.daily_stats": { "date": today, "value": listeners } },
-                $set: {
-                    "running_stats.lastfm_listeners.current": listeners,
-                    "running_stats.lastfm_listeners.last_updated": now 
-                }
-            };
-            db.collection(collection).update(query, set, {upsert:true}, function(err, result) {
-                cb(err, result);
-            });
-        },
-        deleteOld: function(cb) {
-            var expire = moment().subtract('months', 6).calendar();
-            var set = { $pull: {"running_stats.lastfm_listeners.daily_stats": { "date":  expire } } };
-            db.collection(collection).update(query, set, function(err, result) {
-                cb(err, result);
-            });
-        },
-    },
-    function(err, results) {
-        callback(err, results);
-    });
-};
 
 BandRepository.prototype.getBadLastfmIds = function(callback) {
     var db = this.db;
@@ -286,7 +230,7 @@ BandRepository.prototype.getBandsIndex = function(query, callback) {
         callback(null, results);
     });
 
-};
+}
 
 BandRepository.prototype.updateMentions = function(query, site, article, callback) {
     var db = this.db;
@@ -337,7 +281,7 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
         }
         callback(null, results);
     });
-};
+}
 
 /**
  * Counts
@@ -353,6 +297,75 @@ BandRepository.prototype.count = function(query, callback) {
        
         callback(null, results);
     });
-};
+}
+
+BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
+    var statId = "running_stats." + stat + ".current";
+    var errorQuery = {};
+    var stringQuery ={};
+    errorQuery[statId] = /^error.*/;
+    stringQuery[statId] = {$type: 1};
+
+    var query = {
+        $or: [
+            errorQuery,
+            stringQuery 
+        ]
+    };
+
+    this.count(query, function(err, results) {
+        if (err) util.log(err);
+
+        callback(err, results);
+    });
+}
+
+BandRepository.prototype.findDuplicates = function(callback) {
+    var db = this.db;
+    var collection = this.collection;
+
+    var map = function(){
+        if(this.band_name) {
+            emit(this.band_name, 1);
+        }
+    }
+
+    var reduce = function(key, values){
+        var result = 0;
+        values.forEach(function(value) {
+          result += value;
+        });
+        return result;
+    }
+
+    db.collection(collection).mapReduce(map, reduce, {out:{ inline : 1}}, function(err, results) { 
+        var duplicates = [];
+        if (err) {
+            util.log(err);
+            return false;
+        }
+    
+        for (var r in results) {
+            if (results[r].value > 1) {
+                duplicates.push({
+                    "band_name": results[r]._id,
+                    "value": results[r].value
+                });
+            }
+        }
+        callback(null, duplicates);
+    });
+}
+
+BandRepository.prototype.getDistinctValues = function(field, query, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    db.collection(collection).distinct(field, query, function(err, results) {
+        if (err) util.log(err);
+
+        callback(err, results);
+    });
+    
+}
 
 module.exports = BandRepository;

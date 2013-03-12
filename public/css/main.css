@@ -21,6 +21,11 @@ a:visited {color:#666666; text-decoration: none;}
 a:focus {outline:none;}
 a:hover, a:active {text-decoration: underline; outline:none;}
 
+h4 {
+  line-height: 10px;
+  margin: 10px 3px 10px 5px;
+  }
+
 form fieldset {
   border: 0;
   }
@@ -60,6 +65,9 @@ input.input-small {
   }
 
 .menu {
+  position: fixed;
+  width: 100%;
+  margin: auto;
   background-color: #000;
   color: #fff;
   line-height: 20px;
@@ -68,6 +76,13 @@ input.input-small {
   .menu a {
     color: #fff;
     }
+
+.sub-menu {
+  position: fixed;
+  width: 100%;
+  margin: 40px auto;
+  box-shadow: 0 1px 3px #000;
+  }
 
 .navlist li {
   display: inline;
@@ -85,14 +100,12 @@ input.input-small {
   margin-top: -10px;
   }
 
-.submenu {
+.content-container {
+  margin: 0 auto; 
+  overflow: auto;
+  padding: 75px 5px 50px 5px;
   }
 
-.content {
-  padding: 5px 5px 200px 5px;
-  margin-bottom: 55px;
-  height: 100%;
-  }
 
 .footer {
   width: 100%;
@@ -379,6 +392,17 @@ nav.external-ids {
     margin-right: 10px;
     }
 
+.band-main-edit {
+  margin-left: 220px;
+  }
+
+#band-regions-container,
+#band-genres-container {
+  position: relative;
+  width: 300px;
+  margin-left: 220px;
+  }
+
 /* overlay stuff */
 #overlay {
   display: none;
@@ -406,6 +430,8 @@ nav.external-ids {
   top: 10%; 
   /* bottom: 10%; */
   max-height: 80%;
+  min-width: 30%;
+  min-height: 20%;
   width: calc(50% - 10px);
   left: 50%;
   margin: 0 0 0 -25%;
@@ -512,3 +538,34 @@ nav.external-ids {
             font-size: 14px;
             line-height: 20px;
             }
+
+/**
+ * drag and drop stuff
+ */
+.genre-list,
+.region-list {
+  display: inline;
+  line-height: 28px;
+  }
+
+.genre-draggable, 
+.region-draggable {
+  display: inline;
+  white-space: nowrap;
+  color: white;
+  border: solid 1px #666;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+       -o-border-radius: 5px;
+          border-radius: 5px;
+  width: 50%;
+  height: 18px;
+  background-color: #777;
+  text-align: center;
+  padding: 3px;
+  line-height: 19px;
+  margin: 5px 5px 5px 5px;
+  box-shadow: 0 1px 3px #000;
+  font-size: 12px;
+  }

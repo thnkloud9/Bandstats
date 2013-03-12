@@ -43,8 +43,11 @@ LastfmManager.prototype.search = function(query, callback) {
             callback("error, no results from lastfm");
             return false;
         }
-       
-        callback(null, body.results.artistmatches.artist);
+      
+        if (body.results.artistmatches.artist) {
+            results = body.results.artistmatches.artist;
+        } 
+        callback(null, results);
     });  
 
 };

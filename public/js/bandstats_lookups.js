@@ -118,7 +118,7 @@ var Lookup = function(provider, resource, service) {
     this.showSoundcloudMatches = function(id) {
         var displayElement = '#modal';
         var response = this.matches;
-        var output = "<ul>";
+        var output = "<ul id='match-list'>";
 
         $(displayElement).removeClass('loading');
         for (var r in response) {
@@ -190,7 +190,7 @@ var Lookup = function(provider, resource, service) {
     this.showEchonestMatches = function(id) {
         var displayElement = '#modal';
         var response = this.matches;
-        var output = "<ul>";
+        var output = "<ul id='match-list'>";
 
         $(displayElement).removeClass('loading');
         for (var r in response) {
@@ -256,7 +256,7 @@ var Lookup = function(provider, resource, service) {
     this.showLastfmMatches = function(id) {
         var displayElement = '#modal';
         var response = this.matches;
-        var output = "<ul>";
+        var output = "<ul id='match-list'>";
 
         $(displayElement).removeClass('loading');
         for (var r in response) {
@@ -290,7 +290,7 @@ var Lookup = function(provider, resource, service) {
             for (var m in result.results) {
                 var match = result.results[m];
                 
-                output += "<li data-band-id='" + bandId + "' data-provider='lastfm' data-external-id='" + match.id + "' class='bs-lookup-match'>";
+                output += "<li data-band-id='" + bandId + "' data-provider='lastfm' data-external-id='" + match.name + "' class='bs-lookup-match'>";
                 var src = "";
                 if (match.image) {
                     for (var i in match.image) {
@@ -316,7 +316,7 @@ var Lookup = function(provider, resource, service) {
     this.showFacebookMatches = function(id) {
         var displayElement = '#modal';
         var response = this.matches;
-        var output = "<ul>";
+        var output = "<ul id='match-list'>";
 
         $(displayElement).removeClass('loading');
         for (var r in response) {
@@ -378,13 +378,13 @@ var Lookup = function(provider, resource, service) {
         $(displayElement).append(output);
     };
 
-    this.saveMatch = function(provider, bandId, externalId) {
+    this.saveMatch = function(provider, bandId, externalId, callback) {
         //TODO: add save function that works
         // with all lookup types
         var set = {};
         set['external_ids.' + provider + '_id'] = externalId;
 
-        url = '/band/' + bandId + '/update';
+        url = '/admin/band/' + bandId + '/update';
         type = 'put';
 
         $.ajax({
@@ -394,12 +394,17 @@ var Lookup = function(provider, resource, service) {
             dataType: 'json',
             success: function(response) {
                 console.log(response);
+                if (callback) {
+                    callback(response);
+                }
             },
             error: function(err, status, msg) {
                 console.log(err);
+                if (callback) {
+                    callback(err);
+                }
             }
-        });            
-        
+        });
     };
 };
 
@@ -417,7 +422,7 @@ $(function() {
         var bandId = $(this).attr('data-band-id');
 
         externalLookup.lookup(provider, resource, service, search, bandId);
-        //return false;
+        return false;
     });
 
     $('.bs-lookup-matches-close').live('click', function() {
@@ -463,8 +468,27 @@ $(function() {
         var provider = $(this).attr('data-provider');
         var externalId = $(this).attr('data-external-id');
 
-        externalLookup.saveMatch(provider, bandId, externalId);
-        // remove this from the lookup list
-        $(this).parent().parent().parent().hide();
+        // remove from match list
+        $(this).parents('.bs-lookup-match-group').empty();
+
+        externalLookup.saveMatch(provider, bandId, externalId, function(err, response) {
+            if ($('#match-list li').length == 1) {
+                closeModal();
+            };
+            if (profiles) {
+                if (profiles.indexOf(provider) >= 0) {
+                    if (provider == "facebook") {
+                        showFacebookProfile(externalId);  
+                    } else if (provider == "lastfm") {
+                        showLastfmProfile(externalId);  
+                    } else if (provider == "soundcloud") {
+                        showSoundcloudProfile(externalId);  
+                    } else if (provider == "echonest") {
+                        showEchonestProfile(externalId);  
+                    }
+                }
+            }
+            return false;
+        });
     });
 });

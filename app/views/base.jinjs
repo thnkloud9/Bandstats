@@ -18,7 +18,11 @@
 <body>
     <div class="menu">{% block menu %}{% include './menu.jinjs' %}{%endblock %}</div>
     <div class="sub-menu">{% block sub_menu %}{% include './sub_menu.jinjs' %}{%endblock %}</div>
-    <div class="content">{% block content %}{% endblock %}</div>
+    <div class="content-container">
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
     <div class="footer">
         {% block footer %}
         &copy; Copyright 2013 by <a href="http://domain.invalid/">yo momma</a>.

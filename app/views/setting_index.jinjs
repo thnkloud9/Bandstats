@@ -22,7 +22,7 @@
 
         for (var field in group) {
             var value = group[field]
-            $('#setting-edit-form').append(field + ": <input type='text' class='setting-edit' name='" + field + "' value='" + value + "' size='40'><br />");
+            $('#setting-edit-form').append(field + ": <input type='text' class='setting-edit' name='" + key + "." + field + "' value='" + value + "' size='40'><br />");
         }
     }
 </script>

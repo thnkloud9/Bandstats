@@ -170,14 +170,18 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
             var previous = 0;
             var incrementalTotal = 0;
             var totalStats = 0;
-            var existingRunningStats = band.running_stats[runningStat].daily_stats;
-            for (var s in existingRunningStats) {
-                var stat = existingRunningStats[s];
-                if (stat.date == yesterday) {
-                   previous = stat.value;
+
+            // see if we running_stat already exists
+            if (band.running_stats[runningStat]) {
+                var existingRunningStats = band.running_stats[runningStat].daily_stats;
+                for (var s in existingRunningStats) {
+                    var stat = existingRunningStats[s];
+                    if (stat.date == yesterday) {
+                       previous = stat.value;
+                    }
+                    incrementalTotal += stat.incremental; 
+                    totalStats++;
                 }
-                incrementalTotal += stat.incremental; 
-                totalStats++;
             }
 
             var searchItem = {

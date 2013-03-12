@@ -6,6 +6,7 @@
         @import "/js/libs/datatables/media/css/demo_page.css";
         @import "/js/libs/datatables/media/css/demo_table.css";
     </style>
+    <script type="text/javascript" src="/js/bandstats_band.js"></script>
     <script type="text/javascript" src="/js/libs/datatables/media/js/jquery.dataTables.js"></script>
 
 	<script type="text/javascript" charset="utf-8">
@@ -24,7 +25,10 @@
             }
                 
 			var oTable = $('#bands').dataTable( {
-                "sScrollX": "100%",
+                "bScrollInfinite": true,
+                "bScrollCollapse": true,
+                "sScrollY": "500px",
+                "sScrollX": "400px",
 				"bProcessing": true,
                 "bServerSide": true,
 				"sAjaxSource": bandDataUrl,
@@ -37,13 +41,39 @@
                         "mRender": function( data, type, full) {
                             return '<td><a href="/admin/band/' + full.band_id + '/edit">' + data + '</td>';
                         }
+                    },
+                    {
+                        "aTargets":[2],
+                        "mRender": function( data, type, full) {
+                            var output = '<td><ul class="genre-list genre-droppable" data-band-id="' + full.band_id + '">';
+
+                            for (var g in data) {
+                                var genre = data[g];
+                                output += '<li draggable="true" class="genre-draggable" data-genre-name="' + genre + '" data-source-band-id="' + full.band_id + '">' + genre + '</li>';
+                            }
+                            output += '</ul>';
+                            return output;
+                        }
+                    },
+                    {
+                        "aTargets":[3],
+                        "mRender": function( data, type, full) {
+                            var output = '<td><ul class="region-list genre-droppable" data-band-id="' + full.band_id + '">';
+
+                            for (var g in data) {
+                                var region = data[g];
+                                output += '<li draggable="true" class="region-draggable" data-region-name="' + region + '" data-source-band-id="' + full.band_id + '">' + region + '</li>';
+                            }
+                            output += '</ul>';
+                            return output;
+                        }
                     }
                 ],
 				"aoColumns": [
 					{ "mData": "band_id" },
 					{ "mData": "band_name" },
-					{ "mData": "genres.0" },
-					{ "mData": "regions.0" },
+					{ "mData": "genres" },
+					{ "mData": "regions" },
 					{ "mData": "band_url" },
 					{ "mData": "external_ids.facebook_id" },
 					{ "mData": "running_stats.facebook_likes.current" },

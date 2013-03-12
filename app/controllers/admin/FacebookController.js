@@ -69,6 +69,16 @@ var FacebookController = function(db) {
                         {"external_ids.facebook_id": ""}
                     ]
                 };
+            } else if (resource === 'fail_search') {
+                query = {
+                    $and: [
+                        {"external_ids.facebook_id": {$ne: null}},
+                        {"external_ids.facebook_id": {$ne: ""}},
+                        {"running_stats.facebook_likes.current": /^error.*/}
+                    ]
+                };
+                resource = 'search';
+                lookupFunction = 'search';
             } else {
                 query = {
                     $and: [

@@ -51,6 +51,7 @@
         </tr>
     </thead>
     <tbody>
+
 {% for log in job_logs %}
     {% if loop.index % 2 == 0 %}
         <tr class="even">
@@ -68,6 +69,7 @@
         <td>{{log.job_failed}}</td>
     </tr>
 {% endfor %}
+
     </tbody>
 </table>
 

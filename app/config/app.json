@@ -1,7 +1,8 @@
 {
     "app": {
         "port": 4000,
-        "title": "Bandstats"
+        "title": "Bandstats",
+        "data_retention": 30
     },
     "admin": {
         "port": 8000,
@@ -13,21 +14,25 @@
         "database": "bandstats"
     },
     "bandcamp": {
+        "enabled": false,
         "api_key": "vatnajokull",
         "domain": "http://api.bandcamp.com/api"
     },
     "lastfm": {
+        "enabled": true,
         "api_key": "e4d4f5353a13cf36fdb79957f831b6cf",
         "api_secret": "33de9ec1331e068d9e50e3c80f173c96",
         "domain": "http://ws.audioscrobbler.com/2.0"
     },
     "echonest": {
+        "enabled": true,
         "api_key": "5SMVVCCJLQPN1IIOZ",
         "api_secret": "58/+heZ1R3iRlFSGESrwcA",
         "consumer_key": "8be1a338d938f19a8c9cde281d705095",
         "domain": "http://developer.echonest.com/api/v4"
     },
     "facebook": {
+        "enabled": true,
         "app_id": "115928858587081",
         "app_secret": "14b6b4930a997540e79d92c87747564c",
         "channel_url": "//www.thedelimagazine.com/bandstats/channel.html",
@@ -35,7 +40,14 @@
         "domain": "https://graph.facebook.com"
     },
     "soundcloud": {
+        "enabled": true,
         "client_id": "OtYaDuMCqKGZn5IiRU2EKg",
         "domain": "http://api.soundcloud.com"
+    },
+    "musicbrainz": {
+        "enabled": false
+    },
+    "youtube": {
+        "enabled": false
     }
 }
