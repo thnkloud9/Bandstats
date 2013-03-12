@@ -152,7 +152,7 @@
                 }
                 output += "</div>"; 
                 $('#bs-lastfm-profile').html(output);
-                $('#external_ids.lastfm_id').val(lastfmId);
+                $('#external-ids-lastfm-id').val(lastfmId);
                 profiles.push('lastfm');
 
                 // update main band image 
@@ -225,7 +225,7 @@
                 output += "</div>"; 
                 $('#bs-echonest-profile').html(output);
                 profiles.push('echonest');
-                $('#external_ids.echonest_id').val(echonestId);
+                $('#external-ids-echonest-id').val(echonestId);
                
                 // update main band image 
                 showMainImage();
@@ -275,7 +275,7 @@
                 output += "</div>"; 
                 $('#bs-soundcloud-profile').html(output);
                 profiles.push('soundcloud');
-                $('#external_ids.soundcloud_id').val(soundcloudId);
+                $('#external-ids-soundcloud-id').val(soundcloudId);
   
                 // update main band image 
                 showMainImage();
@@ -324,7 +324,7 @@
                 output += "</div>"; 
                 $('#bs-facebook-profile').html(output);
                 profiles.push('facebook');
-                $('#external_ids.facebook_id').val(facebookId);
+                $('#external-ids-facebook-id').val(facebookId);
  
                 // update main band image 
                 showMainImage();

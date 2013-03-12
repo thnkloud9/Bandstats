@@ -79,7 +79,7 @@
     <div id='tabs-facebook'>
       <div class='bs-external-ids-form'>
         <form id='bs-facebook-form'>
-            facebook_id: <input class='bs-band-edit' type='text' id="external_ids.facebook_id" name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
+            <input class='bs-band-edit' type='text' id="external-ids-facebook-id" name='external_ids.facebook_id' value='{{band.external_ids.facebook_id}}'>
             <a data-provider='facebook' data-service='search' data-resource='pageids' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
@@ -105,7 +105,7 @@
     <div id='tabs-lastfm'>
       <div class='bs-external-ids-form'>
         <form id='bs-lastfm-form'>
-            <input class='bs-band-edit' type='text' id="external_ids.lastfm_id" name='external_ids.lastfm_id' value="{{band.external_ids.lastfm_id}}">
+            <input class='bs-band-edit' type='text' id="external-ids-lastfm-id" name='external_ids.lastfm_id' value="{{band.external_ids.lastfm_id}}">
             <a data-provider='lastfm' data-service='search' data-resource='pageids' data-search="{{band.band_name}}" data-band-id='{{band.band_id}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
@@ -124,7 +124,7 @@
     <!-- Bandcamp Section -->
     <div id='tabs-bandcamp'>
         <form id='bs-bandcamp-form'>
-            <input class='bs-band-edit' type='text' id="external_ids.bandcamp_id" name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
+            <input class='bs-band-edit' type='text' id="external-ids-bandcamp-id" name='external_ids.bandcamp_id' value='{{band.external_ids.bandcamp_id}}'>
             <a data-provider='bandcamp' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
     </div>
@@ -134,7 +134,7 @@
     <!-- Soundcloud Section -->
     <div id='tabs-soundcloud'>
         <form id='bs-soundcloud-form'>
-            <input class='bs-band-edit' type='text' id="external_ids.soundcloud_id" name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
+            <input class='bs-band-edit' type='text' id="external-ids-soundcloud-id" name='external_ids.soundcloud_id' value='{{band.external_ids.soundcloud_id}}'>
             <a data-provider='soundcloud' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}'  class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
@@ -148,7 +148,7 @@
     <!-- Musicbrainz Section -->
     <div id='tabs-musicbrainz'>
         <form id='bs-musicbrainz-form'>
-            <input class='bs-band-edit' type='text' id="external_ids.musicbrainz_id" name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
+            <input class='bs-band-edit' type='text' id="external-ids-musicbrainz-id" name='external_ids.musicbrainz_id' value='{{band.external_ids.musicbrainz_id}}'>
             <a data-provider='musicbrainz' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
     </div>
@@ -158,7 +158,7 @@
     <!-- Echonest Section -->
     <div id='tabs-echonest'>
         <form id='bs-echonest-form'>
-            <input class='bs-band-edit' type='text' id="external_ids.echonest_id" name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
+            <input class='bs-band-edit' type='text' id="external-ids-echonest-id" name='external_ids.echonest_id' value='{{band.external_ids.echonest_id}}'>
             <a data-provider='echonest' data-service='search' data-resource='search' data-search='{{band.band_name}}' data-band-id='{{band.band_id}}' class='bs-lookup modal' href='#'>lookup</a><br />
         </form>
 
