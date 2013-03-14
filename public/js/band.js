@@ -9,7 +9,7 @@ function Band(model) {
     this.bandReviews = [];
     this.bandEvents = [];
     this.bandUrls = [];
-    this.bandBlogs = []
+    this.bandBlogs = [];
     this.bandTracks = [];
     this.bandAlbums = [];
     this.bandLabels = [];
@@ -18,23 +18,23 @@ function Band(model) {
 
 Band.prototype.setModel = function(model) {
    this.model = model; 
-}
+};
 
 Band.prototype.render = function(template, container, callback) {
     var viewTemplate = $(template).html();
     $(container).html(_.template(viewTemplate, this.model)); 
 
     if (callback) {
-        callback()
+        callback();
     } 
-}
+};
 
 Band.prototype.showMainImage = function(element) {
     if (this.bandImages.length) {
         $(element).attr('src', this.bandImages[0]);    
         $(element).attr('data-image-index', 0);    
     }
-}
+};
 
 Band.prototype.nextMainImage = function(element) {
     var currentImage = $(element).attr('data-image-index');
@@ -47,7 +47,7 @@ Band.prototype.nextMainImage = function(element) {
         $(element).attr('src', this.bandImages[0]);    
         $(element).attr('data-image-index', 0);    
     }
-}
+};
 
 Band.prototype.prevMainImage = function(element) {
     var currentImage = $(element).attr('data-image-index');
@@ -59,7 +59,7 @@ Band.prototype.prevMainImage = function(element) {
         $(element).attr('src', bandImages[bandImages.length-1]);    
         $(element).attr('data-image-index', 0);    
     }
-}
+};
 
 // update record
 Band.prototype.updateBand = function(callback) {
@@ -97,7 +97,7 @@ Band.prototype.updateBand = function(callback) {
             callback(err, band);
         }
     });            
-}
+};
 
 // delete record
 Band.prototype.deleteBand = function(callback) {
@@ -122,7 +122,7 @@ Band.prototype.deleteBand = function(callback) {
         }
     });
 
-}
+};
 
 Band.prototype.loadLastfmProfile = function(callback) {
     var parent = this;
@@ -144,8 +144,8 @@ Band.prototype.loadLastfmProfile = function(callback) {
         error: function(err, status, msg) {
             console.log(err);
         }
-    }) 
-}
+    });
+};
 
 Band.prototype.loadEchonestProfile = function(callback) {
     var parent = this;
@@ -168,7 +168,7 @@ Band.prototype.loadEchonestProfile = function(callback) {
             console.log(err);
         }
     });
-}
+};
 
 Band.prototype.loadSoundcloudProfile = function(callback) {
     var parent = this;
@@ -191,7 +191,7 @@ Band.prototype.loadSoundcloudProfile = function(callback) {
             console.log(err);
         }
     });
-}
+};
 
 Band.prototype.loadFacebookProfile = function(callback) {
     var parent = this;
@@ -214,7 +214,7 @@ Band.prototype.loadFacebookProfile = function(callback) {
             console.log(err);
         }
     });
-}
+};
 
 Band.prototype.showChart = function(element, dataset) {
     var options = {
@@ -262,4 +262,4 @@ Band.prototype.showChart = function(element, dataset) {
             yaxis: 2
         }
     ], options);
-}
+};

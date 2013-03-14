@@ -44,7 +44,7 @@ var passport = require('passport');
  * web server 
  */
 var node_port = nconf.get('app:port');
-var app = module.exports.app = express()
+var app = module.exports.app = express();
 app.configure(function() {
     app.set('title', nconf.get('app:title'));
     app.use(express.bodyParser());
@@ -66,7 +66,7 @@ app.configure(function() {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);
-})
+});
 
 /**
  * Load the JobSchedule

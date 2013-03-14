@@ -16,7 +16,7 @@ var util = require('util');
 /**
  * constructor
  */
-var SettingController = function(db) {
+function SettingController(db) {
 
     /**
      * Load the setting repo for mongo connectivity
@@ -24,26 +24,27 @@ var SettingController = function(db) {
     this.data = {"section": "setting"};
     nconf.file(path.join(__dirname, 'app/config/app.json'));
 
-    this.indexAction = function(req, res) {
-        var data = this.data;
-        fs.readFile(path.join(__dirname, '/../../config/app.json'), 'utf8', function (err, results) {
-            if (err) {
-                _.extend(data, {"error": err});
-            }
-            _.extend(data, { 'config': JSON.stringify(results) });
-            var template = require('./../../views/setting_index');
-            res.send(template.render(data));
-        });
-    }
+}
 
-    this.updateAction = function(req, res) {
-        if ((req.route.method != "put") || (!req.body.values)) {
-            res.send({status: "error", error: "update must be put action and must include values"});
-            return false;
+SettingController.prototype.indexAction = function(req, res) {
+    var data = this.data;
+    fs.readFile(path.join(__dirname, '/../../config/app.json'), 'utf8', function (err, results) {
+        if (err) {
+            _.extend(data, {"error": err});
         }
+        _.extend(data, { 'config': JSON.stringify(results) });
+        var template = require('./../../views/setting_index');
+        res.send(template.render(data));
+    });
+}
 
-        res.send('not implemented yet');
+SettingController.prototype.updateAction = function(req, res) {
+    if ((req.route.method != "put") || (!req.body.values)) {
+        res.send({status: "error", error: "update must be put action and must include values"});
+        return false;
     }
+
+    res.send('not implemented yet');
 }
 
 exports.controller = SettingController;
