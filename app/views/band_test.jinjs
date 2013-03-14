@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+ 
+    <!-- bandstats stuff -->
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="text/javascript" src="/js/bandstats_ui.js"></script>
+    <script type="text/javascript" src="/js/bandstats_lookups.js"></script>
+    <script type="text/javascript" src="/js/band.js"></script>
+    <script type="text/javascript" src="/js/facebookProfile.js"></script>
+    <script type="text/javascript" src="/js/lastfmProfile.js"></script>
+    <script type="text/javascript" src="/js/echonestProfile.js"></script>
+    <script type="text/javascript" src="/js/soundcloudProfile.js"></script>
+    <!-- /end bandstats stuff -->
+</head>
+<body>
+
+  <h4>Band Test Page</h4>
+
+  <div id="band-container"></div>
+  <div id="facebook-container"></div>
+
+  <script type="text/html" id="band-template">
+        <h4><%= band_name %></h4> 
+  </script>
+  <script type="text/html" id="facebook-template">
+        <p>from facebookProfile <%= id %></p>
+  </script>
+
+  <script type="text/javascript">
+
+    var band = new Band({{json.band}});
+    band.render('#band-template', '#band-container');
+
+    band.loadFacebookProfile(function(err, facebookProfile) {
+        band.bandProfiles.facebook.render('#facebook-template', '#facebook-container');
+    });
+    band.loadLastfmProfile(function(err, lastfmProfile) {
+        lastfmProfile.render();
+    });
+    band.loadEchonestProfile(function(err, echonestProfile) {
+        echonestProfile.render();
+    });
+
+  </script>
+
+</body>
+</html>

@@ -322,10 +322,32 @@ var BandController = function(db) {
 
     // NOT BEING USED YET
     this.showAction = function(req, res) {
-        var page = req.params.id;
         var data = this.data;
-        var template = require(this.viewPath + 'band_' + page);
-        res.send(template.render(data));
+        var param = req.params.id;
+        var data = this.data;
+
+        _.extend(data, {
+            "json": {}
+        });
+
+        if (!isNaN(param)) {
+            var template = require(this.viewPath + 'band_test');
+            var query = {"band_id": param};
+            this.bandRepository.findOne(query, function(err, band) {
+                if ((err) || (!band)) {
+                    res.send({status: "error", error: "band not found"});
+                    return false;
+                }
+                delete band._id;
+                data.band = band;
+                data.json.band = JSON.stringify(band);
+                res.send(template.render(data));
+            });
+
+        } else {
+            var template = require(this.viewPath + 'band_' + page);
+            res.send(template.render(data));
+        }
     }
 
     this.genresAction = function(req, res) {
