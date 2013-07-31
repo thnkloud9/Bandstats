@@ -19,6 +19,11 @@ function FacebookController(db) {
     this.facebookManager = new FacebookManager();
 }
 
+FacebookController.prototype.indexAction = function(req, res) {
+    // forward to page action
+    this.pageAction(req, res);
+}
+
 /**
  * takes a band name as query param
  * and returns search results from 
@@ -165,7 +170,7 @@ FacebookController.prototype.imageAction = function(req, res) {
 };
 
 FacebookController.prototype.pageAction = function(req, res) {
-    if (req.params.id === "page") {
+    if (req.params.id === "page" || !req.params.id) {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }

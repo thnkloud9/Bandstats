@@ -22,6 +22,10 @@ function LastfmController(db) {
     this.lastfmManager = new LastfmManager();
 }
 
+LastfmController.prototype.indexAction = function(req, res) {
+    this.infoAction(req, res);
+}
+
 /**
  * takes a band name as query param
  * and returns search results from 
@@ -152,7 +156,7 @@ LastfmController.prototype.lookupAction = function(req, res) {
 };
 
 LastfmController.prototype.infoAction = function(req, res) {
-    if (req.params.id === "info") {
+    if (req.params.id === "info" || !req.params.id) {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }

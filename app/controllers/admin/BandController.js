@@ -32,8 +32,25 @@ function BandController(db) {
  */
 BandController.prototype.indexAction = function(req, res) {
     var data = this.data;
-    var template = require(this.viewPath + 'band_index');
-    res.send(template.render(_.extend(data, {"search": req.query.search})));
+    var bandId = req.params.id;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
+    var query = {};
+    var options = {};
+
+    if (bandId) {
+        query.band_id = bandId;
+    }
+
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+    
+    this.bandRepository.find(query, options, function(err, bands) {
+        res.send(bands);
+    });
 } 
 
 /**

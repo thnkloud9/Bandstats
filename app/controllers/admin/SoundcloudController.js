@@ -22,6 +22,10 @@ function SoundcloudController(db) {
     this.soundcloudManager = new SoundcloudManager();
 }
 
+SoundcloudController.prototype.indexAction = function(req, res) {
+    this.profileAction(req, res);
+}
+
 /**
  * takes a band name as query param
  * and returns search results from 
@@ -141,7 +145,7 @@ SoundcloudController.prototype.lookupAction = function(req, res) {
 };
 
 SoundcloudController.prototype.profileAction = function(req, res) {
-    if (req.params.id === "info") {
+    if (req.params.id === "info" || !req.params.id ) {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }
