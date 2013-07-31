@@ -75,7 +75,7 @@ FacebookManager.prototype.search = function(query, callback) {
     
 
         var options = {
-            url: api + '/search?q=' + query + '&type=page',
+            url: api + '/search?q=' + query + '&type=page&access_token=' + accessToken,
             json: true            
         };
 

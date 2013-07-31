@@ -323,7 +323,7 @@ var Lookup = function(provider, resource, service) {
             var result = response[r];
 
             // skip if no matches
-            if (!result.results.length) {
+            if (!result.results) {
                 continue;
             }
 
