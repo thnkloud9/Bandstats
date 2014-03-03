@@ -186,8 +186,9 @@ function updateImages(save, query, provider, callback) {
                 var parentLookup = eval(provider + 'Manager.' + lookupFunction);
                 parentLookup.call(manager, result.search, function(err, results) {
                     if (err) {
-                        // just skip and move on
-                        return false;
+                        // just skip and move on, dont throw exception
+                        util.log('ERROR: ' + err + ' for ' + result.band_name);
+                        results = "";
                     }
 
                     // save results here
