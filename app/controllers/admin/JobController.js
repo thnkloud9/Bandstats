@@ -30,7 +30,13 @@ function JobController(db, jobScheduler) {
 JobController.prototype.indexAction = function(req, res) {
     var parent = this;
     var data = this.data;
+    var jobId = req.params.id;
     var query = {};
+
+    if (jobId) {
+        query.job_id = jobId;
+    }
+
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
         query = {"job_name": search};
@@ -38,7 +44,8 @@ JobController.prototype.indexAction = function(req, res) {
     this.jobRepository.find(query, {}, function(err, jobs) {
         _.extend(data, { 'jobs': jobs });
         var template = require(parent.viewPath + 'job_index');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(jobs);
     });
 }
 

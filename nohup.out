@@ -1,0 +1,33 @@
+28 Feb 12:25:35 - [nodemon] v0.7.2
+28 Feb 12:25:35 - [32m[nodemon] watching: /Users/mark/Sites/bandstats/node_bandstats/app[0m
+28 Feb 12:25:36 - [32m[nodemon] starting `node app.js`[0m
+28 Feb 12:25:36 - Bandstats listening on 4000 with localhost:27017/bandstats database
+
+events.js:72
+        throw er; // Unhandled 'error' event
+              ^
+Error: listen EADDRINUSE
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1039:14)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1127:5)
+    at Function.app.listen (/Users/mark/Sites/bandstats/node_bandstats/node_modules/express/lib/application.js:529:24)
+    at Object.<anonymous> (/Users/mark/Sites/bandstats/node_bandstats/app.js:87:5)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+28 Feb 12:25:36 - [1;31m[nodemon] app crashed - waiting for file changes before starting...[0m
+28 Feb 12:27:51 - [nodemon] v0.7.2
+28 Feb 12:27:51 - [32m[nodemon] watching: /Users/mark/Sites/bandstats/node_bandstats/app[0m
+28 Feb 12:27:51 - [32m[nodemon] starting `node app.js`[0m
+28 Feb 12:27:52 - Bandstats listening on 4000 with localhost:27017/bandstats database
+28 Feb 12:27:52 - started Facebook Likes with schedule 0 0 */12 * * *
+28 Feb 12:27:52 - started Echonest Lookup with schedule 0 0 2 * * *
+28 Feb 12:27:52 - started Lastfm Listeners with schedule 0 10 1 * * *
+28 Feb 12:27:52 - started RSS Parsing with schedule 0 45 */12 * * *
+28 Feb 12:27:52 - added all scheduled jobs
+28 Feb 12:27:52 - removing pids from all jobs
+1 Mar 14:34:18 - [nodemon] v0.7.2
+1 Mar 14:34:18 - [32m[nodemon] watching: /Users/mark/Sites/bandstats/node_bandstats/app[0m
+1 Mar 14:34:18 - [32m[nodemon] starting `node app.js`[0m

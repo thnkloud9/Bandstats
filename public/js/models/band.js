@@ -1,10 +1,19 @@
-var app = app || {};
+define([
+  'underscore',
+  'backbone'
+], function(_, Backbone) {
+  var bandModel = Backbone.Model.extend({
+    urlRoot: '/admin/band',
 
-// Band Model
-// ----------
+    defaults: {
+      band_name: ''
+    },
+    initialize: function() {
 
-app.Band = Backbone.Model.extend({
-  defaults: {
-    band_name: ''
-  }
+    }
+
+  });
+
+  return bandModel;
+
 });

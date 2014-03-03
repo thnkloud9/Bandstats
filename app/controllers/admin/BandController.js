@@ -37,6 +37,7 @@ BandController.prototype.indexAction = function(req, res) {
     var skip = req.query.skip;
     var query = {};
     var options = {};
+    var parent = this;
 
     if (bandId) {
         query.band_id = bandId;
@@ -47,9 +48,15 @@ BandController.prototype.indexAction = function(req, res) {
         "skip": skip,
         "_id": 0
     };
-    
-    this.bandRepository.find(query, options, function(err, bands) {
-        res.send(bands);
+   
+    this.bandRepository.count(query, function(err, count) { 
+      parent.bandRepository.find(query, options, function(err, bands) {
+        var results = {
+          "totalRecords": count,
+          "data": bands
+        }
+        res.send(results);
+      });
     });
 } 
 

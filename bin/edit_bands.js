@@ -37,7 +37,7 @@ program
     .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-i, --band_id <band_id>', 'bandstats bandId Id (numeric)')
     .option('-n, --band_name <band_name>', 'band name')
-    .option('-f, --field <field_name>', 'band field name to store the values (example: running_stats.uacebook_likes, lastfm_listeners, etc)')
+    .option('-f, --field <field_name>', 'band field name to store the values (example: running_stats.facebook_likes, lastfm_listeners, etc)')
     .option('-v, --value <value>', 'initial value for field)')
     .option('-l, --limit <num>', 'limit to <num> records')
 
