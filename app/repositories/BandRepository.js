@@ -100,6 +100,31 @@ BandRepository.prototype.addDefaultValues = function(band) {
     return band;
 }
 
+BandRepository.prototype.clearRunningStats = function(band) {
+    var emptyObject = {};
+    var emptyArray = [];
+    band.running_stats = {
+        "facebook_likes": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "total_incremental": 0,
+            "daily_stats": emptyArray
+        },
+        "lastfm_listeners": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "total_incremental": 0,
+            "daily_stats": emptyArray
+        }
+    }
+    band.last_updated = new Date();
+    return band;
+}
+
 BandRepository.prototype.updateRunningStat = function(query, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
     var db = this.db;
     var collection = this.collection
