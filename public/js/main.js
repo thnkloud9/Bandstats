@@ -5,7 +5,8 @@ require.config({
     underscore: 'libs/underscore/underscore-min', // https://github.com/amdjs
     backbone: 'libs/backbone/backbone-min', // https://github.com/amdjs
     paginator: 'libs/backbone-paginator/backbone.paginator.min',
-    sinon: 'libs/sinon/sinon.js',
+    sinon: 'libs/sinon/sinon',
+    bootstrap: 'libs/bootstrap/bootstrap.min',
 
     // Require.js plugins
     text: 'libs/require/text',
@@ -29,6 +30,9 @@ require.config({
     'paginator': {
       deps: ['backbone'],
       exports: 'Backbone.Paginator'
+    },
+    'bootstrap': {
+      deps: ['jquery']
     }
   }
 

@@ -30,14 +30,15 @@ define([
       });
     });
     router.on('route:bands', function () {
-     require(['views/bands/page'], function (BandsPage) {
-        var bandsPage = Vm.create(appView, 'BandsPage', BandsPage);
+     require(['views/bands/bands_page'], function (BandsPageView) {
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView);
         bandsPage.render();
       });
     });
     router.on('route:band', function (id) {
-     require(['views/bands/page'], function (BandsPage) {
-        var bandPage = Vm.create(appView, 'BandPage', BandPage);
+     require(['views/bands/band_detail'], function (BandDetailView) {
+        var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView);
+        bandPage.loadBand(id);
         bandPage.render();
       });
     });

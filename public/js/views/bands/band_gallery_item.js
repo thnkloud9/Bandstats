@@ -2,13 +2,13 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/bands/band_list_item.html' 
+  'text!templates/bands/band_gallery_item.html' 
 ], function($, _, Backbone, template) {
 
-  var BandListItemView = Backbone.View.extend({
+  var BandGalleryItemView = Backbone.View.extend({
 
     tagName: "li",
-    className: "span10",
+    className: "span3",
     template: _.template(template),
 
     initialize: function () {
@@ -23,6 +23,6 @@ define([
 
   });
 
-  return BandListItemView;
+  return BandGalleryItemView;
 
 }); 

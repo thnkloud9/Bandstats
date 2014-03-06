@@ -2,15 +2,14 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/header/menu.html'
-], function($, _, Backbone, headerMenuTemplate){
-  var HeaderMenuView = Backbone.View.extend({
-    el: '.main-menu-container',
+  'text!templates/sidenav/menu.html'
+], function($, _, Backbone, sideNavTemplate){
+  var SideNavView = Backbone.View.extend({
+    el: '#sidenav',
     initialize: function () {
     },
     render: function () {
-      $(this.el).html(headerMenuTemplate);
-      $('a[href="' + window.location.hash + '"]').addClass('active');
+      $(this.el).html(sideNavTemplate);
     },
     events: {
       'click a': 'highlightMenuItem'
@@ -21,5 +20,5 @@ define([
     }
   })
 
-  return HeaderMenuView;
+  return SideNavView;
 });

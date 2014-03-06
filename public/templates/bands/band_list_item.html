@@ -1,0 +1,14 @@
+<ul class="list-unstyled list-inline">
+  <li>
+    <a href="#bands/<%= band_id %>" class="list plain">
+      <h5><%= band_name %></h5>
+    </a>
+  </li>
+
+  <li>
+    <% for (var i = 0; i < regions.length; i++) { %>
+      <% var region = regions[i]; %>
+      <%= region %>
+    <% } %>
+  </li>
+</ul>

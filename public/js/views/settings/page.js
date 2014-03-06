@@ -5,7 +5,7 @@ define([
   'text!templates/settings/page.html'
 ], function($, _, Backbone, settingsPageTemplate){
   var SettingsPage = Backbone.View.extend({
-    el: '.page',
+    el: '#content',
     render: function () {
       this.$el.html(settingsPageTemplate);
     }

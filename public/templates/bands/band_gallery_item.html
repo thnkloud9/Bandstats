@@ -1,0 +1,27 @@
+<div class="row thumbnail">
+
+  <div class="col-xs-4 col-md-2">
+    <a href="#bands/<%= band_id %>">
+      <img src="<%= band_image_src %>" alt="not available" class="img-rounded thumbnail-small pull-left">
+    </a>
+  </div>
+
+  <div class="col-xs-14 col-md-10">
+    <a href="#bands/<%= band_id %>">
+      <h5><%= band_name %></h5>
+    </a>
+
+    <p>
+      <% for (var i = 0; i < regions.length; i++) { %>
+        <% var region = regions[i]; %>
+        <%= region %>
+      <% } %>
+    </p>
+
+    <p>
+      <%= running_stats.facebook_likes.current %>
+    </p>
+
+  </div>
+
+</div>

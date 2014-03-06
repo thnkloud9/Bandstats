@@ -31,3 +31,5 @@ Error: listen EADDRINUSE
 1 Mar 14:34:18 - [nodemon] v0.7.2
 1 Mar 14:34:18 - [32m[nodemon] watching: /Users/mark/Sites/bandstats/node_bandstats/app[0m
 1 Mar 14:34:18 - [32m[nodemon] starting `node app.js`[0m
+/System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/lib/ruby/2.0.0/universal-darwin13/rbconfig.rb:212: warning: Insecure world writable dir /usr/local/bin in PATH, mode 040777
+all output going to: /usr/local/var/log/mongodb/mongo.log

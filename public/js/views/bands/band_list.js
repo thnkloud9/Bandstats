@@ -7,8 +7,8 @@ define([
   'views/bands/band_list_item',
   'text!templates/bands/band_list.html'
 ], function($, _, Backbone, BandsCollection, PaginatorView, BandListItemView, bandListTemplate){
-  var BandsPage = Backbone.View.extend({
-    el: '.page',
+  var BandListView = Backbone.View.extend({
+    el: '#band-list-container',
 
     initialize: function() {
       this.collection = new BandsCollection();
@@ -30,9 +30,9 @@ define([
     },
 
     renderBand: function (model) {
-      $('.thumbnails', this.el).append(new BandListItemView({model: model}).render().el); 
+      $('#band-list', this.el).append(new BandListItemView({model: model}).render().el); 
     }
 
   });
-  return BandsPage;
+  return BandListView;
 });

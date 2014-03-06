@@ -3,12 +3,12 @@ define([
   'underscore',
   'backbone',
   'text!templates/pagination_header.html'
-], function($, _, Backbone, template) {
+], function($, _, Backbone, paginationTemplate) {
 
   var Paginator = Backbone.View.extend({
-
+    el: '#paginator',
     className: "pagination pagination-centered",
-    template: _.template(template),
+    template: _.template(paginationTemplate),
 
     initialize:function () {
         this.model.on("reset", this.render, this);
@@ -21,7 +21,6 @@ define([
 
     render:function () {
 
-     this.$el.html('<ul class="pagination" />');
      var totalPages = this.model.totalPages;
         
      var templateData = {
@@ -29,7 +28,7 @@ define([
        hasNext: this.model.info().hasNext   
      };
    
-     $('ul', this.el).append(this.template(templateData));
+     $('.pagination', this.el).append(this.template(templateData));
 
      
      return this;

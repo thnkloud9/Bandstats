@@ -55,7 +55,11 @@ BandController.prototype.indexAction = function(req, res) {
           "totalRecords": count,
           "data": bands
         }
-        res.send(results);
+        if (bandId) {
+          res.send(bands[0]);
+        } else {
+          res.send(results);
+        }
       });
     });
 } 
