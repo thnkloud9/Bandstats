@@ -58,7 +58,8 @@ JobController.prototype.runningAction = function(req, res) {
         'running_jobs': runningJobs,
         'running_jobs_json': JSON.stringify(runningJobs) 
     });
-    res.send(template.render(data));
+    //res.send(template.render(data));
+    res.send(data);
 }
 
 JobController.prototype.logAction = function(req, res) {
@@ -74,21 +75,15 @@ JobController.prototype.logAction = function(req, res) {
         if (err) res.send(err);
         _.extend(data, { 'job_logs': results });
         var template = require(parent.viewPath + 'job_log');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(data);
     });
 }
 
 JobController.prototype.scheduledAction = function(req, res) {
     var data = this.data;
-    var scheduledJobs = this.jobScheduler.getScheduledJobs();
     var scheduledEvents = this.jobScheduler.getScheduledEvents();
-
-    _.extend(data, { 
-        "scheduled_jobs": scheduledJobs,
-        "scheduled_events": JSON.stringify(scheduledEvents) 
-    });
-    var template = require(this.viewPath + 'job_scheduled');
-    res.send(template.render(data));
+    res.send(scheduledEvents);
 } 
 
 JobController.prototype.editAction = function(req, res) {

@@ -43,6 +43,18 @@ BandController.prototype.indexAction = function(req, res) {
         query.band_id = bandId;
     }
 
+    if (req.query.search) {
+        search = new RegExp('.*' + req.query.search + '.*', 'i');
+        query = {
+            $or: [
+                {"band_name": search},
+                {"band_id": search},
+                {"external_ids.facebook_id": search},
+                {"band_url": search},
+            ]
+        };
+    }
+
     var options = {
         "limit": limit,
         "skip": skip,
@@ -155,7 +167,8 @@ BandController.prototype.failedAction = function(req, res) {
     },
     function (err) {
         var template = require(parent.viewPath + 'band_failed');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(data);
     });
 }
 
@@ -203,7 +216,8 @@ BandController.prototype.lookupsAction = function(req, res) {
     },
     function (err) {
         var template = require(parent.viewPath + 'band_lookups');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(data);
     });
 }
 
@@ -345,17 +359,10 @@ BandController.prototype.duplicatesAction = function(req, res) {
                 "duplicates": finalResults,
                 "duplicates_json": JSON.stringify(finalResults)
             });
-            res.send(template.render(data));
+            //res.send(template.render(data));
+            res.send(data);
         });
     });
-}
-
-// NOT BEING USED YET
-BandController.prototype.showAction = function(req, res) {
-    var page = req.params.id;
-    var data = this.data;
-    var template = require(this.viewPath + 'band_' + page);
-    res.send(template.render(data));
 }
 
 BandController.prototype.genresAction = function(req, res) {

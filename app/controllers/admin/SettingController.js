@@ -34,7 +34,8 @@ SettingController.prototype.indexAction = function(req, res) {
         }
         _.extend(data, { 'config': JSON.stringify(results) });
         var template = require('./../../views/setting_index');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(data);
     });
 }
 

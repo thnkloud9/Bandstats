@@ -34,7 +34,8 @@ SiteController.prototype.indexAction = function(req, res) {
     this.siteRepository.find(query, {}, function(err, sites) {
         _.extend(data, { 'sites': sites });
         var template = require(parent.viewPath + 'site_index');
-        res.send(template.render(data));
+        //res.send(template.render(data));
+        res.send(data);
     });
 }
 

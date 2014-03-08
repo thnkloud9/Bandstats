@@ -8,7 +8,8 @@ define([
     defaults: {
       band_id: 0,
       band_name: '',
-      band_image_src: ''
+      band_image_src: '',
+      band_url: ''
     },
     initialize: function() {
 

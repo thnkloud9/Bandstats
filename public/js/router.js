@@ -11,6 +11,7 @@ define([
       // Pages
       'bands/:id': 'band',
       'bands': 'bands',
+      'bands/search/:query': 'bandsearch',
       'sites': 'sites',
       'jobs': 'jobs',
       'settings': 'settings',
@@ -29,9 +30,19 @@ define([
         dashboardPage.render();
       });
     });
+    router.on('route:bandsearch', function (query) {
+     require(['views/bands/bands_page','collections/bands_search'], function (BandsPageView, BandsSearchCollection) {
+        var bandsSearchCollection = new BandsSearchCollection(query);
+        bandsSearchCollection.fetch();
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsSearchCollection});
+        searchResultsView.render();
+      });
+    });
     router.on('route:bands', function () {
-     require(['views/bands/bands_page'], function (BandsPageView) {
-        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView);
+     require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
+        var bandsCollection = new BandsCollection();
+        bandsCollection.fetch();
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection});
         bandsPage.render();
       });
     });

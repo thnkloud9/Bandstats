@@ -1,54 +1,93 @@
-<div class="row thumbnail">
-
-  <div class="col-xs-4 col-md-2">
-    <a href="#bands/<%= band_id %>">
-      <img src="<%= band_image_src %>" alt="not available" class="img-rounded thumbnail-small pull-left">
-    </a>
-  </div>
-
-  <div class="col-xs-14 col-md-10">
+<div class="row panel panel-default">
+  <div class="panel-heading">
     <a href="#bands/<%= band_id %>">
       <h5><%= band_name %></h5>
     </a>
+  </div>
+  
+  <div class="panel-body">
 
-    <p>
-      <% for (var i = 0; i < regions.length; i++) { %>
-        <% var region = regions[i]; %>
-        <%= region %>
-      <% } %>
-    </p>
+    <div class="col-xs-4 col-md-2">
+      <a href="#bands/<%= band_id %>">
+        <img src="<%= band_image_src %>" alt="not available" class="img-rounded thumbnail-small pull-left">
+      </a>
+    </div>
 
-    <p>
-      <% for (var i = 0; i < genres.length; i++) { %>
-        <% var genre = genres[i]; %>
-        <%= genre %>
-      <% } %>
-    </p>
+    <div class="col-md-10">
 
+      <p>
+        <a href="<%= band_url %>"><%= band_url %></a>
+      </p>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Facebook Stats</h3>
+      <p>
+        <% for (var i = 0; i < regions.length; i++) { %>
+          <% var region = regions[i]; %>
+          <span class="label label-default"><%= region %></span>
+        <% } %>
+      </p>
+
+      <p>
+        <% for (var i = 0; i < genres.length; i++) { %>
+          <% var genre = genres[i]; %>
+          <span class="label label-default"><%= genre %></span>
+        <% } %>
+      </p>
+   
+      <!-- facebook stats panel --> 
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Facebook Stats</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group col-md-6">
+            <li class="list-group-item">
+              Id <span class="badge"><%= external_ids.facebook_id %></span>
+            </li>
+            <li class="list-group-item">
+              Total Likes <span class="badge"><%= running_stats.facebook_likes.current %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental <span class="badge"><%= running_stats.facebook_likes.total_incremental %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental Average <span class="badge"><%= running_stats.facebook_likes.incremental_avg %></span>
+            </li>
+            <li class="list-group-item">
+              Last Updated <span class="label label-info pull-right"><%= running_stats.facebook_likes.last_updated %></span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="panel-body">
-        <ul class="list-group col-md-6">
-          <li class="list-group-item">
-            Id <span class="badge"><%= external_ids.facebook_id %></span>
-          </li>
-          <li class="list-group-item">
-            Total Likes <span class="badge"><%= running_stats.facebook_likes.current %></span>
-          </li>
-          <li class="list-group-item">
-            Incremental <span class="badge"><%= running_stats.facebook_likes.total_incremental %></span>
-          </li>
-          <li class="list-group-item">
-            Incremental Average <span class="badge"><%= running_stats.facebook_likes.incremental_avg %></span>
-          </li>
-          <li class="list-group-item">
-            Last Updated <span class="label label-info"><%= running_stats.facebook_likes.last_updated %></span>
-          </li>
-        </ul>
+      <!-- end facebook stats panel --> 
+
+      <!-- lastfm stats panel --> 
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Lastfm Stats</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group col-md-6">
+            <li class="list-group-item">
+              Id <span class="badge"><%= external_ids.lastfm_id %></span>
+            </li>
+            <li class="list-group-item">
+              Total Listeners <span class="badge"><%= running_stats.lastfm_listeners.current %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental <span class="badge"><%= running_stats.lastfm_listeners.total_incremental %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental Average <span class="badge"><%= running_stats.lastfm_listeners.incremental_avg %></span>
+            </li>
+            <li class="list-group-item">
+              Last Updated <span class="label label-info pull-right"><%= running_stats.lastfm_listeners.last_updated %></span>
+            </li>
+          </ul>
+        </div>
       </div>
+      <!-- end facebook stats panel --> 
+
+
     </div>
 
   </div>

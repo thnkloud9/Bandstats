@@ -10,7 +10,8 @@ define([
   var BandMenuView = Backbone.View.extend({
     el: '#band-menu-container',
 
-    initialize: function() {
+    initialize: function(collection) {
+      this.collection = collection;
     },
 
     events: { 
@@ -24,12 +25,12 @@ define([
     },
 
     renderBandGallery: function (model) {
-      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView);
+      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection});
       bandGalleryView.render();
     },
 
     renderBandList: function () {
-      var bandListView = Vm.create(this, 'BandListView', BandListView);
+      var bandListView = Vm.create(this, 'BandListView', BandListView, {collection: this.collection});
       bandListView.render();
     }
 

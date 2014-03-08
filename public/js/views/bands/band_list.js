@@ -11,8 +11,6 @@ define([
     el: '#band-list-container',
 
     initialize: function() {
-      this.collection = new BandsCollection();
-      this.collection.fetch();
       this.collection.on('reset', this.render, this);
       this.collection.on('sync', this.render, this);
     },
