@@ -24,6 +24,10 @@ function LoginController(db) {
     this.data = {"section": "user"};
 }
 
+LoginController.prototype.indexAction = function(req, res) {
+    res.redirect('/#login');
+}
+
 LoginController.prototype.createAction = function(req, res) {
     var parent = this;
     if ((req.route.method != "post") || (!req.body)) {

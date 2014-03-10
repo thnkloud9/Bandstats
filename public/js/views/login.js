@@ -56,7 +56,6 @@ define([
         event.preventDefault(); // Don't let this button submit the form
         $('.flash-message').hide(); // Hide any errors on a new submit
         var url = '/login';
-        console.log('Loggin in... ');
         var formValues = {
             username: $('#username').val(),
             password: $('#password').val()
@@ -68,12 +67,21 @@ define([
             dataType:"json",
             data: formValues,
             success:function (data) {
+                console.log(data);
                 if(data.message) {  // If there is an error, show the error messages
                     $('.flash-message').text(data.message).show();
                 } else { // If not, send them to the dashboard page
                     parent.destroyView();
                     window.location = '/';
                 }
+            },
+            error: function (data) {
+                console.log(data);
+                if(data.message) {  // If there is an error, show the error messages
+                    $('.flash-message').text(data.message).show();
+                } else { // If not, just say something went wrong
+                    $('.flash-message').text('Internal Error.  Please try again later').show();
+                } 
             }
         });
     },

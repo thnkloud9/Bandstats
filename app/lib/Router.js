@@ -21,7 +21,9 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
     passport.use(new LocalStrategy(
         function(username, password, done) {
             userRepository.findOne({"username": username}, function (err, user) {
-                if (err) { return done(err); }
+                if (err) { 
+                    return done(err); 
+                }
                 if (!user) {
                     return done(null, false, { message: 'Incorrect username.' });
                 }
@@ -38,17 +40,26 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
         }
     ));
 
-
     // login stuff first
-    app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-        res.send(req.user);
+    app.post('/login', function(req, res, next) {
+        passport.authenticate('local', function(err, user, info) {
+            if (err) { 
+                return res.send({ message: info.message });
+            }
+            if (!user) { 
+                return res.send({ message: info.message });
+            }
+            req.logIn(user, function(err) {
+                if (err) { 
+                    return res.send({ message: err.message });
+                }
+                return res.send(user);
+            });
+        })(req, res, next);
+    },
+    function(err, req, res, next) {
+        return res.send({ message: err.message });
     });
-
-    /*
-    app.get('/login', function(req, res){
-        res.send({"message": req.flash('error')});
-    });
-    */
 
     app.get('/logout', function(req, res){
         req.logout();
@@ -84,6 +95,27 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
 
         });
     });
+
+    // now redirect all 404s
+    app.use(function(req, res, next){
+        res.status(404);
+
+        // respond with html page
+        if (req.accepts('html')) {
+            res.redirect('/404.html');
+            return;
+        }
+
+        // respond with json
+        if (req.accepts('json')) {
+            res.send({ error: 'Not found' });
+            return;
+        }
+
+        // default to plain-text. send()
+        res.type('txt').send('Not found');
+    });
+
 
     function mapRoute(path, file, request, response) {
         var mdl = require(path + file);
