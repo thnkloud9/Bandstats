@@ -18,8 +18,6 @@ var flash = require('connect-flash');
 var passport = require('passport');
 var SkinStore = require('connect-mongoskin');
 
-require("jinjs").registerExtension(".jinjs");
-
 /**
  * configuration
  */
@@ -51,11 +49,8 @@ app.configure(function() {
     app.use(express.cookieParser());
     app.use(express.methodOverride());
 
-    // use jinjs for templates
-    //app.set("view options", { jinjs_pre_compile: function (str) { return parse_pwilang(str); } });
-    app.set('view engine', 'jinjs');
     app.set("view options", { layout: false });
-    app.set('views', __dirname + '/app/views');
+    //app.set('views', __dirname + '/app/views');
 
     // setup public folder
     app.use(express.static(__dirname + '/public'));

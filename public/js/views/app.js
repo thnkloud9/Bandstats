@@ -14,13 +14,13 @@ define([
     },
 
     events: {
-      'click a': 'renderMenuItem',
+      'click .topnav-link': 'renderMenuItem',
        'keypress  .search-input': 'searchBands'
     },
 
     render: function (ev) {
 
-      var that = this;
+      var parent = this;
       var section = "dashboard";
 
       if (ev) {
@@ -29,18 +29,18 @@ define([
 
       $(this.el).html(layoutTemplate);
       require(['views/topnav/menu'], function (TopNavView) {
-        var topNavView = Vm.create(that, 'TopNavView', TopNavView);
+        var topNavView = Vm.create(parent, 'TopNavView', TopNavView);
         topNavView.render();
       });
 
       require(['views/sidenav/' + section + '_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(that, 'SideNavView', SideNavView);
+        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
         sideNavView.render();
       });
 
       require(['views/footer/footer'], function (FooterView) {
         // Pass the appView down into the footer so we can render the visualisation
-        var footerView = Vm.create(that, 'FooterView', FooterView, {appView: that});
+        var footerView = Vm.create(parent, 'FooterView', FooterView, {appView: parent});
         footerView.render();
       });
     
@@ -48,6 +48,7 @@ define([
 
     searchBands: function(e) {
       if ( e.which === 13 ) {
+        e.preventDefault();
         Backbone.history.navigate('bands/search/' + $('.search-input').val(), true);
       }
     },

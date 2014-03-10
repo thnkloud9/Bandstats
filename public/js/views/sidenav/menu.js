@@ -12,7 +12,7 @@ define([
       $(this.el).html(sideNavTemplate);
     },
     events: {
-      'click a': 'highlightMenuItem'
+      'click .side-nav-link': 'highlightMenuItem'
     },
     highlightMenuItem: function (ev) {
       $('.active').removeClass('active');

@@ -24,13 +24,6 @@ function LoginController(db) {
     this.data = {"section": "user"};
 }
 
-LoginController.prototype.registerAction = function(req, res) {
-    var userRepository = this.userRepository;
-    var data = this.data;
-    var template = require('./../views/register');
-    res.send(template.render(data));
-}
-
 LoginController.prototype.createAction = function(req, res) {
     var parent = this;
     if ((req.route.method != "post") || (!req.body)) {
@@ -43,10 +36,14 @@ LoginController.prototype.createAction = function(req, res) {
         res.send(data);
     }
     var user = (req.body);
-    delete user['confirm-password'];
+
+    // add default role and permissions fields
+    user.role = "manager";
+    user.active = false;
 
     // encrypt password
     this.userRepository.encryptPassword(user, function(err, encryptedUser) {
+        // save user
         parent.userRepository.insert(user, {}, function(err, newUser) {
             res.send({status: "success", user: newUser});
             return true;

@@ -2,7 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/sidenav/sites_menu.html'
+  'text!templates/sidenav/settings_menu.html'
 ], function($, _, Backbone, sideNavTemplate){
   var SideNavView = Backbone.View.extend({
     el: '#sidenav',

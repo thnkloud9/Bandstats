@@ -8,7 +8,10 @@ define([
   'text!templates/bands/band_list.html'
 ], function($, _, Backbone, BandsCollection, PaginatorView, BandGalleryItemView, bandListTemplate){
   var BandGalleryView = Backbone.View.extend({
+
     el: '#band-list-container',
+
+    page: 1, 
 
     initialize: function() {
       this.collection.on('reset', this.render, this);
@@ -24,7 +27,7 @@ define([
         parent.renderBand(model);
       }, this);
 
-      $('#pagination', this.el).html(new PaginatorView({model: this.collection, page: this.options.page}).render().el);
+      $('#pagination', this.el).html(new PaginatorView({collection: this.collection, page: this.page}).render().el);
     },
 
     renderBand: function (model) {

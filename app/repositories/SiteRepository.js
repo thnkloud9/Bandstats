@@ -70,6 +70,8 @@ SiteRepository.prototype.remove = function(query, options, callback) {
  */
 SiteRepository.prototype.getNewArticles = function(site, callback) {
     var parent = this;
+    util.log(site.site_name + ' last entry was ' + site.last_entry);
+    util.log(site.site_url);
     var req = {
         uri: site.site_url,
         headers: {

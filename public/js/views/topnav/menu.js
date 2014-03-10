@@ -10,10 +10,14 @@ define([
     
     initialize: function () {
     },
+    
+    events: {
+    }, 
 
     render: function () {
       $(this.el).html(topNavTemplate);
       $('a[href="' + window.location.hash + '"]').addClass('active');
+      return this;
     }
 
   })

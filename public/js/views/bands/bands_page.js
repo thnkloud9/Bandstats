@@ -3,11 +3,10 @@ define([
   'underscore',
   'backbone',
   'vm',
-  'views/bands/band_menu',
   'views/bands/band_list',
   'views/bands/band_gallery',
   'text!templates/bands/bands_page.html',
-], function($, _, Backbone, Vm, BandMenuView, BandListView, BandGalleryView, bandsPageTemplate){
+], function($, _, Backbone, Vm, BandListView, BandGalleryView, bandsPageTemplate){
   var BandsPage = Backbone.View.extend({
     el: '#content',
 

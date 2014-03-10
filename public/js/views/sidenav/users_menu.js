@@ -2,7 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'text!templates/sidenav/profile_menu.html'
+  'text!templates/sidenav/users_menu.html'
 ], function($, _, Backbone, sideNavTemplate){
   var SideNavView = Backbone.View.extend({
     el: '#sidenav',
@@ -12,7 +12,7 @@ define([
       $(this.el).html(sideNavTemplate);
     },
     events: {
-      'click a': 'highlightMenuItem'
+      'click .side-nav-link': 'highlightMenuItem'
     },
     highlightMenuItem: function (ev) {
       $('.active').removeClass('active');

@@ -1,0 +1,91 @@
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <h2 class="pull-right">Bandstats 2.0</h2>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+   
+        <div class="well">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#login" data-toggle="tab">Login</a></li>
+                <li><a href="#create" data-toggle="tab">Create Account</a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane active in" id="login">
+                    <form role="form" action='' method="POST">
+
+                        <fieldset>
+                            <legend class="">Login</legend>
+
+                            <div class="form-group">
+                                <!-- Username -->
+                                <label class="form-label"  for="username">Username</label>
+                                <input type="text" id="username" name="username" placeholder="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <!-- Password-->
+                                <label class="form-label" for="password">Password</label>
+                                <input type="password" id="password" name="password" placeholder="" class="form-control">
+                            </div>
+
+                            <button id="login-submit" class="btn btn-success">Login</button>
+
+                        </fieldset>
+                    </form>                
+                </div>
+
+                <div class="tab-pane" id="create">
+                    <form role="form" id="tab">
+
+                        <fieldset>
+
+                            <legend class="">Register</legend>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input id="reg-email" type="text" value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input id="reg-password" type="text" value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Password Confirm</label>
+                                <input id="reg-password-conf" type="text" value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Band Name</label>
+                                <input id="reg-band-name" type="text" value="" class="form-control">
+                            </div>
+                        
+                            <button id="register-submit" class="btn btn-primary">Create Account</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-4"></div>
+  </div>
+
+  <br>
+  <br>
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="flash-message alert alert-danger col-md-4" style="display:none;"></div>
+    <div class="col-md-4"></div>
+  </div>
+
+  <div class="row">
+    <div class="footer">
+  </div>
+</div>

@@ -42,10 +42,25 @@ require.config({
 
 require([
   'views/app',
+  'views/login',
   'router',
   'vm'
-], function(AppView, Router, Vm){
-  var appView = Vm.create({}, 'AppView', AppView);
-  appView.render();
-  Router.initialize({appView: appView});  // The router now has a copy of all main appview
+], function(AppView, LoginView, Router, Vm){
+  // check for authentication and redirect to login if not logged in
+  $.ajax("/admin/session/current", {
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+      // create the app view
+      var appView = Vm.create({}, 'AppView', AppView);
+      appView.render();
+      Router.initialize({appView: appView});  // The router now has a copy of all main appview
+    },
+    error: function() {
+      // to the login view
+      var loginView = Vm.create({}, 'LoginView', LoginView);
+      loginView.render();
+    }
+  });
+
 });

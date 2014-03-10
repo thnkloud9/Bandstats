@@ -25,6 +25,9 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
                 if (!user) {
                     return done(null, false, { message: 'Incorrect username.' });
                 }
+                if (!user.active) {
+                    return done(null, false, { message: 'Invalid username.' });
+                }
                 userRepository.validPassword(user, password, function(err, isMatch) {
                     if (!isMatch) {
                         return done(null, false, { message: 'Incorrect password.' });
@@ -38,17 +41,18 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
 
     // login stuff first
     app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-        res.redirect('/admin/band');
+        res.send(req.user);
     });
 
+    /*
     app.get('/login', function(req, res){
-        var template = require('./../views/login');
-        res.send(template.render({"message": req.flash('error')}));
+        res.send({"message": req.flash('error')});
     });
+    */
 
     app.get('/logout', function(req, res){
         req.logout();
-        res.redirect('/login');
+        res.redirect('/#login');
     });
 
     // get all js files in controllers subfolder
@@ -72,9 +76,7 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
             if (/.js$/.test(file)) {
 
                 // add get route
-                // TODO: add authentication middle wear here
                 app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', ensureAuthenticated, function(request, response) {
-                //app.all('/admin/' + file.replace(/(^index)?Controller\.js$/, '').toLowerCase() + '/:id?/:action?', function(request, response) {
                     mapRoute('./../controllers/admin/', file, request, response);
                 });
                 
@@ -117,7 +119,7 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
 
     function ensureAuthenticated(req, res, next) {
         if (req.isAuthenticated()) { return next(); }
-        res.redirect('/login')
+        res.send(401, 'Not authorized, please login')
     }
 
     // Convert dash to camel string (by James Roberts)

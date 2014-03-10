@@ -199,6 +199,7 @@ function parseSiteArticles(site, save, callback) {
         // get new articles  
         siteRepository.getNewArticles(site, function(err, meta, articles) {
             if (err || !articles) {
+                util.log('No articles found for ' + site.site_name);
                 callback();
                 return false;
             }
@@ -210,7 +211,8 @@ function parseSiteArticles(site, save, callback) {
                     var match = articleHasMatch(site, article, band);
 
                     if (!match) {
-                        cb();
+                        //cb();
+                        setImmediate(function() { cb() }); 
                         return false;
                     }
                     

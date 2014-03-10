@@ -11,36 +11,49 @@ define([
     template: _.template(paginationTemplate),
 
     initialize:function () {
-        this.model.on("reset", this.render, this);
+        this.collection.on("reset", this.render, this);
     },
 
     events: { 
-      'click a#prev': 'requestPreviousPage',
-      'click a#next': 'requestNextPage'
+      'click a#prev': 'getPreviousPage',
+      'click a#next': 'getNextPage',
+      'click a#first': 'getFirstPage',
+      'click a#last': 'getLastPage',
     },
 
     render:function () {
 
-     var totalPages = this.model.totalPages;
-        
-     var templateData = {
-       hasPrevious: this.model.info().hasPrevious,
-       hasNext: this.model.info().hasNext   
-     };
-   
-     $('.pagination', this.el).append(this.template(templateData));
-
-     
-     return this;
+      var totalPages = this.collection.paginatorOptions.totalPages;
+      var templateData = {
+        hasFirst: this.collection.paginatorOptions.hasFirst,
+        hasPrevious: this.collection.paginatorOptions.hasPrevious,
+        hasNext: this.collection.paginatorOptions.hasNext,
+        hasLast: this.collection.paginatorOptions.hasLast,
+      };
+  
+      $('.pagination', this.el).append(this.template(templateData));
+      return this;
    },
 
-   requestPreviousPage: function() {
-     this.model.requestPreviousPage();
+   getFirstPage: function(event) {
+     event.preventDefault(); 
+     this.collection.getFirstPage();
    },
 
-   requestNextPage: function() {
-     this.model.requestNextPage();
-   }
+   getPreviousPage: function(event) {
+     event.preventDefault(); 
+     this.collection.getPreviousPage();
+   },
+
+   getNextPage: function(event) {
+     event.preventDefault(); 
+     this.collection.getNextPage();
+   },
+
+   getLastPage: function(event) {
+     event.preventDefault(); 
+     this.collection.getLastPage();
+   },
 
   });
 

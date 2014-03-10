@@ -1,18 +1,13 @@
 define([
   'backbone',
-  'models/band',
-], function(Backbone, bandModel){
-  var BandsSearchCollection = Backbone.Collection.extend({
-    model: bandModel,
-
-    initialize : function(query){
-        this.query = query;
-    },
+  'models/user',
+], function(Backbone, userModel){
+  var UsersCollection = Backbone.Collection.extend({
+    model: userModel,
 
     url: function() {
-      var path = "/admin/band";
-      path += "?search=" + this.query;
-      path += "&limit=" + this.paginatorOptions.perPage;
+      var path = "/admin/user";
+      path += "?limit=" + this.paginatorOptions.perPage;
       path += "&skip=" + (this.paginatorOptions.currentPage * this.paginatorOptions.perPage);
       return path;
     },
@@ -45,13 +40,12 @@ define([
         this.paginatorOptions.hasFirst = false;
         this.paginatorOptions.hasLast = false;
       }
-
       if (this.paginatorOptions.currentPage > 0) {
         this.paginatorOptions.hasPrevious = true;
       } else {
         this.paginatorOptions.hasPrevious = false;
       }
-
+    
       if (((this.paginatorOptions.currentPage+1) * this.paginatorOptions.perPage) < this.paginatorOptions.totalRecords) {
         this.paginatorOptions.hasNext = true;
       } else {
@@ -83,6 +77,6 @@ define([
 
   });
 
-  return BandsSearchCollection;
+  return UsersCollection;
 
 });
