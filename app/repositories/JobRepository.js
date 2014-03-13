@@ -60,6 +60,12 @@ JobRepository.prototype.remove = function(query, options, callback) {
     });
 }
 
+JobRepository.prototype.count = function(query, callback) {
+    BaseRepository.prototype.count.call(this, query, function(err, jobs) {
+        callback(err, jobs);
+    });
+}
+
 /**
  * Job specific functions
  */

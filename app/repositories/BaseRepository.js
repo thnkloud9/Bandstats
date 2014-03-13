@@ -103,4 +103,13 @@ BaseRepository.prototype.remove = function(query, options, callback) {
     });
 }
 
+BaseRepository.prototype.count = function(query, callback) {
+    this.db.collection(this.collection).count(query, function(err, results) {
+        if (err) throw err;
+
+        callback(null, results);
+    });
+}
+
+
 module.exports = BaseRepository;

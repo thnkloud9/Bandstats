@@ -7,6 +7,7 @@ require.config({
     paginator: 'libs/backbone-paginator/backbone.paginator.min',
     sinon: 'libs/sinon/sinon',
     bootstrap: 'libs/bootstrap/bootstrap.min',
+    typeahead: 'libs/typeahead/typeahead.bundle',
 
     // Require.js plugins
     text: 'libs/require/text',
@@ -33,6 +34,9 @@ require.config({
     },
     'bootstrap': {
       deps: ['jquery']
+    },
+    'typeahead': {
+      deps: ['jquery']
     }
   }
 
@@ -41,11 +45,14 @@ require.config({
 // Let's kick off the application
 
 require([
+  'jquery',
+  'underscore',
+  'backbone',
   'views/app',
   'views/login',
   'router',
   'vm'
-], function(AppView, LoginView, Router, Vm){
+], function($, _, Backbone, AppView, LoginView, Router, Vm){
   // check for authentication and redirect to login if not logged in
   $.ajax("/admin/session/current", {
     type: "GET",
@@ -54,7 +61,11 @@ require([
       // create the app view
       var appView = Vm.create({}, 'AppView', AppView);
       appView.render();
+
+      // start backbone history
       Router.initialize({appView: appView});  // The router now has a copy of all main appview
+      Backbone.history.start();
+      
     },
     error: function() {
       // to the login view

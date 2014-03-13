@@ -77,18 +77,15 @@ BandController.prototype.indexAction = function(req, res) {
 } 
 
 /**
- * server-side implementation to support
- * jquery datatables plugin for mongoskin
+ * simple list of bands and ids
+ * used for typeahead and lookups
  */
-BandController.prototype.bandsAction = function(req, res) {
+BandController.prototype.listAction = function(req, res) {
     var data = this.data;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
     var query = {};
-    var parent = this;
-    var displayLength = req.query.iDisplayLength;
-    var displayStart = req.query.iDisplayStart;
-    var numDisplayColumns = req.query.iColumns;
-    var numSortColumns = req.query.iSortingCols;
-    var sEcho = req.query.sEcho;
+    var options = {};
 
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
@@ -102,52 +99,21 @@ BandController.prototype.bandsAction = function(req, res) {
         };
     }
 
-    // if quey is present, override search
-    if (req.query.query) {
-        query = query;
-    }
-
     var options = {
-        "limit": displayLength,
-        "skip": displayStart,
+        "limit": limit,
+        "skip": skip,
         "_id": 0
     };
-    
-    // add display columns
-    for (var c=0; c<=numDisplayColumns; c++) {
-        options[req.query['mDataProp_'+c]] = 1;
-    }
-
-    // add sorting
-    var orderby = {};
-    for (var s=0; s<numSortColumns; s++) {
-        var columnName = req.query['mDataProp_'+req.query['iSortCol_'+s]];
-        if (req.query['sSortDir_'+s] === 'asc') {
-            var direction = 1;
-        } else {
-            var direction = -1;
+   
+    this.bandRepository.find(query, options, function(err, bands) {
+        if (err) {
+            util.log(JSON.stingify(err));
+            res.send(err);
         }
-        orderby[columnName] = direction;
-    }
-
-    // make the ordered query
-    var orderedQuery = {
-        $query: query,
-        $orderby: orderby
-    }
-
-    this.bandRepository.count(query, function(err, count) {
-        parent.bandRepository.find(orderedQuery, options, function(err, bands) {
-            var results = {
-                "sEcho": sEcho,
-                "iTotalRecords": count,
-                "iTotalDisplayRecords": count,
-                "bands": bands
-            }
-            res.send(results);
-        });
+        res.send(bands);
     });
-}
+} 
+
 
 BandController.prototype.failedAction = function(req, res) {
     var data = this.data;
@@ -321,7 +287,7 @@ BandController.prototype.removeAction = function(req, res) {
 }
 
 BandController.prototype.createAction = function(req, res) {
-    if ((req.route.method != "post") || (!req.body.values)) {
+    if (req.route.method != "post") {
         var data = {
             status: "error",
             error: "insert must be post action and must include values",

@@ -24,13 +24,14 @@ function JobController(db, jobScheduler) {
     this.jobRepository = new JobRepository({'db': db});
     this.jobScheduler = jobScheduler;
     this.data = {"section": "job"};
-    this.viewPath = "./../../views/";
 }
 
 JobController.prototype.indexAction = function(req, res) {
     var parent = this;
     var data = this.data;
     var jobId = req.params.id;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
     var query = {};
 
     if (jobId) {
@@ -41,24 +42,37 @@ JobController.prototype.indexAction = function(req, res) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
         query = {"job_name": search};
     }
-    this.jobRepository.find(query, {}, function(err, jobs) {
-        _.extend(data, { 'jobs': jobs });
-        var template = require(parent.viewPath + 'job_index');
-        //res.send(template.render(data));
-        res.send(jobs);
+
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+
+    this.jobRepository.count(query, function(err, count) {
+        parent.jobRepository.find(query, {}, function(err, jobs) {
+            var results = {
+                "totalRecords": count,
+                "data": jobs
+            }
+            if (jobId) {
+                res.send(jobs[0]);
+            } else {
+                res.send(results);
+            } 
+            
+        });
     });
 }
 
 JobController.prototype.runningAction = function(req, res) {
     var data = this.data;
     var runningJobs = this.jobScheduler.getRunningJobs();
-    var template = require(this.viewPath + 'job_running');
 
     _.extend(data, { 
         'running_jobs': runningJobs,
         'running_jobs_json': JSON.stringify(runningJobs) 
     });
-    //res.send(template.render(data));
     res.send(data);
 }
 
@@ -74,8 +88,6 @@ JobController.prototype.logAction = function(req, res) {
     this.db.collection('job_log').find(query, {}).toArray(function(err, results) {
         if (err) res.send(err);
         _.extend(data, { 'job_logs': results });
-        var template = require(parent.viewPath + 'job_log');
-        //res.send(template.render(data));
         res.send(data);
     });
 }
@@ -91,7 +103,6 @@ JobController.prototype.editAction = function(req, res) {
     var data = this.data;
     var query = {'job_id': req.params.id};
     var jobRepository = this.jobRepository;
-    var template = require(this.viewPath + 'job_edit');
 
     _.extend(data, {json: {}});
 
@@ -103,7 +114,7 @@ JobController.prototype.editAction = function(req, res) {
             // this is a new record
             data.job = {};
             data.json.job = JSON.stringify({});
-            res.send(template.render(data));
+            res.send(data);
         } else {
             // get the record from the db
             parent.jobRepository.findOne(query, function(err, job) {
@@ -114,7 +125,7 @@ JobController.prototype.editAction = function(req, res) {
                 delete job._id;
                 data.job = job;
                 data.json.job = JSON.stringify(job);
-                res.send(template.render(data));
+                res.send(data);
             });
         }
     });

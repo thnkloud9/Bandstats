@@ -28,7 +28,7 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
                     return done(null, false, { message: 'Incorrect username.' });
                 }
                 if (!user.active) {
-                    return done(null, false, { message: 'Invalid username.' });
+                    return done(null, false, { message: 'Inactive username.' });
                 }
                 userRepository.validPassword(user, password, function(err, isMatch) {
                     if (!isMatch) {

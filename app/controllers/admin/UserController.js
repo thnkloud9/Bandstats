@@ -7,6 +7,7 @@
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
+var util = require('util');
 
 var UserRepository = require('./../../repositories/UserRepository.js');
 
@@ -23,6 +24,19 @@ function UserController(db) {
 }
 
 UserController.prototype.indexAction = function(req, res) {
+    // forward POST, PUT, and DELETE request to appropriate actions
+    if (req.route.method == "post") {
+      this.createAction(req, res);
+    }
+
+    if (req.route.method == "put") {
+      this.updateAction(req, res);
+    }
+
+    if (req.route.method == "delete") {
+      this.removeAction(req, res);
+    }
+
     var parent = this;
     var userId = req.params.id;
     var data = this.data;
@@ -90,23 +104,30 @@ UserController.prototype.editAction = function(req, res) {
 }
 
 UserController.prototype.updateAction = function(req, res) {
-    if ((req.route.method != "put") || (!req.body.values)) {
+    if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});
         return false;
     }
     var query = {'user_id': req.params.id};
-    var values = req.body.values;
+    var user = req.body;
     var userRepository = this.userRepository
 
-    userRepository.update(query, values, {}, function(err, updated) {
+    // delete _id to avoid errors
+    delete user._id;
+
+    userRepository.update(query, user, {}, function(err, updated) {
         if ((err) || (!updated)) {
-            res.send({status: "error", error: err});
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send();
             return false;
         }
         // send updated user back
-        res.send({status: "success", updated: updated});        
+        util.log('updated user ' + user.user_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
-
 }
 
 UserController.prototype.removeAction = function(req, res) {
@@ -131,17 +152,23 @@ UserController.prototype.removeAction = function(req, res) {
 }
 
 UserController.prototype.createAction = function(req, res) {
-    if ((req.route.method != "post") || (!req.body.values)) {
+    if (req.route.method != "post") {
         var data = {
             status: "error",
             error: "insert must be post action and must include values",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body 
         };
+        util.log('error saving new user: ' + JSON.stringify(data));
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500);
         res.send(data);
     }    
-    this.userRepository.insert(req.body.values, {}, function(err, user) {
-        res.send({status: "success", user: user});
+    this.userRepository.insert(req.body, {}, function(err, user) {
+        util.log('saving new user: ' + user.user_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
 }
 

@@ -99,3 +99,8 @@ body {
   width: 100px !important;
   height: 100px !important;
 }
+
+.thumbnail-xsmall {
+  width: 50px !important;
+  height: 50px !important;
+}

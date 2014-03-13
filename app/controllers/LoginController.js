@@ -44,6 +44,8 @@ LoginController.prototype.createAction = function(req, res) {
     // add default role and permissions fields
     user.role = "manager";
     user.active = false;
+    user.created = new Date();
+    user.last_updated = new Date();
 
     // encrypt password
     this.userRepository.encryptPassword(user, function(err, encryptedUser) {

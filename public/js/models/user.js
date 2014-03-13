@@ -4,14 +4,17 @@ define([
 ], function(_, Backbone) {
   var userModel = Backbone.Model.extend({
     urlRoot: '/admin/user',
+    
+    idAttribute: "user_id",
 
     defaults: {
-      user_id: 0,
       username: '',
       user_image_src: '',
       password: '',
       role: 'manager',
-      bands: {}
+      bands: {},
+      description: '',
+      active: false
     },
 
     initialize: function() {

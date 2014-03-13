@@ -40,8 +40,6 @@ define([
     }
   });
   
-  Backbone.history.start();
-
   var initialize = function(options){
     var appView = options.appView;
     
@@ -95,8 +93,10 @@ define([
     });
 
     router.on('route:jobs', function () {
-      require(['views/jobs/page'], function (JobsPage) {
-        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage);
+      require(['views/jobs/jobs_page', 'collections/jobs'], function (JobsPage, JobsCollection) {
+        var jobsCollection = new JobsCollection();
+        jobsCollection.fetch();
+        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: jobsCollection});
         jobsPage.render();
       });
     });
