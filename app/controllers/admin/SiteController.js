@@ -24,46 +24,56 @@ function SiteController(db) {
 }
 
 SiteController.prototype.indexAction = function(req, res) {
+    // forward POST, PUT, and DELETE request to appropriate actions
+    if (req.route.method == "post") {
+      this.createAction(req, res);
+    }
+
+    if (req.route.method == "put") {
+      this.updateAction(req, res);
+    }
+
+    if (req.route.method == "delete") {
+      this.removeAction(req, res);
+    }
+
     var parent = this;
+    var siteId = req.params.id;
     var data = this.data;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
     var query = {};
+
+    if (siteId) {
+        query.site_id = siteId;
+    }
+
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
         query = {"site_name": search};
     }
-    this.siteRepository.find(query, {}, function(err, sites) {
-        _.extend(data, { 'sites': sites });
-        var template = require(parent.viewPath + 'site_index');
-        //res.send(template.render(data));
-        res.send(data);
+
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+
+    this.siteRepository.count(query, function(err, count) {
+      parent.siteRepository.find(query, options, function(err, sites) {
+
+        var results = {
+          "totalRecords": count,
+          "data": sites
+        }
+
+        if (siteId) {
+          res.send(sites[0]);
+        } else {
+          res.send(results);
+        }
+      });
     });
-}
-
-SiteController.prototype.editAction = function(req, res) {
-    var data = this.data;
-    var query = {'site_id': req.params.id};
-    var siteRepository = this.siteRepository;
-    var template = require(this.viewPath + 'site_edit');
-    _.extend(data, {json: {}});
-
-    if (req.params.id === "0") {
-        // this is a new record
-        data.site = {};
-        data.json.site = JSON.stringify({});
-        res.send(template.render(data));
-    } else {
-        // get the record from the db
-        this.siteRepository.findOne(query, function(err, site) {
-            if ((err) || (!site)) {
-                res.send({status: "error", error: "site not found"});
-                return false;
-            }
-            delete site._id;
-            data.site = site;
-            data.json.site = JSON.stringify(site);
-            res.send(template.render(data));
-        });
-    }
 }
 
 SiteController.prototype.metaAction = function(req, res) {
@@ -104,21 +114,30 @@ SiteController.prototype.articlesAction = function(req, res) {
 }
 
 SiteController.prototype.updateAction = function(req, res) {
-    if ((req.route.method != "put") || (!req.body.values)) {
-        res.send({status: "error", error: "update must be put action and must include values"});
+    if (req.route.method != "put") {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500);
+        res.send();
         return false;
     }
     var query = {'site_id': req.params.id};
-    var values = req.body.values;
+    var values = req.body;
     var siteRepository = this.siteRepository
+
+    delete values._id;
 
     siteRepository.update(query, values, {}, function(err, updated) {
         if ((err) || (!updated)) {
-            res.send({status: "error", error: err});
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send();
             return false;
         }
         // send updated site back
-        res.send({status: "success", updated: updated});        
+        util.log('updated site ' + values.site_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
 
 }

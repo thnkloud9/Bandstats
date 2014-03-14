@@ -76,33 +76,6 @@ UserController.prototype.indexAction = function(req, res) {
     });
 }
 
-UserController.prototype.editAction = function(req, res) {
-    var data = this.data;
-    var query = {'user_id': req.params.id};
-    var userRepository = this.userRepository;
-    var template = require(this.viewPath + 'user_edit');
-    _.extend(data, {json: {}});
-
-    if (req.params.id === "0") {
-        // this is a new record
-        data.user = {};
-        data.json.user = JSON.stringify({});
-        res.send(template.render(data));
-    } else {
-        // get the record from the db
-        this.userRepository.findOne(query, function(err, user) {
-            if ((err) || (!user)) {
-                res.send({status: "error", error: "user not found"});
-                return false;
-            }
-            delete user._id;
-            data.user = user;
-            data.json.user = JSON.stringify(user);
-            res.send(template.render(data));
-        });
-    }
-}
-
 UserController.prototype.updateAction = function(req, res) {
     if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});

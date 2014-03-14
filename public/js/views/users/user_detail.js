@@ -82,13 +82,11 @@ define([
     saveUser: function(ev) {
       ev.preventDefault();
 
-      var url = '/admin/user/' + this.model.get('user_id') + '/update';
-
       this.model.set({
           username: $('#user-username').val(),
           role: $('#user-role').val(),
           description: $('#user-description').val(),
-          active: $('user-active').is(':checked')
+          active: $('#user-active').is(':checked')
       });
 
       // remove id if this is a new model

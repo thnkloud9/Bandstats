@@ -67,7 +67,6 @@ define([
             dataType:"json",
             data: formValues,
             success:function (data) {
-                console.log(data);
                 if(data.message) {  // If there is an error, show the error messages
                     $('.flash-message').text(data.message).show();
                 } else { // If not, send them to the dashboard page
@@ -76,7 +75,6 @@ define([
                 }
             },
             error: function (data) {
-                console.log(data);
                 if(data.message) {  // If there is an error, show the error messages
                     $('.flash-message').text(data.message).show();
                 } else { // If not, just say something went wrong

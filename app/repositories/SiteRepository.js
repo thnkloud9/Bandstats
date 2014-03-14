@@ -60,6 +60,12 @@ SiteRepository.prototype.remove = function(query, options, callback) {
     });
 }
 
+SiteRepository.prototype.count = function(query, callback) {
+    BaseRepository.prototype.count.call(this, query, function(err, count) {
+        callback(err, count);
+    });
+}
+
 /**
  * Site specific functions
  */

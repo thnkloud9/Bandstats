@@ -27,6 +27,19 @@ function JobController(db, jobScheduler) {
 }
 
 JobController.prototype.indexAction = function(req, res) {
+    // forward POST, PUT, and DELETE request to appropriate actions
+    if (req.route.method == "post") {
+      this.createAction(req, res);
+    }
+
+    if (req.route.method == "put") {
+      this.updateAction(req, res);
+    }
+
+    if (req.route.method == "delete") {
+      this.removeAction(req, res);
+    }
+
     var parent = this;
     var data = this.data;
     var jobId = req.params.id;
@@ -66,13 +79,12 @@ JobController.prototype.indexAction = function(req, res) {
 }
 
 JobController.prototype.runningAction = function(req, res) {
-    var data = this.data;
     var runningJobs = this.jobScheduler.getRunningJobs();
-
-    _.extend(data, { 
-        'running_jobs': runningJobs,
+    var data = { 
+        'totalRecords' : runningJobs.length,
+        'data': runningJobs,
         'running_jobs_json': JSON.stringify(runningJobs) 
-    });
+    };
     res.send(data);
 }
 
@@ -156,18 +168,22 @@ JobController.prototype.startAction = function(req, res) {
 }
 
 JobController.prototype.updateAction = function(req, res) {
-    if ((req.route.method != "put") || (!req.body.values)) {
+    if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});
         return false;
     }
     var parent = this;
     var query = {'job_id': req.params.id};
-    var values = req.body.values;
+    var values = req.body;
     var jobRepository = this.jobRepository
+
+    delete values._id;
 
     jobRepository.update(query, values, {}, function(err, updated) {
         if ((err) || (!updated)) {
-            res.send({status: "error", error: err});
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send();
             return false;
         }
 
@@ -181,7 +197,10 @@ JobController.prototype.updateAction = function(req, res) {
         parent.jobScheduler.initSchedule();
 
         // send updated job back
-        res.send({status: "success", updated: updated});        
+        util.log('updated job ' + values.job_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
 }
 
@@ -220,16 +239,16 @@ JobController.prototype.removeAction = function(req, res) {
 
 JobController.prototype.createAction = function(req, res) {
     var parent = this;
-    if ((req.route.method != "post") || (!req.body.values)) {
+    if (req.route.method != "post") {
         var data = {
             status: "error",
             error: "insert must be post action and must include values",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body
         };
         res.send(data);
     }    
-    this.jobRepository.insert(req.body.values, {}, function(err, newJob) {
+    this.jobRepository.insert(req.body, {}, function(err, newJob) {
         // update the job scheduler
         var scheduledJobs = parent.jobScheduler.getScheduledJobs();
         for (var j in scheduledJobs) {
@@ -239,7 +258,10 @@ JobController.prototype.createAction = function(req, res) {
         }
         parent.jobScheduler.initSchedule();
 
-        res.send({status: "success", job: newJob});
+        util.log('saving new job: ' + newJob.job_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
 }
 

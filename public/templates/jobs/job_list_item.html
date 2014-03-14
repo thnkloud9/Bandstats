@@ -1,15 +1,44 @@
-<ul class="list-unstyled list-inline">
-  <li>
-    <a href="#jobs/<%= job_id %>" class="list plain">
+   <td>
+      <a href="#jobs/<%= job_id %>" class="list plain">
       <h5><%= job_name %></h5>
-    </a>
-  </li>
+     </a>
+   </td>
+   <td>
+     <%= readable_last_run %>
+   </td>
 
-  <li><%= job_command %></li>
-  <li><%= job_duration %></li>
-  <li><%= job_processed %></li>
-  <li><%= job_failed %></li>
-  <li><%= job_schedule %></li>
-  <li><%= last_updated %> </li>
-  <li><%= job_active %> </li>
-</ul>
+   <td>
+     <%= readable_duration %>
+   </td>
+
+   <td>
+    <% if (job_processed > 0) { %>
+      <span class="badge pull-right">
+        <%= job_processed %>
+      </span>
+    <% }  %>
+   </td>
+
+   <td>
+    <% if (job_failed > 0) { %>
+      <span class="badge pull-right alert-danger">
+        <%= job_failed %>
+      </span>
+    <% }  %>
+   </td>
+
+   <td>
+     <%= job_schedule %>
+   </td>
+
+   <td>
+     <% if (job_active == "true" ) { %>
+        <span class="label label-success">Active</span>
+     <% } else { %>
+        <span class="label label-danger">Inactive</span>
+     <% }  %>
+   </td>
+
+   <td>
+     <button data-job-id="<%= job_id %>" class="btn btn-primary btn-run-job">Run Now</button>
+   </td>

@@ -23,6 +23,10 @@ define([
       hasLast: false,
     },
 
+    getName: function() {
+        return "Jobs";
+    },
+
     server_api: {
       'limit': function() { return this.perPage },
       'skip': function() { return this.currentPage * this.perPage; }

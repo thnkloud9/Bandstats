@@ -28,6 +28,10 @@ define([
       'skip': function() { return this.currentPage * this.perPage; }
     },
 
+    getName: function() {
+        return "Bands";
+    },
+
     parse: function (response) {
 
       // set pagination info

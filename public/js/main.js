@@ -8,6 +8,7 @@ require.config({
     sinon: 'libs/sinon/sinon',
     bootstrap: 'libs/bootstrap/bootstrap.min',
     typeahead: 'libs/typeahead/typeahead.bundle',
+    moment: 'libs/moment/moment',
 
     // Require.js plugins
     text: 'libs/require/text',

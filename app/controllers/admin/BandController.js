@@ -237,10 +237,7 @@ BandController.prototype.articlesAction = function(req, res) {
             return false;
         }
         // get articles
-        bandRepository.getBandArticles(band, function(err, band, articles) {
-                data.articles = articles;
-                res.send(data);
-        });
+        res.send(band.mentions);
     });
     
 }

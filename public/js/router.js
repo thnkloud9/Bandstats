@@ -28,7 +28,9 @@ define([
       'bands': 'bands',
       'bands/search/:query': 'bandsearch',
       'sites': 'sites',
+      'jobs/:id': 'job',
       'jobs': 'jobs',
+      'running_jobs': 'running_jobs',
       'settings': 'settings',
       'login': 'login',
       'dashboard': 'dashboard',
@@ -86,9 +88,19 @@ define([
     });
 
     router.on('route:sites', function () {
-      require(['views/sites/page'], function (SitesPage) {
-        var sitesPage = Vm.create(appView, 'SitesPage', SitesPage);
+      require(['views/sites/sites_page', 'collections/sites'], function (SitesPage, SitesCollection) {
+        var sitesCollection = new SitesCollection();
+        sitesCollection.fetch();  
+        var sitesPage = Vm.create(appView, 'SitesPage', SitesPage, {collection: sitesCollection});
         sitesPage.render();
+      });
+    });
+
+    router.on('route:job', function (id) {
+      require(['views/jobs/job_detail'], function (JobDetailPage) {
+        var jobPage = Vm.create(appView, 'JobDetailPage', JobDetailPage);
+        jobPage.loadJob(id);
+        jobPage.render();
       });
     });
 
@@ -97,6 +109,15 @@ define([
         var jobsCollection = new JobsCollection();
         jobsCollection.fetch();
         var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: jobsCollection});
+        jobsPage.render();
+      });
+    });
+
+    router.on('route:running_jobs', function () {
+      require(['views/jobs/jobs_page', 'collections/running_jobs'], function (JobsPage, RunningJobsCollection) {
+        var runningJobsCollection = new RunningJobsCollection();
+        runningJobsCollection.fetch();
+        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: runningJobsCollection});
         jobsPage.render();
       });
     });

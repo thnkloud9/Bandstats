@@ -32,6 +32,9 @@ define([
       'limit': function() { return this.perPage },
       'skip': function() { return this.currentPage * this.perPage; }
     },
+    getName: function() {
+        return "BandsSearch";
+    },
 
     parse: function (response) {
 

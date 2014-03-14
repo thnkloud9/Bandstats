@@ -2,8 +2,10 @@ define([
   'underscore',
   'backbone'
 ], function(_, Backbone) {
-  var bandModel = Backbone.Model.extend({
-    urlRoot: '/admin/band',
+  var jobModel = Backbone.Model.extend({
+    urlRoot: '/admin/job',
+
+    idAttribute: "job_id",
 
     defaults: {
       job_id: 0,
@@ -11,6 +13,7 @@ define([
       job_processed: '',
       job_last_updated: '',
       job_last_run: '',
+      job_duration: '',
       job_active: '',
       job_arguments: '',
       job_command: '',
@@ -26,6 +29,6 @@ define([
 
   });
 
-  return bandModel;
+  return jobModel;
 
 });

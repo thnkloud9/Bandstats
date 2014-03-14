@@ -12,6 +12,11 @@ define([
     render: function () {
       this.$el.html(jobsPageTemplate);
       this.renderJobList();
+
+      require(['views/sidenav/jobs_menu'], function (SideNavView) {
+        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
+        sideNavView.render();
+      });
     },
 
     renderJobList: function() {

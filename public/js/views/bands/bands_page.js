@@ -21,12 +21,15 @@ define([
     render: function () {
       this.$el.html(bandsPageTemplate);
       this.renderBandGallery();
+
+      require(['views/sidenav/bands_menu'], function (SideNavView) {
+        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
+        sideNavView.render();                                      
+      });
     },
 
     renderBandGallery: function (model) {
-      var bandsCollection = this.collection;
-
-      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: bandsCollection});
+      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection});
       bandGalleryView.render();
     },
 

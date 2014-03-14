@@ -59,7 +59,7 @@
             <div class="col-lg-6">
                 <label for="user-active" class="control-label">Active: </label>
                 <div class="controls">
-                    <input class="form-control" type="checkbox" id="user-active" name="active" value="true" <%= active === true ? 'checked' : '' %>/>
+                    <input class="form-control" type="checkbox" id="user-active" name="active" value="true" <%= active == true ? 'checked' : '' %>/>
                 </div>
             </div>
         </div>
@@ -82,10 +82,4 @@
 
     </form>
 
-
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="flash-message alert col-md-4" style="display:none;"></div>
-  <div class="col-md-4"></div>
-</div>
 

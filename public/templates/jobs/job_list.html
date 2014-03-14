@@ -4,7 +4,13 @@
 </div>
 
 <div id='job-list-container'>
-  <ul id="job-list" class="list-unstyled">
-  </ul>
+  <table id="job-list" class="table table-hover">
+  </table>
 </div>
 
+<!-- used to display log output -->
+<div id='log-output-container' class="jumbotron" style="display:none">
+  <h3>Job Output</h3>
+  <p><pre id="log-output-content" style="overflow: scroll; height: 250px;"></pre></p>
+  <p><a id='btn-close-log-output' class="btn btn-primary" role="button">Close</a></p>
+</div>
