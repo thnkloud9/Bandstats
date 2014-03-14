@@ -3,12 +3,15 @@ define([
   'backbone'
 ], function(_, Backbone) {
   var bandModel = Backbone.Model.extend({
+
     urlRoot: '/admin/band',
+
+    idAttribute: "band_id",
 
     defaults: {
       band_id: 0,
       band_name: '',
-      band_image_src: '',
+      band_image_src: '/images/no_image.jpeg',
       band_url: '',
       regions: [],
       genres: [],
@@ -39,7 +42,14 @@ define([
     },
 
     initialize: function() {
+    },
 
+    parse: function(response) {
+        if (response.band_img_src == '') {
+            reponse.band_img_src == this.defaults.band_image_src; 
+        }
+
+        return response;
     }
 
   });

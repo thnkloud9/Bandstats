@@ -16,22 +16,37 @@ define([
     initialize: function() {
       this.collection.on('reset', this.render, this);
       this.collection.on('sync', this.render, this);
+      this.isLoading = false;
+      // bind to checkScroll 
+      _.bindAll(this, 'checkScroll');
+      $(window).scroll(this.checkScroll);
+
+      // only render the list container once
+      this.$el.html(bandListTemplate);
     },
 
     render: function () {
-
-      this.$el.html(bandListTemplate);
 
       var parent = this;
       _.each(this.collection.models, function (model) {
         parent.renderBand(model);
       }, this);
 
-      $('#pagination', this.el).html(new PaginatorView({collection: this.collection, page: this.page}).render().el);
+      this.isLoading = false;
+
     },
 
     renderBand: function (model) {
       $('#band-list', this.el).append(new BandTileItemView({model: model}).render().el); 
+    },
+
+    checkScroll: function () {
+      // if we are at the bottom of the page
+      if(!(this.isLoading) && $(window).scrollTop() + $(window).height() == $(document).height()) {
+        this.isLoading = true;
+        this.collection.getNextPage(); // Load next page
+        this.render();
+      }
     }
 
   });
