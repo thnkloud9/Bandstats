@@ -270,7 +270,7 @@ LastfmManager.prototype.getImage = function(lastfmId, callback) {
         var result = '';
         for (var i in body.artist.image) {
             var image = body.artist.image[i];
-            if ((image['#text']) && (image.size === "medium")) {
+            if ((image['#text']) && (image.size === "large")) {
                 result = image['#text'];
             }
         }

@@ -1,0 +1,28 @@
+
+    <div class="col-md-3 thumbnail-container">
+      <a href="#bands/<%= band_id %>">
+        <img src="<%= band_image_src %>" alt="not available" class="thumbnail-medium">
+      </a>
+
+      <div class="thumbnail-overlay">
+
+        <h4>
+          <span class="label label-info">
+            <% if (band_name.length > 24) { band_name = band_name.substring(0,24) + "..."; } %> 
+            <%= band_name %>
+          </span>
+        </h4>
+
+          <% for (var i = 0; i < regions.length; i++) { %>
+            <% var region = regions[i]; %>
+            <span class="label label-default"><%= region %></span>
+          <% } %>
+        <br>
+          <% for (var i = 0; i < genres.length; i++) { %>
+            <% var genre = genres[i]; %>
+            <span class="label label-default"><%= genre %></span>
+          <% } %>
+   
+      </div>
+  </div>
+

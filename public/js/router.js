@@ -27,6 +27,7 @@ define([
       'bands/:id': 'band',
       'bands': 'bands',
       'bands/search/:query': 'bandsearch',
+      'sites/:id': 'site',
       'sites': 'sites',
       'jobs/:id': 'job',
       'jobs': 'jobs',
@@ -84,6 +85,14 @@ define([
         var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView);
         bandPage.loadBand(id);
         bandPage.render();
+      });
+    });
+
+    router.on('route:site', function (id) {
+      require(['views/sites/site_detail'], function (SiteDetailPage) {
+        var sitePage = Vm.create(appView, 'SiteDetailPage', SiteDetailPage);
+        sitePage.loadSite(id);
+        sitePage.render();
       });
     });
 

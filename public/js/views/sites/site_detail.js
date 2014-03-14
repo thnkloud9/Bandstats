@@ -16,7 +16,7 @@ define([
     },
 
     loadSite: function (id) {
-      this.model = new SiteModel({id: id});
+      this.model = new SiteModel({site_id: id});
       this.model.fetch();
 
       this.model.bind("change", this.render, this);
