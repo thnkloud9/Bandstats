@@ -12,6 +12,7 @@ define([
     el: '#content',
 
     initialize: function() {
+      this.children = {};
     },
 
     events: { 
@@ -30,20 +31,41 @@ define([
       });
     },
 
-    renderBandGallery: function (model) {
+    renderBandGallery: function () {
+      this.destroyChildren();
       var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection});
-      bandGalleryView.render();
+      $(bandGalleryView.render().el).appendTo('#bands-page-content');
+      console.log(this.children);
     },
 
     renderBandList: function () {
+      this.destroyChildren();
       var bandListView = Vm.create(this, 'BandListView', BandListView, {collection: this.collection});
-      bandListView.render();
+      $(bandListView.render().el).appendTo('#bands-page-content');
+      console.log(this.children);
     },
 
     renderBandTile: function () {
+      this.destroyChildren();
       var bandTileView = Vm.create(this, 'BandTileView', BandTileView, {collection: this.collection});
-      bandTileView.render();
+      //bandTileView.collection.getFirstPage();
+      $(bandTileView.render().el).appendTo('#bands-page-content');
+      console.log(this.children);
+    },
+
+    destroyChildren: function() {
+      var parent = this;
+      _.each(this.children, function(child, name) {
+        if (child.close) {
+          child.close();
+        }
+        child.remove();
+        child.undelegateEvents();
+        child.unbind();
+      }, this);
+      this.children = {};
     }
+
   });
   return BandsPage;
 });

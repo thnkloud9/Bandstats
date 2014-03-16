@@ -1,0 +1,24 @@
+      <!-- facebook stats panel -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Facebook Stats</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group">
+            <li class="list-group-item">
+              Id <span class="badge"><%= external_ids.facebook_id %></span>
+            </li>
+            <li class="list-group-item">
+              Total Likes <span class="badge"><%= running_stats.facebook_likes.current %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental <span class="badge"><%= running_stats.facebook_likes.total_incremental %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental Average <span class="badge"><%= running_stats.facebook_likes.incremental_avg %></span>
+            </li>
+            <li class="list-group-item">
+              Last Updated <span class="label label-info pull-right"><%= running_stats.facebook_likes.last_updated %></span>
+            </li>
+          </ul>
+        </div>
+      <!-- end facebook stats panel -->

@@ -335,7 +335,22 @@ BandController.prototype.genresAction = function(req, res) {
     this.bandRepository.getDistinctValues('genres', {}, function(err, genres) {
         if (err) util.log(err);
 
-        res.send(genres);
+        if (req.query.search) {
+            var results = [];
+            search = new RegExp('.*' + req.query.search + '.*', 'i');
+            async.forEach(genres, function(genre, cb) {
+                if (search.test(genre)) {
+                    results.push(genre);
+                }
+                cb();
+            },
+            function(err) {
+                res.send(results);
+                return true;
+            });
+        } else {
+          res.send(genres);
+        }
     });
 }
 
@@ -346,7 +361,23 @@ BandController.prototype.regionsAction = function(req, res) {
     this.bandRepository.getDistinctValues('regions', {}, function(err, regions) {
         if (err) util.log(err);
 
-        res.send(regions);
+        if (req.query.search) {
+            var results = [];
+            search = new RegExp('.*' + req.query.search + '.*', 'i');
+            async.forEach(regions, function(region, cb) {
+                if (search.test(region)) {
+                    results.push(region);
+                }
+                cb();
+            },
+            function(err) {
+                res.send(results);
+                return true;
+            });
+        } else {
+          res.send(regions);
+        }
+
     });
 }
 

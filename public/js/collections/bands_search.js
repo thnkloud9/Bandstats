@@ -65,21 +65,25 @@ define([
     },
 
     getPreviousPage: function() {
+      this.reset();
       this.paginatorOptions.currentPage--;
       this.fetch();
     },
 
     getNextPage: function() {
+      this.reset();
       this.paginatorOptions.currentPage++;
       this.fetch();
     },
 
     getFirstPage: function() {
+      this.reset();
       this.paginatorOptions.currentPage = 0;
       this.fetch();
     },
 
     getLastPage: function() {
+      this.reset();
       this.paginatorOptions.currentPage = (this.paginatorOptions.totalPages-1);
       this.fetch();
     }

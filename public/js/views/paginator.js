@@ -6,8 +6,9 @@ define([
 ], function($, _, Backbone, paginationTemplate) {
 
   var Paginator = Backbone.View.extend({
-    el: '#paginator',
+    id: 'paginator',
     className: "pagination pagination-centered",
+    tagName: 'ul',
     template: _.template(paginationTemplate),
 
     initialize:function () {
@@ -31,7 +32,8 @@ define([
         hasLast: this.collection.paginatorOptions.hasLast,
       };
   
-      $('.pagination', this.el).append(this.template(templateData));
+      this.$el.html(this.template(templateData));
+
       return this;
    },
 

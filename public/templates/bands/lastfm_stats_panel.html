@@ -1,0 +1,26 @@
+      <!-- lastfm stats panel -->
+      <!-- <div class="panel panel-default"> -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Lastfm Stats</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group">
+            <li class="list-group-item">
+              Id <span class="badge"><%= external_ids.lastfm_id %></span>
+            </li>
+            <li class="list-group-item">
+              Total Listeners <span class="badge"><%= running_stats.lastfm_listeners.current %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental <span class="badge"><%= running_stats.lastfm_listeners.total_incremental %></span>
+            </li>
+            <li class="list-group-item">
+              Incremental Average <span class="badge"><%= running_stats.lastfm_listeners.incremental_avg %></span>
+            </li>
+            <li class="list-group-item">
+              Last Updated <span class="label label-info pull-right"><%= running_stats.lastfm_listeners.last_updated %></span>
+            </li>
+          </ul>
+        </div>
+      <!--</div>-->
+      <!-- end facebook stats panel -->

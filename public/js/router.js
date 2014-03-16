@@ -77,6 +77,7 @@ define([
         bandsCollection.fetch();
         var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection});
         bandsPage.render();
+        //bandsPage.renderBandTile();
       });
     });
 

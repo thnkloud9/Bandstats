@@ -1,57 +1,64 @@
 <div class="row">
 
     <form class="form-horizontal span12">
-
-
         <fieldset>
-
             <legend>Band Details</legend>
-            <br/>
 
-            <div class="row">
-                <div class="span9">
+            <div class="control-group">
+                 <label for="bandId" class="control-label">Id:</label>
+                 <input id="bandId" name="band_id" type="text" value="<%= band_id === null ? '' : band_id %>" class="span2" disabled/>
+             </div>
 
-                    <div class="control-group">
-                        <label for="bandId" class="control-label">Id:</label>
+             <div class="control-group">
+                 <label for="bandName" class="control-label">Name:</label>
+                 <input type="text" id="bandName" name="band_name" value="<%= band_name %>"/>
+             </div>
 
-                        <div class="controls">
-                            <input id="bandId" name="band_id" type="text" value="<%= band_id === null ? '' : band_id %>" class="span2"
-                                   disabled/>
-                        </div>
-                    </div>
+    <!-- genres controls -->
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Add</button>
+                </span>
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
 
-                    <div class="control-group">
-                        <label for="bandName" class="control-label">Name:</label>
+            <div id="genres-content" class="row">
+              <% for (var i = 0; i < genres.length; i++) { %>
+                <% var genre = genres[i]; %>
+                <span class="label label-default"><%= genre %></span>
+              <% } %>
+            </div>
+    <!-- end genres controls -->
 
-                        <div class="controls">
-                            <input type="text" id="bandName" name="band_name" value="<%= band_name %>"/>
-                            <span class="help-inline"></span>
-                        </div>
-                    </div>
+    <!-- region controls -->
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Add</button>
+                </span>
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
 
-                    <div class="control-group">
-                        <label for="bandGenre" class="control-label">Genre:</label>
+            <div id="regions-content" class="row">
+              <% for (var i = 0; i < regions.length; i++) { %>
+                <% var region = regions[i]; %>
+                <span class="label label-default"><%= region %></span>
+              <% } %>
+            </div>
+    <!-- end region controls -->
 
-                        <div class="controls">
-                            <select class="span3" id="bandGenre" name="genres" value="">
-                                <option>Rock</option>
-                                <option>Rap</option>
-                                <option>Indie</option>
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="span3">
+        <div class="row">
+            <div class="col-md-3">
                     <div class="well">
                         <p><img id="picture" width="180" src="<%= band_image_src === null ? 'pics/generic.jpg' : band_image_src  %>"/></p>
 
                         <p>To change the picture, drag a new picture from your file system onto the box above.</p>
                     </div>
-                </div>
-
             </div>
+        </div>
 
         </fieldset>
 
@@ -64,10 +71,38 @@
 
 </div>
 
-<div class="row status-bar">
-    <div class="span12">
-        <div class="alert alert-success" style="display: none">
-            <b>Success!</b> Band saved successfully
+<div id="stats-content row">
+  <ul class="list-unstyled"> 
+    <li class="col-md-6">
+      <div id="facebook-stats-content">
+      </div>
+    </li>
+    <li class="col-md-6">
+      <div id="lastfm-stats-content">
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="row">
+  <ul class="list-unstyled"> 
+    <li class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Facebook Detailed Stats</h3>
         </div>
-    </div>
+        <div id="facebook-stats-table" class="panel-body">
+        </div>
+      </div>
+    </li>
+    <li class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Lastfm Detailed Stats</h3>
+        </div>
+        <div id="lastfm-stats-table" class="panel-body">
+        </div>
+      </div>
+    </li>
+  </ul>
 </div>

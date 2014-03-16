@@ -137,3 +137,13 @@ body {
   width: 50px !important;
   height: 50px !important;
 }
+
+#lastfm-stats-table {
+  overflow: scroll;
+  height: 200px
+}
+
+#facebook-stats-table {
+  overflow: scroll;
+  height: 200px
+}
