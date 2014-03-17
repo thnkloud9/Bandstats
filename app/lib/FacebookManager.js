@@ -75,9 +75,11 @@ FacebookManager.prototype.search = function(query, callback) {
     
 
         var options = {
-            url: api + '/search?q=' + query + '&type=page',
+            url: api + '/search?q=' + query + '&type=page&access_token=' + accessToken,
             json: true            
         };
+
+        util.log(options.url);
 
         request(options, function(err, response, body) {
             var musicPageIds = []; 
