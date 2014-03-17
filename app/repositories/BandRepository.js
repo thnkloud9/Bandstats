@@ -4,6 +4,8 @@
  *
  * author: Mark Lewis
  */
+var nconf = require('nconf');
+var path = require('path');
 var request = require('request');
 var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
@@ -12,11 +14,20 @@ var moment = require('moment');
 var util = require('util');
 
 /**
+ * configuration
+ */
+nconf.file(path.join(__dirname, 'app/config/app.json'));
+
+
+/**
  * constructor
  */
 function BandRepository(args) {
     this.db = args.db;
     this.collection = 'bands';
+    this.retentionValue = nconf.get('retention:value');
+    this.retentionPeriod = nconf.get('retention:period');
+
     args.collection = this.collection;
  
     BaseRepository.call(this, args);
@@ -128,6 +139,7 @@ BandRepository.prototype.clearRunningStats = function(band) {
 BandRepository.prototype.updateRunningStat = function(query, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
     var db = this.db;
     var collection = this.collection
+    var parent = this;
     var today = moment().format('YYYY-MM-DD');
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -144,25 +156,38 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, increm
         updateToday: function(cb) {
             var runningStat = {};
             var setFields = {};
-            runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value, "incremental": incremental };
-            setFields["running_stats." + stat + ".current"] = value;
-            setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
-            setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
-            setFields["running_stats." + stat + ".last_updated"] = now;
-            var set = { 
-                $addToSet: runningStat,
-                $set: setFields 
-            };
-            
+
+            // if this is an error, update the error and skip the stat
+            if (typeof value == "string") {
+
+                setFields["running_stats." + stat + ".error"] = value;
+                var set = {
+                    $set: setFields
+                }
+
+            } else { 
+                runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value, "incremental": incremental };
+                setFields["running_stats." + stat + ".current"] = value;
+                setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
+                setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
+                setFields["running_stats." + stat + ".last_updated"] = now;
+                var set = { 
+                    $addToSet: runningStat,
+                    $set: setFields 
+                };
+            }
+
             db.collection(collection).update(query, set, {"multi":true}, function(err, result) {
                 cb(err, result);
             });
         },
         deleteOld: function(cb) {
-            var expire = moment().subtract('months', 6).calendar();
+
+            var expire = moment().subtract(parent.retentionPeriod, parent.retentionValue).format('YYYY-MM-DD');
             var expireStat = {};
-            expireStat["running_stats." + stat + ".daily_stats"] = { "date":  expire };
+            expireStat["running_stats." + stat + ".daily_stats"] = { "date":  { $lt:  expire }  };
             var set = { $pull: expireStat };
+            
             db.collection('bands').update(query, set, {"multi":true}, function(err, result) {
                 cb(err, result);
             });

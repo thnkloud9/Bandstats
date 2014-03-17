@@ -4,9 +4,9 @@
         "title": "Bandstats",
         "data_retention": 30
     },
-    "admin": {
-        "port": 8000,
-        "title": "Bandstats Admin"
+    "retention": {
+        "value": 2,
+        "period": "weeks"
     },
     "db": {
         "host": "localhost",

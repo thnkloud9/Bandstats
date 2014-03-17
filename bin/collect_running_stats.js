@@ -241,6 +241,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                             }
 
                             if (typeof value == "string") {
+                                // this indicaates a bad external id
                                 jobStats.errors++;
                             } else {
                                 jobStats.success++;
