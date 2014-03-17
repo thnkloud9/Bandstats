@@ -132,8 +132,6 @@ BandController.prototype.failedAction = function(req, res) {
         });
     },
     function (err) {
-        var template = require(parent.viewPath + 'band_failed');
-        //res.send(template.render(data));
         res.send(data);
     });
 }
@@ -181,8 +179,6 @@ BandController.prototype.lookupsAction = function(req, res) {
         });
     },
     function (err) {
-        var template = require(parent.viewPath + 'band_lookups');
-        //res.send(template.render(data));
         res.send(data);
     });
 }
@@ -191,7 +187,6 @@ BandController.prototype.editAction = function(req, res) {
     var data = this.data;
     var query = {'band_id': req.params.id};
     var bandRepository = this.bandRepository;
-    var template = require(this.viewPath + 'band_edit');
     var apisEnabled = {
         "facebook": nconf.get('facebook:enabled'),
         "lastfm": nconf.get('lastfm:enabled'),
@@ -210,7 +205,6 @@ BandController.prototype.editAction = function(req, res) {
         // this is a new record
         data.band = {};
         data.json.band = JSON.stringify({});
-        res.send(template.render(data));
     } else {
         // get the record from the db
         this.bandRepository.findOne(query, function(err, band) {
@@ -221,7 +215,7 @@ BandController.prototype.editAction = function(req, res) {
             delete band._id;
             data.band = band;
             data.json.band = JSON.stringify(band);
-            res.send(template.render(data));
+            res.send(data);
         });
     }
 }
@@ -317,13 +311,11 @@ BandController.prototype.duplicatesAction = function(req, res) {
             }); 
         },
         function(err) {
-            var template = require(parent.viewPath + 'band_duplicates');
-            _.extend(data, { 
-                "duplicates": finalResults,
-                "duplicates_json": JSON.stringify(finalResults)
-            });
-            //res.send(template.render(data));
-            res.send(data);
+            var results = {
+                "totalRecords": finalResults.length,
+                "data": finalResults
+            }
+            res.send(results);
         });
     });
 }
