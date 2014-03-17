@@ -35,7 +35,11 @@ BandController.prototype.indexAction = function(req, res) {
     var bandId = req.params.id;
     var limit = req.query.limit;
     var skip = req.query.skip;
+    var filter = req.query.filter;
+    var sort = req.query.sort;
     var query = {};
+    var searchQuery = {};
+    var filterQuery = {};
     var options = {};
     var parent = this;
 
@@ -43,9 +47,10 @@ BandController.prototype.indexAction = function(req, res) {
         query.band_id = bandId;
     }
 
+    // if search requested search for band name, id, or external id
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
-        query = {
+        searchQuery = {
             $or: [
                 {"band_name": search},
                 {"band_id": search},
@@ -55,14 +60,71 @@ BandController.prototype.indexAction = function(req, res) {
         };
     }
 
+    // if filter add to query
+    if (filter) {
+        var filters = [];
+
+        _.forEach(filter, function(values, field) {
+            // see if multiple values were passed
+            if (typeof values === 'object') {
+                _.forEach(values, function(value) {
+                    var orQuery = {};
+                    orQuery[field] = { $in: [ value ] };
+                    filters.push(orQuery);  
+                });
+            } else {
+                var orQuery = {};
+                orQuery[field] = { $in: [ values ] };
+                filters.push(orQuery);
+            }
+        });
+        
+        filterQuery = {
+            $or: filters
+        };
+    }
+
+    
+    // add sorting
+    var orderby = {};
+    if (sort) {
+        _.forEach(sort, function(direction, field) {
+            if (direction === "asc") {
+                orderby[field] = 1; 
+            } else {
+                orderby[field] = -1; 
+            }
+        });
+    }
+
+    // make the ordered query
+    var orderedQuery = {
+        $query: { 
+            $and: [ 
+                searchQuery, 
+                filterQuery 
+            ]
+        },
+        $orderby: orderby
+    };
+
+    // unordered query for count
+    var unorderedQuery = {
+        $and: [
+            searchQuery,
+            filterQuery
+        ]
+    }
+
+    // now add pager options, and remove _id
     var options = {
         "limit": limit,
         "skip": skip,
         "_id": 0
     };
    
-    this.bandRepository.count(query, function(err, count) { 
-      parent.bandRepository.find(query, options, function(err, bands) {
+    this.bandRepository.count(unorderedQuery, function(err, count) { 
+      parent.bandRepository.find(orderedQuery, options, function(err, bands) {
         var results = {
           "totalRecords": count,
           "data": bands
