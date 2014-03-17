@@ -147,3 +147,7 @@ body {
   overflow: scroll;
   height: 200px
 }
+
+.flash-message-content {
+  margin-top: 10px;
+}

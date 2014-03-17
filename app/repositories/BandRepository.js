@@ -204,8 +204,8 @@ BandRepository.prototype.getBadLastfmIds = function(callback) {
     var collection = this.collection;
     var query = {
         $or: [
-            {"running_stats.lastfm_listeners.current": /^error.*/},
-            {"running_stats.lastfm_listeners.current": {$type: 1 }} 
+            {"running_stats.lastfm_listeners.error": /^error.*/},
+            {"running_stats.lastfm_listeners.error": {$type: 1 }} 
         ]
     };
     var options = {
@@ -236,8 +236,8 @@ BandRepository.prototype.getBadFacebookIds = function(callback) {
     var collection = this.collection;
     var query = {
         $or: [
-            {"running_stats.facebook_likes.current": /^error.*/},
-            {"running_stats.facebook_likes.current": {$type: 1 }} 
+            {"running_stats.facebook_likes.error": /^error.*/},
+            {"running_stats.facebook_likes.error": {$type: 1 }} 
         ]
     };
     var options = {
@@ -350,7 +350,7 @@ BandRepository.prototype.count = function(query, callback) {
 }
 
 BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
-    var statId = "running_stats." + stat + ".current";
+    var statId = "running_stats." + stat + ".error";
     var errorQuery = {};
     var stringQuery ={};
     errorQuery[statId] = /^error.*/;
