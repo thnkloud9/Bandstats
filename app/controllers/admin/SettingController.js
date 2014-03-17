@@ -32,8 +32,7 @@ SettingController.prototype.indexAction = function(req, res) {
         if (err) {
             _.extend(data, {"error": err});
         }
-        _.extend(data, { 'config': JSON.stringify(results) });
-        res.send(data);
+        res.send(results);
     });
 }
 
