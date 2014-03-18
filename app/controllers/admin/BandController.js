@@ -37,15 +37,10 @@ BandController.prototype.indexAction = function(req, res) {
     var skip = req.query.skip;
     var filter = req.query.filter;
     var sort = req.query.sort;
-    var query = {};
     var searchQuery = {};
     var filterQuery = {};
     var options = {};
     var parent = this;
-
-    if (bandId) {
-        query.band_id = bandId;
-    }
 
     // if search requested search for band name, id, or external id
     if (req.query.search) {
@@ -116,12 +111,20 @@ BandController.prototype.indexAction = function(req, res) {
         ]
     }
 
+    // if this is for single band
+    if (bandId) {
+        unorderedQuery = { band_id: bandId };
+        orderedQuery = { band_id: bandId };
+    }
+
     // now add pager options, and remove _id
     var options = {
         "limit": limit,
         "skip": skip,
         "_id": 0
     };
+
+    util.log(JSON.stringify(orderedQuery));
    
     this.bandRepository.count(unorderedQuery, function(err, count) { 
       parent.bandRepository.find(orderedQuery, options, function(err, bands) {

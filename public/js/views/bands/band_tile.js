@@ -11,6 +11,10 @@ define([
 
     id: 'band-tile-content',
 
+    events: {
+      'click .band-detail-link': 'close',
+    },
+
     initialize: function() {
       this.collection.on('reset', this.render, this);
       this.collection.on('sync', this.render, this);
@@ -27,6 +31,9 @@ define([
 
     close: function() {
       $(window).unbind('scroll');
+      this.remove();
+      this.undelegateEvents();
+      this.unbind();
     },
 
     render: function () {

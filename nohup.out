@@ -35,3 +35,5 @@ Error: listen EADDRINUSE
 all output going to: /usr/local/var/log/mongodb/mongo.log
 /System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/lib/ruby/2.0.0/universal-darwin13/rbconfig.rb:212: warning: Insecure world writable dir /usr/local/bin in PATH, mode 040777
 all output going to: /usr/local/var/log/mongodb/mongo.log
+/System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/lib/ruby/2.0.0/universal-darwin13/rbconfig.rb:212: warning: Insecure world writable dir /usr/local/bin in PATH, mode 040777
+all output going to: /usr/local/var/log/mongodb/mongo.log

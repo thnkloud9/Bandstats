@@ -1,6 +1,10 @@
 <h3>Bands</h3>
 
-<div class="pull-right">
+<div class="row pull-right">
+
+  <span id="band-list-filter" class="small">filter</span>
+  <span id="band-list-total" class="badge"></span>
+
   <button id="btn-tile-view" type="button" class="btn btn-default">
     <span class="glyphicon glyphicon-th"></span> Tile 
   </button>
@@ -10,6 +14,48 @@
   <button id="btn-list-view" type="button" class="btn btn-default">
     <span class="glyphicon glyphicon-align-justify"></span> List
   </button>
+  <button id="btn-show-filter" type="button" class="btn btn-default">
+    <span class="glyphicon glyphicon-filter"></span> Filter
+  </button>
+</div>
+
+<div class="row bands-list-filter">
+    <!-- genres controls -->
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Add</button>
+                </span>
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+
+            <div id="genres-content" class="row">
+              <% for (var i = 0; i < genres.length; i++) { %>
+                <% var genre = genres[i]; %>
+                <span class="label label-default"><%= genre %></span>
+              <% } %>
+            </div>
+    <!-- end genres controls -->
+
+    <!-- region controls -->
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Add</button>
+                </span>
+              </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+
+            <div id="regions-content" class="row">
+              <% for (var i = 0; i < regions.length; i++) { %>
+                <% var region = regions[i]; %>
+                <span class="label label-default"><%= region %></span>
+              <% } %>
+            </div>
+    <!-- end region controls -->
+
 </div>
 
 <div id="bands-page-content"></div>

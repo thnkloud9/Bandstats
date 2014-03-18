@@ -4,11 +4,32 @@ define([
 ], function(Backbone, bandModel){
   var BandsCollection = Backbone.Collection.extend({
     model: bandModel,
+    filter: {},
+    sort: {},
+    query: null, 
+
+    initialize : function(query){
+      if (query) {
+        this.query = query;
+      }
+
+      this.sort['running_stats.facebook_likes.current'] = "desc"; 
+    
+    },
 
     url: function() {
       var path = "/admin/band";
       path += "?limit=" + this.paginatorOptions.perPage;
       path += "&skip=" + (this.paginatorOptions.currentPage * this.paginatorOptions.perPage);
+
+      if (this.query) {
+        path += "&search=" + this.query;
+      }
+    
+      _.forEach(this.sort, function(direction, field) {
+        path+= "&sort[" + field + "]=" + direction;
+      });
+    
       return path;
     },
 
@@ -56,6 +77,10 @@ define([
       } else {
         this.paginatorOptions.hasNext = false;
       }
+
+      // this should be in the bands_page view, but it doesn't
+      // seem to work from there, so its here for now
+      $('#band-list-total').html(this.paginatorOptions.totalRecords);
 
       return response.data; 
     },
