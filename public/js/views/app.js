@@ -85,7 +85,7 @@ define([
         templates: {
             suggestion: _.compile([
                 '<div class="media">',
-                '<a class="pull-left">',
+                '<a class="band-detail-link pull-left" href="#bands/<%= band_id %>">',
                 '<img class="media-object img-rounded thumbnail-xsmall" src="<%= band_image_src %>" alt="..."></a>',
                 '<div class="media-body">',
                 '<h4 class="media-heading"><%=band_name%></h4>',
