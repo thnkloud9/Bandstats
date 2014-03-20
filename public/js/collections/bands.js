@@ -29,6 +29,16 @@ define([
       _.forEach(this.sort, function(direction, field) {
         path+= "&sort[" + field + "]=" + direction;
       });
+
+      _.forEach(this.filter, function(values, field) {
+	if (typeof values === "object") {
+	    _.forEach(values, function(value) {
+                path+= "&filter[" + field + "]=" + value;
+	    });
+	} else {
+            path+= "&filter[" + field + "]=" + values;
+	}
+      });
     
       return path;
     },
@@ -54,7 +64,6 @@ define([
     },
 
     parse: function (response) {
-
       // set pagination info
       this.paginatorOptions.totalPages = Math.ceil(response.totalRecords / this.paginatorOptions.perPage);
       this.paginatorOptions.totalRecords = parseInt(response.totalRecords);
@@ -78,10 +87,7 @@ define([
         this.paginatorOptions.hasNext = false;
       }
 
-      // this should be in the bands_page view, but it doesn't
-      // seem to work from there, so its here for now
       $('#band-list-total').html(this.paginatorOptions.totalRecords);
-
       return response.data; 
     },
 

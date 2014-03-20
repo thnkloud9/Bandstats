@@ -1,62 +1,137 @@
 <h3>Bands</h3>
 
-<div class="row pull-right">
+<!-- view menu -->
+<div class="row">
+  <div class="pull-left">
+    <ul id="band-list-filter" class="list-inline small">
 
-  <span id="band-list-filter" class="small">filter</span>
-  <span id="band-list-total" class="badge"></span>
+	<!-- genres -->
+        <% for (var i = 0; i < genres.length; i++) { %>
+           <li><span class="label label-default genre-filter"><%= genres[i] %></span></li>
+        <% } %>
 
-  <button id="btn-tile-view" type="button" class="btn btn-default">
-    <span class="glyphicon glyphicon-th"></span> Tile 
-  </button>
-  <button id="btn-gallery-view" type="button" class="btn btn-default">
-    <span class="glyphicon glyphicon-th-list"></span> Gallery
-  </button>
-  <button id="btn-list-view" type="button" class="btn btn-default">
-    <span class="glyphicon glyphicon-align-justify"></span> List
-  </button>
-  <button id="btn-show-filter" type="button" class="btn btn-default">
-    <span class="glyphicon glyphicon-filter"></span> Filter
-  </button>
+	<!-- regions -->
+        <% for (var i = 0; i < regions.length; i++) { %>
+            <li><span class="label label-default region-filter"><%= regions[i] %></span></li>
+        <% } %>
+
+	<!-- sorts -->
+        <% for (var i = 0; i < sorts.length; i++) { %>
+            <li><span class="label label-default sort-filter"><%= sorts[i] %></span></li>
+        <% } %>
+    </ul>
+
+  </div>
+
+  <div class="pull-right">
+    <button id="btn-tile-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-th"></span> Tile 
+    </button>
+    <button id="btn-gallery-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-th-list"></span> Gallery
+    </button>
+    <button id="btn-list-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-align-justify"></span> List
+    </button>
+    <button id="btn-show-filter" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-filter"></span> Filter
+    </button>
+    <span id="band-list-total" class="badge">0</span>
+  </div>
 </div>
+<!-- end view menu -->
 
-<div class="row bands-list-filter">
-    <!-- genres controls -->
+<!-- filter menu -->
+<div id="bands-filter-list-content" class="row bands-list-filter" style="display: none">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Filter Builder</h3>
+    </div>
+    <div class="panel-body">
+	<h5>Filter by</h5>
+	<!-- genres controls -->
+	<div class="row">
             <div class="col-md-4">
                <div class="input-group">
                 <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Add</button>
+                  <button id="btn-add-genre-filter" class="btn btn-default" type="button">Add</button>
                 </span>
-              </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-
-            <div id="genres-content" class="row">
-              <% for (var i = 0; i < genres.length; i++) { %>
-                <% var genre = genres[i]; %>
-                <span class="label label-default"><%= genre %></span>
-              <% } %>
+              </div>
             </div>
-    <!-- end genres controls -->
+        </div>
+        <!-- end genres controls -->
 
-    <!-- region controls -->
+	<h5>And (not Or)</h5>
+
+        <!-- region controls -->
+	<div class="row">
             <div class="col-md-4">
                <div class="input-group">
                 <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Add</button>
+                  <button id="btn-add-region-filter" class="btn btn-default" type="button">Add</button>
                 </span>
-              </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-
-            <div id="regions-content" class="row">
-              <% for (var i = 0; i < regions.length; i++) { %>
-                <% var region = regions[i]; %>
-                <span class="label label-default"><%= region %></span>
-              <% } %>
+              </div>
             </div>
-    <!-- end region controls -->
+        </div>
+        <!-- end region controls -->
 
+	<h5>Sort by</h5>
+	
+	<div class="row">
+            <div class="col-md-6">
+	      <ul class="list-inline">
+		<li>
+                 <div class="input-group">
+		  <select id="select-sort" class="form-control">
+		    <option value="running_stats.facebook_likes.current">Facebook Likes</option>
+		    <option value="running_stats.facebook_likes.total_incremental">Facebook Incremental Likes</option>
+		    <option value="running_stats.facebook_likes.incremental_avg">Facebook Incremental Average Likes</option>
+		    <option value="running_stats.lastfm_listeners.current">Lastfm Listeners</option>
+		    <option value="running_stats.lastfm_listeners.total_incremental">Lastfm Incremental Listeners</option>
+		    <option value="running_stats.lastfm_listeners.incremental_avg">Lastfm Incremental Average Listeners</option>
+		    <option value="mentions">Article Mentions</option>
+		    <option value="band_name">Band Name</option>
+		  </select>
+                 </div>
+		</li>
+
+		<li>
+                 <div class="input-group">
+		  <select id="select-direction" class="form-control">
+		    <option value="desc">Desc</option>
+		    <option value="asc">Asc</option>
+		  </select>
+                 </div>
+		</li>
+
+		<li>
+                 <div class="input-group">
+	      	   <button id="btn-add-sort-filter" type="button" class="btn btn-default">Add</button>
+                 </div>
+		</li>
+
+	      </ul>
+            </div>
+	</div>
+
+	<br>
+
+	<div>
+          <div class="input-group">
+	    <ul class="list-inline">
+	      <li><button id="btn-clear-filter" type="button" class="btn btn-default">Clear</button></li>
+	      <li><button id="btn-apply-filter" type="button" class="btn btn-success">Apply</button></li>
+	    </ul>
+	  </div>
+	</div>
+
+    </div>
+  </div>
 </div>
+<!-- end filter menu -->
 
 <div id="bands-page-content"></div>
 

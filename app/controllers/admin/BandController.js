@@ -57,26 +57,39 @@ BandController.prototype.indexAction = function(req, res) {
 
     // if filter add to query
     if (filter) {
-        var filters = [];
+        var filters = {};
+	var andFilters = [];
+	var orFilters = [];
 
+
+	// different fields will be seperated by AND
+	// different values for a given field will be
+	// separated by OR 
         _.forEach(filter, function(values, field) {
-            // see if multiple values were passed
+	    var andFilter = {};
+	    var orFilter = {};
+	    orFilters = [];
+
+            // see if multiple values were passed, use or
             if (typeof values === 'object') {
                 _.forEach(values, function(value) {
                     var orQuery = {};
-                    orQuery[field] = { $in: [ value ] };
-                    filters.push(orQuery);  
+                    orFilter[field] = { $in: [ value ] };
+                    orFilters.push(orFilter);  
                 });
+		var andFilter = {};
+		andFilter = { $or: orFilters };
+		andFilters.push(andFilter);
             } else {
-                var orQuery = {};
-                orQuery[field] = { $in: [ values ] };
-                filters.push(orQuery);
+                andFilter[field] = { $in: [ values ] };
+                andFilters.push(andFilter);
             }
+
         });
-        
-        filterQuery = {
-            $or: filters
-        };
+      
+	filterQuery = {
+	    $and: andFilters
+	}
     }
 
     
@@ -124,6 +137,7 @@ BandController.prototype.indexAction = function(req, res) {
         "_id": 0
     };
 
+    // DEBUG
     util.log(JSON.stringify(orderedQuery));
    
     this.bandRepository.count(unorderedQuery, function(err, count) { 

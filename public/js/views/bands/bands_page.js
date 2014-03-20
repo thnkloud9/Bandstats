@@ -11,9 +11,18 @@ define([
   var BandsPage = Backbone.View.extend({
     el: '#content',
     template: _.template(bandsPageTemplate),
+    filter: {},
+    sort: {},
 
     initialize: function() {
       this.children = {};
+      this.filter.genres = [];
+      this.filter.regions = [];
+
+      // cannot use these here because they make infinite
+      // scroll reset to top of the page
+      //this.collection.on('reset', this.render, this);
+      //this.collection.on('sync', this.render, this);
     },
 
     events: { 
@@ -21,16 +30,51 @@ define([
       'click button#btn-list-view': 'renderBandList',
       'click button#btn-tile-view': 'renderBandTile',
       'click button#btn-show-filter': 'showFilter',
-      'click button#btn-apply-filter': 'applyFilter'
+      'click button#btn-apply-filter': 'applyFilter',
+      'click button#btn-clear-filter': 'clearFilter',
+      'click button#btn-add-genre-filter': 'addGenreFilter',
+      'click button#btn-add-region-filter': 'addRegionFilter',
+      'click button#btn-add-sort-filter': 'addSortFilter'
+    },
+
+    addGenreFilter: function() {
+      var genre = $('#genre-typeahead').val();
+      if (genre != "") {
+	this.filter.genres.push(genre);
+      }
+      $('#band-list-filter', this.el).append('<li><span class="label label-default">' + genre + '</span></li>');
+      $('#genre-typeahead').val('');
+    },
+
+    addRegionFilter: function() {
+      var region = $('#region-typeahead').val();	
+      if (region != "") {
+	this.filter.regions.push(region);
+      }
+      $('#band-list-filter', this.el).append('<li><span class="label label-default">' + region + '</span></li>'); 
+      $('#region-typeahead').val('');
+    },
+
+    addSortFilter: function() {
+      var sortField = $('#select-sort').val();
+      var direction = $('#select-direction').val();
+      this.sort[sortField] = direction;
+      $('#band-list-filter', this.el).append('<li><span class="label label-default">' + $('#select-sort option:selected').text() + ' ' + direction + '</span></li>'); 
     },
 
     render: function () {
 
       // load this with filter data from the collection
+      var sorts = [];
+      _.forEach(this.sort, function (direction, field) {
+	sorts.push(field + ' ' + direction);
+      });
       var templateData = {
-        genres: ['Indie'],
-        regions: ['NYC']
+        genres: this.filter.genres,
+        regions: this.filter.regions,
+	sorts: sorts
       };
+
       this.$el.html(this.template(templateData));
 
       this.renderBandTile();
@@ -111,11 +155,26 @@ define([
     },
 
     showFilter: function () {
-        console.log('show filter');
+	$('#bands-filter-list-content').toggle();
     },
  
     applyFilter: function () {
-        console.log('apply filter');
+ 	this.collection.filter = this.filter;
+ 	this.collection.sort = this.sort;
+	this.collection.getFirstPage();
+	this.render();
+    },
+
+    clearFilter: function () {
+	this.filter = {};
+	this.sort = {};
+        this.filter.genres = [];
+        this.filter.regions = [];
+
+ 	this.collection.filter = this.filter;
+ 	this.collection.sort = this.sort;
+	this.collection.getFirstPage();
+	this.render();
     },
 
     destroyChildren: function() {
