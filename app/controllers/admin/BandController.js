@@ -73,7 +73,7 @@ BandController.prototype.indexAction = function(req, res) {
             // see if multiple values were passed, use or
             if (typeof values === 'object') {
                 _.forEach(values, function(value) {
-                    var orQuery = {};
+                    var orFilter = {};
                     orFilter[field] = { $in: [ value ] };
                     orFilters.push(orFilter);  
                 });
