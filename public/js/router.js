@@ -32,6 +32,7 @@ define([
       'jobs/:id': 'job',
       'jobs': 'jobs',
       'running_jobs': 'running_jobs',
+      'jobs_log': 'jobs_log',
       'settings': 'settings',
       'login': 'login',
       'dashboard': 'dashboard',
@@ -127,6 +128,15 @@ define([
         var runningJobsCollection = new RunningJobsCollection();
         runningJobsCollection.fetch();
         var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: runningJobsCollection});
+        jobsPage.render();
+      });
+    });
+
+    router.on('route:jobs_log', function () {
+      require(['views/jobs/jobs_page', 'collections/jobs_log'], function (JobsPage, JobsLogCollection) {
+        var jobsLogCollection = new JobsLogCollection();
+        jobsLogCollection.fetch();
+        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: jobsLogCollection});
         jobsPage.render();
       });
     });

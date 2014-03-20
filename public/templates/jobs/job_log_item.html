@@ -1,0 +1,38 @@
+   <td>
+      <a href="#jobs/<%= job_id %>" class="list plain">
+      <h5><%= job_name %></h5>
+     </a>
+   </td>
+
+   <td>
+     <%= readable_start %>
+   </td>
+
+   <td>
+     <%= action %>
+   </td>
+
+   <td>
+     <%= readable_duration %>
+   </td>
+
+   <td>
+     <% if (job_processed > 0) { %>
+       <span class="badge pull-right">
+         <%= job_processed %>
+       </span>
+     <% }  %>
+   </td>
+
+   <td>
+     <% if (job_failed > 0) { %>
+       <span class="badge pull-right alert-danger">
+         <%= job_failed %>
+       </span>
+     <% }  %>
+   </td>
+
+   <td>
+     <%= pid %>
+   </td>
+

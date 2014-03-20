@@ -13,9 +13,9 @@ define([
     initialize: function() {
       this.collection.on('reset', this.render, this);
       this.collection.on('sync', this.render, this);
-    },
 
-    page: 1,
+      this.$el.html(siteListTemplate);
+    },
 
     render: function () {
 
@@ -26,7 +26,7 @@ define([
         parent.renderSite(model);
       }, this);
 
-      $('#pagination', this.el).append(new PaginatorView({collection: this.collection, page: this.page}).render().el);
+      $('#paginator-content', this.el).append(new PaginatorView({collection: this.collection, page: this.page}).render().el);
     },
 
     renderSite: function (model) {

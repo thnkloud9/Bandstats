@@ -91,16 +91,35 @@ JobController.prototype.runningAction = function(req, res) {
 JobController.prototype.logAction = function(req, res) {
     var parent = this;
     var data = this.data;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
     var query = {
         $query: {},
         $orderby: {
             "time": -1
         }
     }
-    this.db.collection('job_log').find(query, {}).toArray(function(err, results) {
-        if (err) res.send(err);
-        _.extend(data, { 'job_logs': results });
-        res.send(data);
+
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+
+    // TODO: orderby breaks count, need to serparate these later
+    this.db.collection('job_log').count({}, function(err, count) {
+	if (err) util.log(err);
+	util.log(count);
+
+        parent.db.collection('job_log').find(query, options).toArray(function(err, results) {
+            if (err) res.send(err);
+
+            var results = {
+                "totalRecords": count,
+                "data": results 
+            }
+            res.send(results);
+        });
     });
 }
 

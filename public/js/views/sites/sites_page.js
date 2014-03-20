@@ -19,7 +19,7 @@ define([
     render: function () {
       this.$el.html(sitesPageTemplate);
 
-      this.renderSiteGallery();
+      this.renderSiteList();
 
       require(['views/sidenav/sites_menu'], function (SideNavView) {
         var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
