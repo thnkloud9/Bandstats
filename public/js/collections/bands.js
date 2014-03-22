@@ -6,11 +6,16 @@ define([
     model: bandModel,
     filter: {},
     sort: {},
-    query: null, 
+    bandSearch: null,
+    startQuery: null, 
 
-    initialize : function(query){
-      if (query) {
-        this.query = query;
+    initialize : function(bandSearch, startQuery){
+      if (bandSearch) {
+        this.bandSearch = bandSearch;
+      }
+
+      if (startQuery) {
+        this.startQuery = startQuery;
       }
 
       this.sort['running_stats.facebook_likes.current'] = "desc"; 
@@ -22,8 +27,12 @@ define([
       path += "?limit=" + this.paginatorOptions.perPage;
       path += "&skip=" + (this.paginatorOptions.currentPage * this.paginatorOptions.perPage);
 
-      if (this.query) {
-        path += "&search=" + this.query;
+      if (this.startQuery) {
+        path += "&q=" + this.startQuery;
+      }
+
+      if (this.bandSearch) {
+        path += "&search=" + this.bandSearch;
       }
     
       _.forEach(this.sort, function(direction, field) {
@@ -52,6 +61,10 @@ define([
       hasNext: false,
       hasFirst: false,
       hasLast: false,
+    },
+
+    setStartQuery: function (startQuery) {
+      this.startQuery = startQuery;
     },
 
     server_api: {

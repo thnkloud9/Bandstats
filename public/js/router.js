@@ -27,6 +27,8 @@ define([
       'bands/:id': 'band',
       'bands': 'bands',
       'bands/search/:query': 'bandsearch',
+      'bands/missing/:field': 'missing_external_id',
+      'bands/bad/:field': 'bad_external_id',
       'sites/:id': 'site',
       'sites': 'sites',
       'jobs/:id': 'job',
@@ -66,6 +68,26 @@ define([
     router.on('route:bandsearch', function (query) {
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
         var bandsCollection = new BandsCollection(query);
+        bandsCollection.getFirstPage();
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        searchResultsView.render();
+      });
+    });
+
+    router.on('route:missing_external_id', function (field) {
+      require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
+	var query = '{"external_ids.' + field + '": ""}';
+        var bandsCollection = new BandsCollection(null, query);
+        bandsCollection.getFirstPage();
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        searchResultsView.render();
+      });
+    });
+
+    router.on('route:bad_external_id', function (field) {
+      require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
+	var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
+        var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
         searchResultsView.render();

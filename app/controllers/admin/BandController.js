@@ -105,10 +105,17 @@ BandController.prototype.indexAction = function(req, res) {
         });
     }
 
+    if (req.query.q) {
+      var startQuery = JSON.parse(req.query.q);
+    } else {
+      var startQuery = {};
+    }
+
     // make the ordered query
     var orderedQuery = {
         $query: { 
-            $and: [ 
+            $and: [
+		startQuery, 
                 searchQuery, 
                 filterQuery 
             ]
@@ -119,6 +126,7 @@ BandController.prototype.indexAction = function(req, res) {
     // unordered query for count
     var unorderedQuery = {
         $and: [
+	    startQuery, 
             searchQuery,
             filterQuery
         ]

@@ -37,7 +37,6 @@ define([
     },
 
     render: function () {
-      //this.$el.html(bandListTemplate);
       this.renderBands();
       return this;
     },
@@ -60,7 +59,7 @@ define([
 
     checkScroll: function () {
       // if we are at the bottom of the page
-      if(!(this.isLoading) && $(window).scrollTop() + $(window).height() == $(document).height()) {
+      if(!(this.isLoading) && $(window).scrollTop() + $(window).height() >= $(document).height()) {
         if (this.collection.paginatorOptions.hasNext) {
           this.isLoading = true;
           this.collection.getNextPage(); // Load next page
@@ -70,5 +69,6 @@ define([
     }
 
   });
+
   return BandTileView;
 });
