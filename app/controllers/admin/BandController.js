@@ -153,6 +153,12 @@ BandController.prototype.indexAction = function(req, res) {
         }
       });
     });
+}
+ 
+BandController.prototype.countAction = function(req, res) {
+    this.bandRepository.count({}, function(err, count) {
+        res.send({"count": count});
+    });
 } 
 
 /**
@@ -380,6 +386,7 @@ BandController.prototype.duplicatesAction = function(req, res) {
         var finalResults = [];
         async.forEach(results, function(band, cb) {
 
+	    // add field to mark 'not_duplicate' records
             parent.bandRepository.find({"band_name": band.band_name}, {}, function(err, bandResults) {
                 if (err) util.log(err);
 

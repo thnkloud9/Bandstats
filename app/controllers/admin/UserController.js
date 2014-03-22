@@ -76,6 +76,12 @@ UserController.prototype.indexAction = function(req, res) {
     });
 }
 
+UserController.prototype.countAction = function(req, res) {
+    this.userRepository.count({}, function(err, count) {
+        res.send({"count": count});
+    });
+}
+
 UserController.prototype.updateAction = function(req, res) {
     if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});

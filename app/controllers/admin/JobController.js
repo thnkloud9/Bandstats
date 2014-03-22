@@ -78,6 +78,12 @@ JobController.prototype.indexAction = function(req, res) {
     });
 }
 
+JobController.prototype.countAction = function(req, res) {
+    this.jobRepository.count({}, function(err, count) {
+        res.send({"count": count});
+    });
+}
+
 JobController.prototype.runningAction = function(req, res) {
     var runningJobs = this.jobScheduler.getRunningJobs();
     var data = { 

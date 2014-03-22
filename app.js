@@ -57,7 +57,7 @@ app.configure(function() {
 
     // authentication and sessions
     app.use(flash());
-    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db)}));
+    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge: 1800000 }})); // 30 minutes
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);

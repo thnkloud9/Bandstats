@@ -223,17 +223,16 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var search = result.search;
                     var value = result.results;
                     var previous = result.previous;
-                    var totalStats = result.total_stats;
-                    var incrementalTotal = result.incremental_total;
-                    incrementalTotal += incremental;
-                    var incrementalAvg = Math.round(incrementalTotal / totalStats);
-
                     // do ont calculate incremental if this is the first collection
                     if (parseInt(previous) > 0) {
                         var incremental = parseInt(value) - parseInt(previous); 
                     } else {
                         var incremental = 0;
                     }
+                    var totalStats = result.total_stats;
+                    var incrementalTotal = result.incremental_total;
+                    incrementalTotal += incremental;
+                    var incrementalAvg = Math.round(incrementalTotal / totalStats);
 
                     jobStats.processed++;
 

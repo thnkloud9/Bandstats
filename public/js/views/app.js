@@ -20,7 +20,6 @@ define([
     },
 
     render: function (ev) {
-
       var parent = this;
       var section = "dashboard";
 

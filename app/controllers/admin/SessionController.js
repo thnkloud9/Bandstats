@@ -96,5 +96,24 @@ SessionController.prototype.removeAction = function(req, res) {
     });
 }
 
+SessionController.prototype.activeAction = function(req, res) {
+    var sessionId = req.params.id;
+    var data = this.data;
+    var query = {};
+
+    if (sessionId) {
+        query.session_id = sessionId;
+    }
+
+    if (req.query.search) {
+        search = new RegExp('.*' + req.query.search + '.*', 'i');
+        query = {"session_name": search};
+    }
+
+    this.sessionRepository.find(query, {}, function(err, sessions) {
+        res.send(sessions);
+    });
+}
+
 /* export the class */
 exports.controller = SessionController;

@@ -76,6 +76,12 @@ SiteController.prototype.indexAction = function(req, res) {
     });
 }
 
+SiteController.prototype.countAction = function(req, res) {
+    this.siteRepository.count({}, function(err, count) {
+        res.send({"count": count});
+    });
+}
+
 SiteController.prototype.metaAction = function(req, res) {
     var query = {'site_id': req.params.id};
     var siteRepository = this.siteRepository;

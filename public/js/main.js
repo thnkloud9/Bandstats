@@ -9,6 +9,7 @@ require.config({
     bootstrap: 'libs/bootstrap/bootstrap.min',
     typeahead: 'libs/typeahead/typeahead.bundle',
     moment: 'libs/moment/moment',
+    chart: 'libs/chart/chart.min',
 
     // Require.js plugins
     text: 'libs/require/text',
@@ -59,13 +60,16 @@ require([
     type: "GET",
     dataType: "json",
     success: function(data) {
-      // create the app view
-      var appView = Vm.create({}, 'AppView', AppView);
-      appView.render();
 
-      // start backbone history
-      Router.initialize({appView: appView});  // The router now has a copy of all main appview
-      Backbone.history.start();
+      if (data.user.role === 'admin') {
+        // create the app view
+        var appView = Vm.create({}, 'AppView', AppView);
+        appView.render();
+
+        // start backbone history
+        Router.initialize({appView: appView, session: data});  // The router now has a copy of all main appview
+        Backbone.history.start();
+      }
       
     },
     error: function() {

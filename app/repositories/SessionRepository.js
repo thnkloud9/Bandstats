@@ -58,6 +58,12 @@ SessionRepository.prototype.remove = function(query, options, callback) {
     });
 }
 
+SessionRepository.prototype.count = function(query, callback) {
+    BaseRepository.prototype.count.call(this, query, function(err, count) {
+        callback(err, count);
+    });
+}
+
 /**
  * Session specific functions
  */

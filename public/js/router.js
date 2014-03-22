@@ -46,18 +46,18 @@ define([
   
   var initialize = function(options){
     var appView = options.appView;
-    
+    var session = options.session;
     var router = new AppRouter(options);
 
     router.on('route:defaultAction', function (actions) {
-      require(['views/dashboard/page'], function (DashboardPage) {
+      require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.render();
       });
     });
 
     router.on('route:dashboard', function () {
-      require(['views/dashboard/page'], function (DashboardPage) {
+      require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.render();
       });

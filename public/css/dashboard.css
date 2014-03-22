@@ -156,3 +156,11 @@ body {
   margin-top: 10px;
 }
 
+.dashboard-widget {
+  vertical-align: top;
+  min-width: 250px;
+}
+
+#jobs-dashboard-widget {
+  min-width: 500px;
+}

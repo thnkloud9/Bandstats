@@ -2,10 +2,13 @@
 exports.initRoutes = function(app, passport, db, jobScheduler) {
    
     var fs = require('fs');
+    var util = require('util');
 
     // authentication
     var UserRepository = require('./../repositories/UserRepository.js');
     var userRepository = new UserRepository({"db": db});
+    var SessionRepository = require('./../repositories/SessionRepository.js');
+    var sessionRepository = new SessionRepository({"db": db});
     var LocalStrategy = require('passport-local').Strategy;
 
     passport.serializeUser(function(user, done) {
@@ -62,8 +65,18 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
     });
 
     app.get('/logout', function(req, res){
-        req.logout();
-        res.redirect('/#login');
+	if (req.session) {
+		// remove session from mongo
+		sessionRepository.remove({session: req.session}, function(err) {
+		    req.logout();
+		    req.session.destroy();
+		    res.redirect('/#login');
+		    return true;
+		});
+	}
+
+	req.logout();
+	res.redirect('/#login');
     });
 
     // get all js files in controllers subfolder
