@@ -39,8 +39,6 @@ define([
     },
 
     renderUserStats: function (data) {
-      console.log(data);
-
       $('#total-users').html(data.total);
       $('#active-users').html(data.active);
       $('#online-users').html(data.online);
