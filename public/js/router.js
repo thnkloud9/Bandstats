@@ -104,7 +104,10 @@ define([
     });
 
     router.on('route:band', function (id) {
-      require(['views/bands/band_detail'], function (BandDetailView) {
+      require(['views/bands/band_detail', 'views/bands/bands_page'], function (BandDetailView, BandsPageView) {
+        // create the bandsPageView to ensure event handling
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView);
+
         var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView);
         bandPage.loadBand(id);
         bandPage.render();

@@ -164,3 +164,11 @@ body {
 #jobs-dashboard-widget {
   min-width: 500px;
 }
+
+.admin-modal-content {
+  padding: 15px;
+}
+
+.facebook-lookup-item {
+  margin-top: 15px !important;
+}

@@ -10,7 +10,8 @@ define([
   'views/bands/lastfm_stats_table',
   'text!templates/bands/band_detail.html',
   'typeahead' 
-], function($, _, Backbone, Vm, BandModel, 
+], function($, _, Backbone, Vm, 
+    BandModel, 
     FacebookStatsPanelView, 
     LastfmStatsPanelView, 
     FacebookStatsTableView, 

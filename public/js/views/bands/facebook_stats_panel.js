@@ -2,8 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'vm',
   'text!templates/bands/facebook_stats_panel.html' 
-], function($, _, Backbone, template) {
+], function($, _, Backbone, Vm, template) {
 
   var FacebookStatsPanelView = Backbone.View.extend({
 
@@ -18,8 +19,9 @@ define([
 
     render: function () {
       $(this.el).html(this.template(this.model.toJSON()));
+
       return this;
-    }
+    },
 
   });
 

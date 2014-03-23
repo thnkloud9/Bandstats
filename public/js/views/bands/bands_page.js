@@ -6,8 +6,16 @@ define([
   'views/bands/band_list',
   'views/bands/band_gallery',
   'views/bands/band_tile',
+  'models/facebook_lookup_item',
+  'views/bands/facebook_lookup_item',
   'text!templates/bands/bands_page.html',
-], function($, _, Backbone, Vm, BandListView, BandGalleryView, BandTileView, bandsPageTemplate){
+], function($, _, Backbone, Vm, 
+    BandListView, 
+    BandGalleryView, 
+    BandTileView, 
+    FacebookLookupItemModel,
+    FacebookLookupItemView,
+    bandsPageTemplate){
   var BandsPage = Backbone.View.extend({
     el: '#content',
     template: _.template(bandsPageTemplate),
@@ -34,7 +42,51 @@ define([
       'click button#btn-clear-filter': 'clearFilter',
       'click button#btn-add-genre-filter': 'addGenreFilter',
       'click button#btn-add-region-filter': 'addRegionFilter',
-      'click button#btn-add-sort-filter': 'addSortFilter'
+      'click button#btn-add-sort-filter': 'addSortFilter',
+
+      // not happy about having this here, but its needed for these 
+      // to work in gallery view as well as band_detail views
+      'click .lnk-facebook-lookup': 'lookupFacebookId',
+      'click .lnk-facebook-clear': 'clearFacebookId',
+      'click .lnk-facebook-collect': 'collectFacebookLikes'
+    },
+
+    clearFacebookId: function () {
+      console.log("clicked clear");
+    },
+
+    collectFacebookLikes: function () {
+      console.log("clicked collect");
+    },
+
+    lookupFacebookId: function (ev) {
+      var parent = this;
+
+      var search = $(ev.currentTarget).data("search");
+      var bandId = $(ev.currentTarget).data("band-id");
+
+      console.log('requesting search results for ' + bandId);
+
+      $('#admin-modal-title').html('Facebook Lookup: ' + search);
+
+      $.ajax("/admin/facebook/search?search=" + search, {
+       type: "GET",
+       dataType: "json",
+         success: function(data) {
+	   $('.admin-modal-content', this.el).html('');
+
+	   _.forEach(data[0].results, function(result) {
+	     var facebookLookupItemModel = new FacebookLookupItemModel(result);
+             facebookLookupItemModel.set('band_id', bandId);
+             var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
+            $(facebookLookupItemView.render().el).appendTo($('.admin-modal-content', this.el));
+	  });
+
+         },
+         error: function(data) {
+	   console.log('error: ' + data);
+         }
+      }); 	
     },
 
     addGenreFilter: function() {
@@ -63,6 +115,7 @@ define([
     },
 
     render: function () {
+	console.log('here');
 
       // load this with filter data from the collection
       var sorts = [];

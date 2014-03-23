@@ -167,7 +167,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
         // build searchObj
         async.forEach(results, function(band, cb) {
             // find yesterdays stat
-            var previous = 0;
+            var previous = null;
             var incrementalTotal = 0;
             var totalStats = 0;
 
@@ -224,7 +224,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var value = result.results;
                     var previous = result.previous;
                     // do ont calculate incremental if this is the first collection
-                    if (parseInt(previous) > 0) {
+                    if (!isNaN(previous)) {
                         var incremental = parseInt(value) - parseInt(previous); 
                     } else {
                         var incremental = 0;

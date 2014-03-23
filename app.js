@@ -43,6 +43,7 @@ var passport = require('passport');
  */
 var node_port = nconf.get('app:port');
 var app = module.exports.app = express();
+var sessionTimeout = nconf.get('app:session_timeout');
 app.configure(function() {
     app.set('title', nconf.get('app:title'));
     app.use(express.bodyParser());
@@ -57,7 +58,7 @@ app.configure(function() {
 
     // authentication and sessions
     app.use(flash());
-    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge: 1800000 }})); // 30 minutes
+    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge: sessionTimeout }})); // 30 minutes
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);

@@ -1,0 +1,19 @@
+<div class="media facebook-lookup-item">
+  <a class="lnk-facebook-lookup-select pull-left">
+    <img class="media-object img-rounded thumbnail-xsmall" src="<%= cover.source %>" alt="...">
+  </a>
+  <div class="media-body">
+    <a class="lnk-facebook-lookup-select"><h4 class="media-heading"><%= name %> (<%= id %>)</h4></a>
+    <a href="<%= link %>" target="_blank"><%= link %></a>
+    <p><span class="label label-default"><%= current_location %></span></p>
+    <p><span class="label label-default"><%= genre %></span></p>
+    <p style="overflow: scroll; max-height: 150px;"><small><%= about %></small></p>
+    <p style="overflow: scroll; max-height: 150px;"><small><%= bio %></small></p>
+    
+    <ul class="list-group">
+      <li class="list-group-item">Likes: <span class="badge pull-right"><%= likes %></span></li>
+      <li class="list-group-item">Talking About: <span class="badge pull-right"><%= talking_about_count %></span></li>
+    </ul>
+
+  </div>
+</div>

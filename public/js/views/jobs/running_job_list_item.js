@@ -36,6 +36,8 @@ define([
 
     // display relatime output from running jobs
     viewOutput: function () {
+        $('#admin-modal-title').html('Job Output');
+
         // use ajax to get latest output
         var url = "/admin/job/running";
         var parent = this;
@@ -49,8 +51,7 @@ define([
                         if (job.pid == parent.model.get('pid')) {
 
                             // display output
-                            $('#log-output-content').html(job.output.replace("\n","<br>"));
-                            $('#log-output-container').show();
+                            $('.admin-modal-content').html('<pre id="log-output-content"><small>' + job.output.replace("\n","<br>") + '</small></pre>');
 
                         }
                     }, this);
