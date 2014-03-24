@@ -5,6 +5,21 @@
         </div>
         <div class="panel-body">
           <ul class="list-group">
+
+            <li class="list-group-item">
+	      <div class="btn-group" style="width: 100%">
+                <button type="button" class="btn btn-default" style="width: 90%">Id: <%= external_ids.lastfm_id %></button>
+    		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+      		  <span class="caret"></span>
+		  <span class="sr-only">Toggle Dropdown</span>
+     		</button>
+    		<ul class="dropdown-menu" role="menu">
+      		  <li><a class="lnk-lastfm-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Lookup</a></li>
+      		  <li><a class="lnk-lastfm-collect" >Collect Now</a></li>
+      		  <li><a class="lnk-lastfm-clear" >Clear</a></li>
+    	     	</ul>
+            </li>
+
             <li class="list-group-item">
               Id <span class="badge"><%= external_ids.lastfm_id %></span>
             </li>
@@ -23,4 +38,4 @@
           </ul>
         </div>
       <!--</div>-->
-      <!-- end facebook stats panel -->
+      <!-- end lastfm stats panel -->

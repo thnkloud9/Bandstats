@@ -8,6 +8,8 @@ define([
   'views/bands/band_tile',
   'models/facebook_lookup_item',
   'views/bands/facebook_lookup_item',
+  'models/lastfm_lookup_item',
+  'views/bands/lastfm_lookup_item',
   'text!templates/bands/bands_page.html',
 ], function($, _, Backbone, Vm, 
     BandListView, 
@@ -15,6 +17,8 @@ define([
     BandTileView, 
     FacebookLookupItemModel,
     FacebookLookupItemView,
+    LastfmLookupItemModel,
+    LastfmLookupItemView,
     bandsPageTemplate){
   var BandsPage = Backbone.View.extend({
     el: '#content',
@@ -49,6 +53,10 @@ define([
       'click .lnk-facebook-lookup': 'lookupFacebookId',
       'click .lnk-facebook-clear': 'clearFacebookId',
       'click .lnk-facebook-collect': 'collectFacebookLikes',
+
+      'click .lnk-lastfm-lookup': 'lookupLastfmId',
+      'click .lnk-lastfm-clear': 'clearLastfmId',
+      'click .lnk-lastfm-collect': 'collectLastfmLikes',
     },
 
     clearFacebookId: function () {
@@ -88,6 +96,46 @@ define([
          }
       }); 	
     },
+
+    clearLastfmId: function () {
+      console.log("clicked clear");
+    },
+
+    collectLastfmLikes: function () {
+      console.log("clicked collect");
+    },
+
+    lookupLastfmId: function (ev) {
+      var parent = this;
+
+      var search = $(ev.currentTarget).data("search");
+      var bandId = $(ev.currentTarget).data("band-id");
+
+      console.log('requesting search results for ' + bandId);
+
+      $('#admin-modal-title').html('Facebook Lookup: ' + search);
+
+      $.ajax("/admin/lastfm/search?search=" + search, {
+       type: "GET",
+       dataType: "json",
+         success: function(data) {
+	   $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
+
+	   _.forEach(data[0].results, function(result) {
+	     console.log(result);
+	     var lastfmLookupItemModel = new LastfmLookupItemModel(result);
+             lastfmLookupItemModel.set('band_id', bandId);
+             var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
+	     lastfmLookupItemView.render();
+	  });
+
+         },
+         error: function(data) {
+	   console.log('error: ' + data);
+         }
+      }); 	
+    },
+
 
     addGenreFilter: function() {
       var genre = $('#genre-typeahead').val();
