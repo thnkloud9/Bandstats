@@ -48,7 +48,7 @@ define([
       // to work in gallery view as well as band_detail views
       'click .lnk-facebook-lookup': 'lookupFacebookId',
       'click .lnk-facebook-clear': 'clearFacebookId',
-      'click .lnk-facebook-collect': 'collectFacebookLikes'
+      'click .lnk-facebook-collect': 'collectFacebookLikes',
     },
 
     clearFacebookId: function () {
@@ -73,13 +73,13 @@ define([
        type: "GET",
        dataType: "json",
          success: function(data) {
-	   $('.admin-modal-content', this.el).html('');
+	   $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
 
 	   _.forEach(data[0].results, function(result) {
 	     var facebookLookupItemModel = new FacebookLookupItemModel(result);
              facebookLookupItemModel.set('band_id', bandId);
              var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
-            $(facebookLookupItemView.render().el).appendTo($('.admin-modal-content', this.el));
+	    facebookLookupItemView.render();
 	  });
 
          },
@@ -115,8 +115,6 @@ define([
     },
 
     render: function () {
-	console.log('here');
-
       // load this with filter data from the collection
       var sorts = [];
       _.forEach(this.sort, function (direction, field) {

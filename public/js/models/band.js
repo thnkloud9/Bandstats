@@ -16,6 +16,7 @@ define([
       regions: [],
       genres: [],
       mentions: [],
+      created: new Date,
       external_ids: {
         "lastfm_id": "",
         "facebook_id": "",

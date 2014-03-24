@@ -1,9 +1,9 @@
-<div class="media facebook-lookup-item">
-  <a class="lnk-facebook-lookup-select pull-left">
+<li class="media facebook-lookup-item">
+  <a class="lnk-facebook-lookup-select pull-left" data-facebook-id="<%= id %>" data-dismiss="modal">
     <img class="media-object img-rounded thumbnail-xsmall" src="<%= cover.source %>" alt="...">
   </a>
   <div class="media-body">
-    <a class="lnk-facebook-lookup-select"><h4 class="media-heading"><%= name %> (<%= id %>)</h4></a>
+    <a class="lnk-facebook-lookup-select" data-facebook-id="<%= id %>" data-dismiss="modal"><h4 class="media-heading"><%= name %> (<%= id %>)</h4></a>
     <a href="<%= link %>" target="_blank"><%= link %></a>
     <p><span class="label label-default"><%= current_location %></span></p>
     <p><span class="label label-default"><%= genre %></span></p>
@@ -16,4 +16,4 @@
     </ul>
 
   </div>
-</div>
+</li>

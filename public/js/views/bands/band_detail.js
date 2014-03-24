@@ -24,6 +24,11 @@ define([
 
     template: _.template(template),
 
+    events: {
+      'click #band-save': 'saveBand',
+      'click #band-delete': 'deleteBand',
+    }, 
+
     initialize: function () {
       this.children = {};
     },
@@ -105,6 +110,36 @@ define([
         source: search.ttAdapter(),
       });      
     },
+
+    saveBand: function (ev) {
+      ev.preventDefault();
+
+      this.model.set({
+          band_name: $('#band-name').val(),
+      });
+
+      // remove id if this is a new model
+      console.log(this.model.attributes);
+      if (this.model.get('band_id') === "0") {
+        this.model.set('band_id', null);
+      }
+
+      this.model.save(null, {
+        success: function(band, response) {
+          $('.flash-message').addClass('alert-success').text("Success").show();
+        }, 
+        error: function(band, response) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
+
+    }, 
+
+    deleteBand: function (ev) {
+      ev.preventDefault();
+      console.log('delete band ' + this.model.get('band_id'));
+    },    
 
     destroyChildren: function () {
       var parent = this;

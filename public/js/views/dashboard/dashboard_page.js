@@ -5,12 +5,14 @@ define([
   'vm',
   'views/dashboard/users_dashboard',
   'views/dashboard/bands_dashboard',
+  'views/dashboard/top_bands_dashboard',
   'views/dashboard/jobs_dashboard',
   'views/dashboard/sites_dashboard',
   'text!templates/dashboard/dashboard_page.html'
 ], function($, _, Backbone, Vm, 
   UsersDashboardView, 
   BandsDashboardView, 
+  TopBandsDashboardView, 
   JobsDashboardView, 
   SitesDashboardView, 
   dashboardPageTemplate){
@@ -26,6 +28,9 @@ define([
 
       var bandsDashboardView = Vm.create(this, 'BandsDashboardView', BandsDashboardView);
       $(bandsDashboardView.render().el).appendTo($('#dashboard-list', this.el));
+
+      var topBandsDashboardView = Vm.create(this, 'TopBandsDashboardView', TopBandsDashboardView);
+      $(topBandsDashboardView.render().el).appendTo($('#dashboard-list', this.el));
 
       var jobsDashboardView = Vm.create(this, 'JobsDashboardView', JobsDashboardView);
       $(jobsDashboardView.render().el).appendTo($('#dashboard-list', this.el));

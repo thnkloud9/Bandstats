@@ -31,6 +31,19 @@ function BandController(db) {
  * just render template for jquery datatables
  */
 BandController.prototype.indexAction = function(req, res) {
+    // forward POST, PUT, and DELETE request to appropriate actions
+    if (req.route.method == "post") {
+      this.createAction(req, res);
+    }
+
+    if (req.route.method == "put") {
+      this.updateAction(req, res);
+    }
+
+    if (req.route.method == "delete") {
+      this.removeAction(req, res);
+    }
+
     var data = this.data;
     var bandId = req.params.id;
     var limit = req.query.limit;
@@ -330,21 +343,31 @@ BandController.prototype.articlesAction = function(req, res) {
 }
 
 BandController.prototype.updateAction = function(req, res) {
-    if ((req.route.method != "put") || (!req.body.values)) {
+    if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});
         return false;
     }
     var query = {'band_id': req.params.id};
-    var values = req.body.values;
+    var band = req.body;
     var bandRepository = this.bandRepository
 
-    bandRepository.update(query, {$set: values}, {"multi": true}, function(err, updated) {
+    // delete _id to avoid errors
+    delete band._id;
+
+    console.log(JSON.stringify(band));
+
+    bandRepository.update(query, band, {}, function(err, updated) {
         if ((err) || (!updated)) {
-            res.send({status: "error", error: err});
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send();
             return false;
         }
-        // send updated band back
-        res.send({status: "success", updated: updated});        
+        // send updated user back
+        util.log('updated band ' + band.band_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
     });
 
 }
