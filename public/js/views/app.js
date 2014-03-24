@@ -65,7 +65,9 @@ define([
     // typeahead setup for bands list
     renderBandsTypeahead: function() {
       var search = new Bloodhound({
-        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.value); },
+        datumTokenizer: function(d) { 
+	    return Bloodhound.tokenizers.whitespace(d.band_name); 
+	},
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: '/admin/band/list?limit=5&search=%QUERY',
         prefetch: '/admin/band/list?limit=50'
