@@ -10,8 +10,9 @@ define([
   'views/bands/lastfm_stats_table',
   'views/bands/mentions_stats_panel',
   'views/bands/mentions_stats_table',
+  'views/bands/running_stats_chart',
   'text!templates/bands/band_detail.html',
-  'typeahead' 
+  'typeahead',
 ], function($, _, Backbone, Vm, 
     BandModel, 
     FacebookStatsPanelView, 
@@ -20,6 +21,7 @@ define([
     LastfmStatsTableView, 
     MentionsStatsPanelView, 
     MentionsStatsTableView, 
+    RunningStatsChartView, 
     template) {
 
   var BandDetailView = Backbone.View.extend({
@@ -77,6 +79,9 @@ define([
       
       this.renderGenreTypeahead();
       this.renderRegionTypeahead();
+
+      var runningStatsChartView = Vm.create(this, 'RunningStatsChartView', RunningStatsChartView, {model: this.model});
+      $(runningStatsChartView.render().el).appendTo($('#running-stats-chart-content', this.el));
  
       var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el));
