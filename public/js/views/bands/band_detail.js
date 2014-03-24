@@ -8,6 +8,8 @@ define([
   'views/bands/lastfm_stats_panel',
   'views/bands/facebook_stats_table',
   'views/bands/lastfm_stats_table',
+  'views/bands/mentions_stats_panel',
+  'views/bands/mentions_stats_table',
   'text!templates/bands/band_detail.html',
   'typeahead' 
 ], function($, _, Backbone, Vm, 
@@ -16,6 +18,8 @@ define([
     LastfmStatsPanelView, 
     FacebookStatsTableView, 
     LastfmStatsTableView, 
+    MentionsStatsPanelView, 
+    MentionsStatsTableView, 
     template) {
 
   var BandDetailView = Backbone.View.extend({
@@ -27,10 +31,36 @@ define([
     events: {
       'click #band-save': 'saveBand',
       'click #band-delete': 'deleteBand',
+      'click #btn-add-genre': 'addGenre',
+      'click #btn-add-region': 'addRegion',
+      'click .btn-delete-genre': 'deleteGenre',
+      'click .btn-delete-region': 'deleteRegion',
     }, 
 
     initialize: function () {
       this.children = {};
+    },
+
+    addGenre: function () {
+      var genres =  this.model.get('genres');
+      genres.push($('#genre-typeahead').val());
+      //this.saveBand();
+    },
+
+    deleteGenre: function (ev) {
+      var genre = $(ev.currentTarget).data("genre");
+      console.log('deleting genre: ' + genre);
+    },
+
+    addRegion: function () {
+      console.log('adding region');
+      var regions =  this.model.get('regions');
+      regions.push($('#region-typeahead').val());
+    },
+
+    deleteRegion: function (ev) {
+      var region = $(ev.currentTarget).data("region");
+      console.log('deleting region: ' + region);
     },
 
     loadBand: function (id) {
@@ -59,6 +89,12 @@ define([
 
       var lastfmStatsTableView = Vm.create(this, 'LastfmStatsTableView', LastfmStatsTableView, {model: this.model});
       $(lastfmStatsTableView.render().el).appendTo($('#lastfm-stats-table', this.el));
+
+      var mentionsStatsTableView = Vm.create(this, 'MentionsStatsTableView', MentionsStatsTableView, {model: this.model});
+      $(mentionsStatsTableView.render().el).appendTo($('#mentions-stats-table', this.el));
+
+      var mentionsStatsPanelView = Vm.create(this, 'MentionsStatsPanelView', MentionsStatsPanelView, {model: this.model});
+      $(mentionsStatsPanelView.render().el).appendTo($('#mentions-stats-content', this.el));
 
       return this;
     },
@@ -112,7 +148,9 @@ define([
     },
 
     saveBand: function (ev) {
-      ev.preventDefault();
+      if (ev) {
+        ev.preventDefault();
+      }
 
       this.model.set({
           band_name: $('#band-name').val(),
