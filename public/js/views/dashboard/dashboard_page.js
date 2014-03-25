@@ -8,6 +8,8 @@ define([
   'views/dashboard/top_bands_dashboard',
   'views/dashboard/jobs_dashboard',
   'views/dashboard/sites_dashboard',
+  'views/dashboard/genres_dashboard',
+  'views/dashboard/regions_dashboard',
   'text!templates/dashboard/dashboard_page.html'
 ], function($, _, Backbone, Vm, 
   UsersDashboardView, 
@@ -15,10 +17,30 @@ define([
   TopBandsDashboardView, 
   JobsDashboardView, 
   SitesDashboardView, 
+  GenresDashboardView, 
+  RegionsDashboardView, 
   dashboardPageTemplate){
 
   var DashboardPage = Backbone.View.extend({
     el: '#content',
+
+    renderGenres: function () {
+      this.destroyChildren();
+
+      $(this.el).html(dashboardPageTemplate);
+
+      var genresDashboardView = Vm.create(this, 'GenresDashboardView', GenresDashboardView);
+      $(genresDashboardView.render().el).appendTo($('#dashboard-list', this.el));
+    },
+
+    renderRegions: function () {
+      this.destroyChildren();
+
+      $(this.el).html(dashboardPageTemplate);
+
+      var regionsDashboardView = Vm.create(this, 'RegionsDashboardView', RegionsDashboardView);
+      $(regionsDashboardView.render().el).appendTo($('#dashboard-list', this.el));
+    },
 
     render: function () {
       $(this.el).html(dashboardPageTemplate);
@@ -38,6 +60,19 @@ define([
       var sitesDashboardView = Vm.create(this, 'SitesDashboardView', SitesDashboardView);
       $(sitesDashboardView.render().el).appendTo($('#dashboard-list', this.el));
 
+    },
+
+    destroyChildren: function() {
+      var parent = this;
+      _.each(this.children, function(child, name) {
+        if (child.close) {
+          child.close();
+        }
+        child.remove();
+        child.undelegateEvents();
+        child.unbind();
+      }, this);
+      this.children = {};
     }
 
   });

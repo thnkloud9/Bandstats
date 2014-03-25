@@ -38,6 +38,8 @@ define([
       'settings': 'settings',
       'login': 'login',
       'dashboard': 'dashboard',
+      'dashboard/genres': 'dashboard_genres',
+      'dashboard/regions': 'dashboard_regions',
       'users/:id': 'user',
       'users': 'users',
       
@@ -62,6 +64,20 @@ define([
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.render();
+      });
+    });
+
+    router.on('route:dashboard_genres', function () {
+      require(['views/dashboard/dashboard_page'], function (DashboardPage) {
+        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
+        dashboardPage.renderGenres();
+      });
+    });
+
+    router.on('route:dashboard_regions', function () {
+      require(['views/dashboard/dashboard_page'], function (DashboardPage) {
+        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
+        dashboardPage.renderRegions();
       });
     });
 
