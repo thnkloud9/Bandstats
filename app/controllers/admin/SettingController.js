@@ -32,7 +32,7 @@ SettingController.prototype.indexAction = function(req, res) {
         if (err) {
             _.extend(data, {"error": err});
         }
-        res.send(results);
+        res.send(JSON.parse(results));
     });
 }
 

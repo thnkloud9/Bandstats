@@ -1,14 +1,26 @@
-<ul class="list-unstyled list-inline">
-  <li>
+  <td>
     <a class="band-detail-link" href="#bands/<%= band_id %>" class="list plain">
       <h5><%= band_name %></h5>
     </a>
-  </li>
+  </td>
 
-  <li>
+  <td>
+    <% for (var i = 0; i < genres.length; i++) { %>
+      <% var genre = genres[i]; %>
+      <span class="label label-default genres btn-delete-genre" data-genre="<%= genre %>"><%= genre %></span>
+    <% } %>
+  </td>
+
+  <td>
     <% for (var i = 0; i < regions.length; i++) { %>
       <% var region = regions[i]; %>
-      <%= region %>
+      <span class="label label-default regions btn-delete-region" data-region="<%= region %>"><%= region %></span>
     <% } %>
-  </li>
-</ul>
+  </td>
+
+  <td><%= running_stats.facebook_likes.current %></td>
+  <td><%= running_stats.lastfm_listeners.current %></td>
+  <td><%= mentions.length %></td>
+  <td><%= created %></td>
+  <td><%= last_updated %></td>
+  <td><%= active %></td>

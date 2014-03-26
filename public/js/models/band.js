@@ -18,6 +18,7 @@ define([
       mentions: [],
       created: new Date,
       last_updated: new Date,
+      active: true,
       external_ids: {
         "lastfm_id": "",
         "facebook_id": "",

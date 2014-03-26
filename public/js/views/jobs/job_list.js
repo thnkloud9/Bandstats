@@ -7,8 +7,20 @@ define([
   'views/jobs/job_list_item',
   'views/jobs/running_job_list_item',
   'views/jobs/job_log_item',
+  'text!templates/jobs/job_list_jobs_header.html',
+  'text!templates/jobs/job_list_running_header.html',
+  'text!templates/jobs/job_log_header.html',
   'text!templates/jobs/job_list.html'
-], function($, _, Backbone, JobsCollection, PaginatorView, JobListItemView, RunningJobListItemView, JobLogItemView, jobListTemplate){
+], function($, _, Backbone, 
+    JobsCollection, 
+    PaginatorView, 
+    JobListItemView, 
+    RunningJobListItemView, 
+    JobLogItemView, 
+    jobListJobsHeaderTemplate,
+    jobListRunningHeaderTemplate,
+    jobLogHeaderTemplate,
+    jobListTemplate){
   var JobListView = Backbone.View.extend({
     el: '#job-list-container',
 
@@ -33,16 +45,7 @@ define([
 
       if (this.collection.getName() == "Jobs") {
           // add table and headers
-          $('#job-list', this.el).html('<thead>');
-          $('#job-list', this.el).append('<th>Name</th>');
-          $('#job-list', this.el).append('<th>Last Run</th>');
-          $('#job-list', this.el).append('<th>Duration</th>');
-          $('#job-list', this.el).append('<th>Processed</th>');
-          $('#job-list', this.el).append('<th>Failed</th>');
-          $('#job-list', this.el).append('<th>Schedule</th>');
-          $('#job-list', this.el).append('<th>Active</th>');
-          $('#job-list', this.el).append('<th>Tools</th>');
-          $('#job-list', this.el).append('</thead>');
+          $('#job-list', this.el).html(jobListJobsHeaderTemplate);
 
           var parent = this;
               _.each(this.collection.models, function (model) {
@@ -52,12 +55,7 @@ define([
 
       if (this.collection.getName() == "RunningJobs") {
           // add table and header
-          $('#job-list', this.el).html('<thead>');
-          $('#job-list', this.el).append('<th>Name</th>');
-          $('#job-list', this.el).append('<th>Started</th>');
-          $('#job-list', this.el).append('<th>Duration</th>');
-          $('#job-list', this.el).append('<th>Tools</th>');
-          $('#job-list', this.el).append('</thead>');
+          $('#job-list', this.el).html(jobListRunningHeaderTemplate);
 
           var parent = this;
               _.each(this.collection.models, function (model) {
@@ -67,15 +65,7 @@ define([
 
       if (this.collection.getName() == "JobsLog") {
               // add table and header
-          $('#job-list', this.el).html('<thead>');
-          $('#job-list', this.el).append('<th>Name</th>');
-          $('#job-list', this.el).append('<th>Time</th>');
-          $('#job-list', this.el).append('<th>Action</th>');
-          $('#job-list', this.el).append('<th>Duration</th>');
-          $('#job-list', this.el).append('<th>Processed</th>');
-          $('#job-list', this.el).append('<th>Failures</th>');
-          $('#job-list', this.el).append('<th>Pid</th>');
-          $('#job-list', this.el).append('</thead>');
+          $('#job-list', this.el).html(jobLogHeaderTemplate);
 
           var parent = this;
 

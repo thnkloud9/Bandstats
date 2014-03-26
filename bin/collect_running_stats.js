@@ -224,7 +224,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var value = result.results;
                     var previous = result.previous;
                     // do ont calculate incremental if this is the first collection
-                    if (!isNaN(previous)) {
+                    if (previous === null) {
                         var incremental = parseInt(value) - parseInt(previous); 
                     } else {
                         var incremental = 0;

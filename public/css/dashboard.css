@@ -172,3 +172,7 @@ body {
 .facebook-lookup-item {
   margin-top: 15px !important;
 }
+
+#form-settings {
+  width: 400px;
+}

@@ -4,8 +4,7 @@ define([
   'backbone',
   'models/job',
   'collections/jobs',
-  'text!templates/jobs/job_detail.html',
-  'typeahead'
+  'text!templates/jobs/job_detail.html'
 ], function($, _, Backbone, JobModel, JobCollection, template) {
 
   var JobDetailView = Backbone.View.extend({

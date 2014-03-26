@@ -159,10 +159,10 @@ define([
 
       this.model.set({
           band_name: $('#band-name').val(),
+	  active: $('active').is(':checked')
       });
 
       // remove id if this is a new model
-      console.log(this.model.attributes);
       if (this.model.get('band_id') === "0") {
         this.model.set('band_id', null);
       }

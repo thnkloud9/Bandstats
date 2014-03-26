@@ -183,7 +183,7 @@ define([
     });
 
     router.on('route:settings', function () {
-      require(['views/settings/page'], function (SettingsPage) {
+      require(['views/settings/settings_page'], function (SettingsPage) {
         var settingsPage = Vm.create(appView, 'SettingsPage', SettingsPage);
         settingsPage.render();
       });
