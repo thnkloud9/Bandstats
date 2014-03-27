@@ -7,8 +7,10 @@ define([
 ], function($, _, Vm, Backbone, topNavTemplate){
   var TopNavView = Backbone.View.extend({
     el: '#topnav',
+    template: _.template(topNavTemplate),
     
-    initialize: function () {
+    initialize: function (options) {
+      this.options = options;
     },
     
     events: {
@@ -16,7 +18,8 @@ define([
 
     render: function () {
 
-      $(this.el).html(topNavTemplate);
+      $(this.el).html(this.template(this.options.session));
+
       $('a[href="' + window.location.hash + '"]').addClass('active');
 
       // stupid hack to make routes refresh

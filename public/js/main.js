@@ -63,13 +63,18 @@ require([
 
       if (data.user.role === 'admin') {
         // create the app view
-        var appView = Vm.create({}, 'AppView', AppView);
+        var appView = Vm.create({}, 'AppView', AppView, {session: data});
         appView.render();
 
         // start backbone history
         Router.initialize({appView: appView, session: data});  // The router now has a copy of all main appview
         Backbone.history.start();
       }
+
+      if (data.user.role === 'manager') {
+	console.log('load band manager page');
+      }
+	
       
     },
     error: function() {

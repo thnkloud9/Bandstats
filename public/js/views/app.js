@@ -10,8 +10,10 @@ define([
 ], function($, _, Backbone, Vm, Events, layoutTemplate){
   var AppView = Backbone.View.extend({
     el: 'body',
+    session: null,
 
-    initialize: function () {
+    initialize: function (options) {
+      this.options = options;
     },
 
     events: {
@@ -25,11 +27,14 @@ define([
 
       if (ev) {
         section = $(ev.currentTarget).html().toLowerCase();
+	if (section === 'edit profile') {
+	  section = 'users';
+	}
       }
 
       $(this.el).html(layoutTemplate);
       require(['views/topnav/menu'], function (TopNavView) {
-        var topNavView = Vm.create(parent, 'TopNavView', TopNavView);
+        var topNavView = Vm.create(parent, 'TopNavView', TopNavView, {session: parent.options.session});
         topNavView.render();
         parent.renderBandsTypeahead();  
       });

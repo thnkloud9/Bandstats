@@ -19,17 +19,35 @@ define([
     FacebookLookupItemView,
     LastfmLookupItemModel,
     LastfmLookupItemView,
-    bandsPageTemplate){
+    bandsPageTemplate) {
   var BandsPage = Backbone.View.extend({
     el: '#content',
     template: _.template(bandsPageTemplate),
     filter: {},
     sort: {},
 
-    initialize: function() {
+    initialize: function(options) {
+      this.options = options;
+
       this.children = {};
       this.filter.genres = [];
       this.filter.regions = [];
+
+      // apply session filter
+      /*
+      if (this.options.session.filter) {
+	this.filter = this.options.session.filter;
+        this.applyFilter();
+      }
+
+      // apply session sort
+      if (this.options.session.sort) {
+	this.sort = this.options.session.sort;
+      } else {
+	// might want to default to facebook likes desc here
+	this.sort = [];
+      }
+      */
 
       // cannot use these here because they make infinite
       // scroll reset to top of the page
@@ -144,6 +162,7 @@ define([
       }
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + genre + '</span></li>');
       $('#genre-typeahead').val('');
+      this.options.session.filter = this.filter;
     },
 
     addRegionFilter: function() {
@@ -153,6 +172,7 @@ define([
       }
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + region + '</span></li>'); 
       $('#region-typeahead').val('');
+      this.options.session.filter = this.filter;
     },
 
     addSortFilter: function() {
@@ -160,6 +180,7 @@ define([
       var direction = $('#select-direction').val();
       this.sort[sortField] = direction;
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + $('#select-sort option:selected').text() + ' ' + direction + '</span></li>'); 
+      this.options.session.sort = this.sort;
     },
 
     render: function () {
@@ -184,6 +205,7 @@ define([
         var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
         sideNavView.render();                                      
       });
+      console.log(this.options.session);
     },
     
     renderBandGallery: function () {

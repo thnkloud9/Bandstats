@@ -49,6 +49,7 @@ define([
   });
   
   var initialize = function(options){
+    var parent = this;
     var appView = options.appView;
     var session = options.session;
     var router = new AppRouter(options);
@@ -114,7 +115,7 @@ define([
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
         var bandsCollection = new BandsCollection();
         bandsCollection.getFirstPage();
-        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session});
         bandsPage.render();
       });
     });
