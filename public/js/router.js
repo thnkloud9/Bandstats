@@ -4,8 +4,9 @@ define([
   'underscore',
   'backbone',
   'vm',
+  'models/session',
   'paginator'
-], function ($, _, Backbone, Vm) {
+], function ($, _, Backbone, Vm, SessionModel) {
 
   // redirect non-authurized requests to the login page
   $.ajaxSetup({
@@ -51,9 +52,11 @@ define([
   var initialize = function(options){
     var parent = this;
     var appView = options.appView;
-    var session = options.session;
     var router = new AppRouter(options);
 
+    options.session.id = options.session.user.user_id;
+    var session = new SessionModel(options.session);
+ 
     router.on('route:defaultAction', function (actions) {
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
@@ -93,7 +96,7 @@ define([
 
     router.on('route:missing_external_id', function (field) {
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
-	var query = '{"external_ids.' + field + '": ""}';
+	    var query = '{"external_ids.' + field + '": ""}';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
@@ -103,7 +106,7 @@ define([
 
     router.on('route:bad_external_id', function (field) {
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
-	var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
+	    var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
@@ -113,9 +116,11 @@ define([
 
     router.on('route:bands', function () {
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
+        console.log(session.toJSON());
+
         var bandsCollection = new BandsCollection();
-        bandsCollection.getFirstPage();
         var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session});
+        bandsPage.applySessionFilter();
         bandsPage.render();
       });
     });

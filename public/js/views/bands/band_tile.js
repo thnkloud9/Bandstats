@@ -29,6 +29,10 @@ define([
       this.$el.html(bandListTemplate);
     },
 
+    clear: function () {
+      this.$el.html(bandListTemplate);
+    },
+
     close: function() {
       $(window).unbind('scroll');
       this.remove();

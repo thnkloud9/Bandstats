@@ -18,7 +18,7 @@ define([
         this.startQuery = startQuery;
       }
 
-      this.sort['running_stats.facebook_likes.current'] = "desc"; 
+      //this.sort['running_stats.facebook_likes.current'] = "desc"; 
     
     },
 

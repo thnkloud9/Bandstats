@@ -25,6 +25,7 @@ define([
     template: _.template(bandsPageTemplate),
     filter: {},
     sort: {},
+    viewType: 'tile',
 
     initialize: function(options) {
       this.options = options;
@@ -32,27 +33,28 @@ define([
       this.children = {};
       this.filter.genres = [];
       this.filter.regions = [];
+	  this.sort['running_stats.facebook_likes.current'] = "desc";
 
+    },
+
+    applySessionFilter: function () {
       // apply session filter
-      /*
-      if (this.options.session.filter) {
-	this.filter = this.options.session.filter;
-        this.applyFilter();
+      var sessionFilter = this.options.session.get('filter'); 
+      var sessionSort = this.options.session.get('sort'); 
+
+      if (sessionFilter) {
+	    this.filter = sessionFilter;
       }
 
       // apply session sort
       if (this.options.session.sort) {
-	this.sort = this.options.session.sort;
-      } else {
-	// might want to default to facebook likes desc here
-	this.sort = [];
+	    this.sort = this.options.session.sort;
       }
-      */
 
-      // cannot use these here because they make infinite
-      // scroll reset to top of the page
-      //this.collection.on('reset', this.render, this);
-      //this.collection.on('sync', this.render, this);
+      // appy view type
+      this.viewType = this.options.session.get('view');
+
+      this.applyFilter();
     },
 
     events: { 
@@ -68,6 +70,8 @@ define([
 
       // not happy about having this here, but its needed for these 
       // to work in gallery view as well as band_detail views
+      // need to figure out how to handle these events in the
+      // respective facebook and lastfm stats panel views
       'click .lnk-facebook-lookup': 'lookupFacebookId',
       'click .lnk-facebook-clear': 'clearFacebookId',
       'click .lnk-facebook-collect': 'collectFacebookLikes',
@@ -140,7 +144,6 @@ define([
 	   $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
 
 	   _.forEach(data[0].results, function(result) {
-	     console.log(result);
 	     var lastfmLookupItemModel = new LastfmLookupItemModel(result);
              lastfmLookupItemModel.set('band_id', bandId);
              var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
@@ -158,21 +161,19 @@ define([
     addGenreFilter: function() {
       var genre = $('#genre-typeahead').val();
       if (genre != "") {
-	this.filter.genres.push(genre);
+	    this.filter.genres.push(genre);
       }
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + genre + '</span></li>');
       $('#genre-typeahead').val('');
-      this.options.session.filter = this.filter;
     },
 
     addRegionFilter: function() {
       var region = $('#region-typeahead').val();	
       if (region != "") {
-	this.filter.regions.push(region);
+	    this.filter.regions.push(region);
       }
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + region + '</span></li>'); 
       $('#region-typeahead').val('');
-      this.options.session.filter = this.filter;
     },
 
     addSortFilter: function() {
@@ -180,24 +181,22 @@ define([
       var direction = $('#select-direction').val();
       this.sort[sortField] = direction;
       $('#band-list-filter', this.el).append('<li><span class="label label-default">' + $('#select-sort option:selected').text() + ' ' + direction + '</span></li>'); 
-      this.options.session.sort = this.sort;
     },
 
     render: function () {
       // load this with filter data from the collection
       var sorts = [];
       _.forEach(this.sort, function (direction, field) {
-	sorts.push(field + ' ' + direction);
+	    sorts.push(field + ' ' + direction);
       });
       var templateData = {
         genres: this.filter.genres,
         regions: this.filter.regions,
-	sorts: sorts
+	    sorts: sorts
       };
 
       this.$el.html(this.template(templateData));
 
-      this.renderBandTile();
       this.renderGenreTypeahead();
       this.renderRegionTypeahead();
     
@@ -205,13 +204,29 @@ define([
         var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
         sideNavView.render();                                      
       });
-      console.log(this.options.session);
+
+      this.renderViewType();
+    },
+
+    renderViewType: function () {
+      if (this.viewType === 'tile') {
+        this.renderBandTile();
+      }
+      if (this.viewType === 'gallery') {
+        this.renderBandGallery();
+      }
+      if (this.viewType === 'list') {
+        this.renderBandList();
+      }
     },
     
     renderBandGallery: function () {
       this.destroyChildren();
       var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection});
       $(bandGalleryView.render().el).appendTo('#bands-page-content');
+
+      // save view to session prefs
+      this.options.session.set('view', 'gallery');
     },
 
     renderGenreTypeahead: function () {
@@ -266,6 +281,9 @@ define([
       this.destroyChildren();
       var bandListView = Vm.create(this, 'BandListView', BandListView, {collection: this.collection});
       $(bandListView.render().el).appendTo('#bands-page-content');
+
+      // save view to session prefs
+      this.options.session.set('view', 'list');
     },
 
     renderBandTile: function () {
@@ -273,6 +291,9 @@ define([
       var bandTileView = Vm.create(this, 'BandTileView', BandTileView, {collection: this.collection});
       //bandTileView.collection.getFirstPage();
       $(bandTileView.render().el).appendTo('#bands-page-content');
+
+      // save view to session prefs
+      this.options.session.set('view', 'tile');
     },
 
     showFilter: function () {
@@ -280,22 +301,32 @@ define([
     },
  
     applyFilter: function () {
- 	this.collection.filter = this.filter;
- 	this.collection.sort = this.sort;
-	this.collection.getFirstPage();
-	this.render();
+ 	  this.collection.filter = this.filter;
+ 	  this.collection.sort = this.sort;
+	  this.collection.getFirstPage();
+    
+      // save the filters to the session
+      this.options.session.set('filter', this.filter);
+      this.options.session.set('sort', this.sort);
+
+	  this.render();
     },
 
     clearFilter: function () {
-	this.filter = {};
-	this.sort = {};
-        this.filter.genres = [];
-        this.filter.regions = [];
+	  this.filter = {};
+	  this.sort = {};
+      this.filter.genres = [];
+      this.filter.regions = [];
 
- 	this.collection.filter = this.filter;
- 	this.collection.sort = this.sort;
-	this.collection.getFirstPage();
-	this.render();
+ 	  this.collection.filter = this.filter;
+ 	  this.collection.sort = this.sort;
+	  this.collection.getFirstPage();
+
+      // clear the filters to the session
+      this.options.session.set('filter', this.filter);
+      this.options.session.set('sort', this.sort);
+
+	  this.render();
     },
 
     destroyChildren: function() {
