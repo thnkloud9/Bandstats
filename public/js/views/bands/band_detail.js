@@ -39,30 +39,27 @@ define([
       'click .btn-delete-region': 'deleteRegion',
     }, 
 
-    initialize: function () {
+    initialize: function (options) {
+      this.vent = options.vent;
       this.children = {};
     },
 
     addGenre: function () {
       var genres =  this.model.get('genres');
       genres.push($('#genre-typeahead').val());
-      //this.saveBand();
     },
 
     deleteGenre: function (ev) {
       var genre = $(ev.currentTarget).data("genre");
-      console.log('deleting genre: ' + genre);
     },
 
     addRegion: function () {
-      console.log('adding region');
       var regions =  this.model.get('regions');
       regions.push($('#region-typeahead').val());
     },
 
     deleteRegion: function (ev) {
       var region = $(ev.currentTarget).data("region");
-      console.log('deleting region: ' + region);
     },
 
     loadBand: function (id) {
@@ -76,29 +73,29 @@ define([
 
     render: function () {
       $(this.el).html(this.template(this.model.attributes));
-      
+
       this.renderGenreTypeahead();
       this.renderRegionTypeahead();
 
-      var runningStatsChartView = Vm.create(this, 'RunningStatsChartView', RunningStatsChartView, {model: this.model});
+      var runningStatsChartView = Vm.create(this, 'RunningStatsChartView', RunningStatsChartView, {model: this.model, vent: this.vent});
       $(runningStatsChartView.render().el).appendTo($('#running-stats-chart-content', this.el));
  
-      var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model});
+      var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model, vent: this.vent});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el));
 
-      var lastfmStatsPanelView = Vm.create(this, 'LastfmStatsPanelView', LastfmStatsPanelView, {model: this.model});
+      var lastfmStatsPanelView = Vm.create(this, 'LastfmStatsPanelView', LastfmStatsPanelView, {model: this.model, vent: this.vent});
       $(lastfmStatsPanelView.render().el).appendTo($('#lastfm-stats-content', this.el));
 
-      var facebookStatsTableView = Vm.create(this, 'FacebookStatsTableView', FacebookStatsTableView, {model: this.model});
+      var facebookStatsTableView = Vm.create(this, 'FacebookStatsTableView', FacebookStatsTableView, {model: this.model, vent: this.vent});
       $(facebookStatsTableView.render().el).appendTo($('#facebook-stats-table', this.el));
 
-      var lastfmStatsTableView = Vm.create(this, 'LastfmStatsTableView', LastfmStatsTableView, {model: this.model});
+      var lastfmStatsTableView = Vm.create(this, 'LastfmStatsTableView', LastfmStatsTableView, {model: this.model, vent: this.vent});
       $(lastfmStatsTableView.render().el).appendTo($('#lastfm-stats-table', this.el));
 
-      var mentionsStatsTableView = Vm.create(this, 'MentionsStatsTableView', MentionsStatsTableView, {model: this.model});
+      var mentionsStatsTableView = Vm.create(this, 'MentionsStatsTableView', MentionsStatsTableView, {model: this.model, vent: this.vent});
       $(mentionsStatsTableView.render().el).appendTo($('#mentions-stats-table', this.el));
 
-      var mentionsStatsPanelView = Vm.create(this, 'MentionsStatsPanelView', MentionsStatsPanelView, {model: this.model});
+      var mentionsStatsPanelView = Vm.create(this, 'MentionsStatsPanelView', MentionsStatsPanelView, {model: this.model, vent: this.vent});
       $(mentionsStatsPanelView.render().el).appendTo($('#mentions-stats-content', this.el));
 
       return this;

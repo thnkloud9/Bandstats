@@ -56,6 +56,8 @@ define([
 
     options.session.id = options.session.user.user_id;
     var session = new SessionModel(options.session);
+
+    var vent = options.vent;
  
     router.on('route:defaultAction', function (actions) {
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
@@ -89,7 +91,7 @@ define([
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
         var bandsCollection = new BandsCollection(query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
@@ -99,7 +101,7 @@ define([
 	    var query = '{"external_ids.' + field + '": ""}';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
@@ -109,17 +111,15 @@ define([
 	    var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection});
+        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
 
     router.on('route:bands', function () {
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
-        console.log(session.toJSON());
-
         var bandsCollection = new BandsCollection();
-        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session});
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         bandsPage.applySessionFilter();
         bandsPage.render();
       });
@@ -128,9 +128,8 @@ define([
     router.on('route:band', function (id) {
       require(['views/bands/band_detail', 'views/bands/bands_page'], function (BandDetailView, BandsPageView) {
         // create the bandsPageView to ensure event handling
-        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView);
-
-        var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView);
+        var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {vent: vent});
+        var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView, {vent: vent});
         bandPage.loadBand(id);
         bandPage.render();
       });

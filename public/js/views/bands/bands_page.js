@@ -6,20 +6,13 @@ define([
   'views/bands/band_list',
   'views/bands/band_gallery',
   'views/bands/band_tile',
-  'models/facebook_lookup_item',
-  'views/bands/facebook_lookup_item',
-  'models/lastfm_lookup_item',
-  'views/bands/lastfm_lookup_item',
   'text!templates/bands/bands_page.html',
 ], function($, _, Backbone, Vm, 
     BandListView, 
     BandGalleryView, 
     BandTileView, 
-    FacebookLookupItemModel,
-    FacebookLookupItemView,
-    LastfmLookupItemModel,
-    LastfmLookupItemView,
     bandsPageTemplate) {
+
   var BandsPage = Backbone.View.extend({
     el: '#content',
     template: _.template(bandsPageTemplate),
@@ -28,8 +21,8 @@ define([
     viewType: 'tile',
 
     initialize: function(options) {
-      this.options = options;
-
+      this.session = options.session; 
+      this.vent = options.vent;
       this.children = {};
       this.filter.genres = [];
       this.filter.regions = [];
@@ -39,20 +32,20 @@ define([
 
     applySessionFilter: function () {
       // apply session filter
-      var sessionFilter = this.options.session.get('filter'); 
-      var sessionSort = this.options.session.get('sort'); 
+      var sessionFilter = this.session.get('filter'); 
+      var sessionSort = this.session.get('sort'); 
 
       if (sessionFilter) {
 	    this.filter = sessionFilter;
       }
 
       // apply session sort
-      if (this.options.session.sort) {
-	    this.sort = this.options.session.sort;
+      if (this.session.sort) {
+	    this.sort = this.session.sort;
       }
 
       // appy view type
-      this.viewType = this.options.session.get('view');
+      this.viewType = this.session.get('view');
 
       this.applyFilter();
     },
@@ -70,8 +63,6 @@ define([
 
       // not happy about having this here, but its needed for these 
       // to work in gallery view as well as band_detail views
-      // need to figure out how to handle these events in the
-      // respective facebook and lastfm stats panel views
       'click .lnk-facebook-lookup': 'lookupFacebookId',
       'click .lnk-facebook-clear': 'clearFacebookId',
       'click .lnk-facebook-collect': 'collectFacebookLikes',
@@ -81,80 +72,28 @@ define([
       'click .lnk-lastfm-collect': 'collectLastfmLikes',
     },
 
-    clearFacebookId: function () {
-      console.log("clicked clear");
+    clearFacebookId: function (ev) {
+      this.vent.trigger("facebookStatsPanel.clearFacebookId", ev);
     },
 
-    collectFacebookLikes: function () {
-      console.log("clicked collect");
+    collectFacebookLikes: function (ev) {
+      this.vent.trigger("facebookStatsPanel.collectFacebookLikes", ev);
     },
 
     lookupFacebookId: function (ev) {
-      var parent = this;
-
-      var search = $(ev.currentTarget).data("search");
-      var bandId = $(ev.currentTarget).data("band-id");
-
-      console.log('requesting search results for ' + bandId);
-
-      $('#admin-modal-title').html('Facebook Lookup: ' + search);
-
-      $.ajax("/admin/facebook/search?search=" + search, {
-       type: "GET",
-       dataType: "json",
-         success: function(data) {
-	   $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
-
-	   _.forEach(data[0].results, function(result) {
-	     var facebookLookupItemModel = new FacebookLookupItemModel(result);
-             facebookLookupItemModel.set('band_id', bandId);
-             var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
-	    facebookLookupItemView.render();
-	  });
-
-         },
-         error: function(data) {
-	   console.log('error: ' + data);
-         }
-      }); 	
+      this.vent.trigger("facebookStatsPanel.lookupFacebookId", ev);
     },
 
-    clearLastfmId: function () {
-      console.log("clicked clear");
+    clearLastfmId: function (ev) {
+      this.vent.trigger("lastfmStatsPanel.clearLastfmId", ev);
     },
 
-    collectLastfmLikes: function () {
-      console.log("clicked collect");
+    collectLastfmLikes: function (ev) {
+      this.vent.trigger("lastfmStatsPanel.collectLastfmLikes", ev);
     },
 
     lookupLastfmId: function (ev) {
-      var parent = this;
-
-      var search = $(ev.currentTarget).data("search");
-      var bandId = $(ev.currentTarget).data("band-id");
-
-      console.log('requesting search results for ' + bandId);
-
-      $('#admin-modal-title').html('Facebook Lookup: ' + search);
-
-      $.ajax("/admin/lastfm/search?search=" + search, {
-       type: "GET",
-       dataType: "json",
-         success: function(data) {
-	   $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
-
-	   _.forEach(data[0].results, function(result) {
-	     var lastfmLookupItemModel = new LastfmLookupItemModel(result);
-             lastfmLookupItemModel.set('band_id', bandId);
-             var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
-	     lastfmLookupItemView.render();
-	  });
-
-         },
-         error: function(data) {
-	   console.log('error: ' + data);
-         }
-      }); 	
+      this.vent.trigger("lastfmStatsPanel.lookupLastfmId", ev);
     },
 
 
@@ -208,27 +147,9 @@ define([
       this.renderViewType();
     },
 
-    renderViewType: function () {
-      if (this.viewType === 'tile') {
-        this.renderBandTile();
-      }
-      if (this.viewType === 'gallery') {
-        this.renderBandGallery();
-      }
-      if (this.viewType === 'list') {
-        this.renderBandList();
-      }
-    },
-    
-    renderBandGallery: function () {
-      this.destroyChildren();
-      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection});
-      $(bandGalleryView.render().el).appendTo('#bands-page-content');
-
-      // save view to session prefs
-      this.options.session.set('view', 'gallery');
-    },
-
+    /**
+     * typeahead lookups
+     */
     renderGenreTypeahead: function () {
       var search = new Bloodhound({
         datumTokenizer: function (d) {
@@ -277,27 +198,53 @@ define([
       });      
     },
 
+    /**
+     * child view render functions 
+     */
+    renderViewType: function () {
+      if (this.viewType === 'tile') {
+        this.renderBandTile();
+      }
+      if (this.viewType === 'gallery') {
+        this.renderBandGallery();
+      }
+      if (this.viewType === 'list') {
+        this.renderBandList();
+      }
+    },
+
+    renderBandGallery: function () {
+      this.destroyChildren();
+      var bandGalleryView = Vm.create(this, 'BandGalleryView', BandGalleryView, {collection: this.collection, vent: this.vent});
+      $(bandGalleryView.render().el).appendTo('#bands-page-content');
+
+      // save view to session prefs
+      this.session.set('view', 'gallery');
+    },
+
     renderBandList: function () {
       this.destroyChildren();
-      var bandListView = Vm.create(this, 'BandListView', BandListView, {collection: this.collection});
+      var bandListView = Vm.create(this, 'BandListView', BandListView, {collection: this.collection, vent: this.vent});
       $(bandListView.render().el).appendTo('#bands-page-content');
 
       // save view to session prefs
-      this.options.session.set('view', 'list');
+      this.session.set('view', 'list');
     },
 
     renderBandTile: function () {
       this.destroyChildren();
-      var bandTileView = Vm.create(this, 'BandTileView', BandTileView, {collection: this.collection});
-      //bandTileView.collection.getFirstPage();
+      var bandTileView = Vm.create(this, 'BandTileView', BandTileView, {collection: this.collection, vent: this.vent});
       $(bandTileView.render().el).appendTo('#bands-page-content');
 
       // save view to session prefs
-      this.options.session.set('view', 'tile');
+      this.session.set('view', 'tile');
     },
 
+    /**
+     * filter functions 
+     */
     showFilter: function () {
-	$('#bands-filter-list-content').toggle();
+	  $('#bands-filter-list-content').toggle();
     },
  
     applyFilter: function () {
@@ -306,8 +253,8 @@ define([
 	  this.collection.getFirstPage();
     
       // save the filters to the session
-      this.options.session.set('filter', this.filter);
-      this.options.session.set('sort', this.sort);
+      this.session.set('filter', this.filter);
+      this.session.set('sort', this.sort);
 
 	  this.render();
     },
@@ -323,16 +270,21 @@ define([
 	  this.collection.getFirstPage();
 
       // clear the filters to the session
-      this.options.session.set('filter', this.filter);
-      this.options.session.set('sort', this.sort);
+      this.session.set('filter', this.filter);
+      this.session.set('sort', this.sort);
 
 	  this.render();
     },
 
-    destroyChildren: function() {
+    close: function () {
+      this.undelegateEvents();
+      this.unbind();
+    },
+
+    destroyChildren: function () {
       var parent = this;
       _.each(this.children, function(child, name) {
-        if (child.close) {
+        if (typeof child.close === 'function') {
           child.close();
         }
         child.remove();

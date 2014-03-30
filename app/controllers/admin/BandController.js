@@ -354,8 +354,6 @@ BandController.prototype.updateAction = function(req, res) {
     // delete _id to avoid errors
     delete band._id;
 
-    console.log(JSON.stringify(band));
-
     bandRepository.update(query, band, {}, function(err, updated) {
         if ((err) || (!updated)) {
             res.setHeader('Content-Type', 'application/json');

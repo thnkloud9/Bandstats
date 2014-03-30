@@ -66,8 +66,11 @@ require([
         var appView = Vm.create({}, 'AppView', AppView, {session: data});
         appView.render();
 
+        // create events aggregator
+        var vent = _.extend({}, Backbone.Events); 
+
         // start backbone history
-        Router.initialize({appView: appView, session: data});  // The router now has a copy of all main appview
+        Router.initialize({appView: appView, session: data, vent: vent});  // The router now has a copy of all main appview
         Backbone.history.start();
       }
 

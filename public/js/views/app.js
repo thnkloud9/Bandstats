@@ -11,6 +11,7 @@ define([
   var AppView = Backbone.View.extend({
     el: 'body',
     session: null,
+    requiredViews: ['TopNavView', 'SideNavView', 'FooterView', 'ModalView'],
 
     initialize: function (options) {
       this.options = options;
@@ -27,9 +28,9 @@ define([
 
       if (ev) {
         section = $(ev.currentTarget).html().toLowerCase();
-	if (section === 'edit profile') {
-	  section = 'users';
-	}
+	    if (section === 'edit profile') {
+	      section = 'users';
+	    }
       }
 
       $(this.el).html(layoutTemplate);
@@ -116,6 +117,23 @@ define([
       $(ev.currentTarget).addClass('active');
     
       this.render(ev);
+    },
+
+    destroyChildren: function() {
+      var parent = this;
+
+      _.each(this.children, function(child, name) {
+        if (parent.requiredViews.indexOf(name) < 0) {
+          if (child.close) {
+            child.close();
+          }
+          child.remove();
+          child.undelegateEvents();
+          child.unbind();
+
+          delete parent.children[name];
+        }
+      }, this);
     }
 
   });

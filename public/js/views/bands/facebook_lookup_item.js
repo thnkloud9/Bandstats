@@ -31,14 +31,14 @@ define([
       var bandModel = new BandModel({band_id: bandId});
       bandModel.fetch({
         success: function (model, response) {
-	  // only update facebook_id, copy rest from previous
+	      // only update facebook_id, copy rest from previous
           var externalIds = model.get('external_ids');
           externalIds.facebook_id = facebookId;
-	  model.set({external_ids: externalIds}); 
+	      model.set({external_ids: externalIds}); 
 
           model.save(null, { 
             success: function(band, saveResponse) {
-	      console.log(bandId + ' saved');
+	          console.log(bandId + ' saved');
               $('.flash-message').addClass('alert-success').text("Success").show();
             }, 
             error: function(band, saveResponse) {

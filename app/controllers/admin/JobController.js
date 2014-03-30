@@ -175,12 +175,18 @@ JobController.prototype.startAction = function(req, res) {
     }
     var parent = this;
     var query = {'job_id': req.params.id};
+    var args = req.query.args;
     var jobRepository = this.jobRepository
 
     jobRepository.findOne(query, function(err, job) {
         if ((err) || (!job)) {
             res.send({status: "error", error: err});
             return false;
+        }
+
+        // apply args
+        if (args) {
+          job.job_arguments = args;
         }
 
         // update the job scheduler
