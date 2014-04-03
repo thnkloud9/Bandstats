@@ -47,19 +47,31 @@ define([
     addGenre: function () {
       var genres =  this.model.get('genres');
       genres.push($('#genre-typeahead').val());
+      this.model.set('genres', genres);
+      this.model.save();
     },
 
     deleteGenre: function (ev) {
       var genre = $(ev.currentTarget).data("genre");
+      var genres =  this.model.get('genres');
+      genres.splice(genres.indexOf(genre), 1);
+      this.model.set('genres', genres);
+      this.model.save();
     },
 
     addRegion: function () {
       var regions =  this.model.get('regions');
       regions.push($('#region-typeahead').val());
+      this.model.set('regions', regions);
+      this.model.save();
     },
 
     deleteRegion: function (ev) {
       var region = $(ev.currentTarget).data("region");
+      var regions =  this.model.get('regions');
+      regions.splice(regions.indexOf(region), 1);
+      this.model.set('regions', regions);
+      this.model.save();
     },
 
     loadBand: function (id) {
@@ -68,6 +80,7 @@ define([
 
       this.model.bind("change", this.render, this);
       this.model.bind("destroy", this.close, this);
+      this.model.bind("fetch", this.render, this);
     
     },
 

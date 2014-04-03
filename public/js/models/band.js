@@ -30,7 +30,7 @@ define([
             "incremental_avg": 0,
             "incremental_total": 0,
             "last_updated": "",
-            "total_incremental": 0,
+            "incremental": 0,
             "daily_stats": [] 
         },
         "lastfm_listeners": {
@@ -38,7 +38,7 @@ define([
             "incremental_avg": 0,
             "incremental_total": 0,
             "last_updated": "",
-            "total_incremental": 0,
+            "incremental": 0,
             "daily_stats": [] 
         }
       }

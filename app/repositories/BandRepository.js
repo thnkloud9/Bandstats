@@ -92,7 +92,7 @@ BandRepository.prototype.addDefaultValues = function(band) {
             "incremental_avg": 0,
             "incremental_total": 0,
             "last_updated": "",
-            "total_incremental": 0,
+            "incremental": 0,
             "daily_stats": emptyArray
         },
         "lastfm_listeners": {
@@ -100,7 +100,7 @@ BandRepository.prototype.addDefaultValues = function(band) {
             "incremental_avg": 0,
             "incremental_total": 0,
             "last_updated": "",
-            "total_incremental": 0,
+            "incremental": 0,
             "daily_stats": emptyArray
         }
     }
@@ -168,6 +168,7 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, increm
             } else { 
                 runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value, "incremental": incremental };
                 setFields["running_stats." + stat + ".current"] = value;
+                setFields["running_stats." + stat + ".incremental"] = incremental;
                 setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
                 setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
                 setFields["running_stats." + stat + ".last_updated"] = now;
