@@ -176,3 +176,8 @@ body {
 #form-settings {
   width: 400px;
 }
+
+.modal-flash-message {
+  width: 93%;
+  margin: 20px;
+}

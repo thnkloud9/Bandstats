@@ -14,7 +14,8 @@ define([
     requiredViews: ['TopNavView', 'SideNavView', 'FooterView', 'ModalView'],
 
     initialize: function (options) {
-      this.options = options;
+      this.vent = options.vent;
+      this.session = options.session
     },
 
     events: {
@@ -35,7 +36,7 @@ define([
 
       $(this.el).html(layoutTemplate);
       require(['views/topnav/menu'], function (TopNavView) {
-        var topNavView = Vm.create(parent, 'TopNavView', TopNavView, {session: parent.options.session});
+        var topNavView = Vm.create(parent, 'TopNavView', TopNavView, {session: parent.session});
         topNavView.render();
         parent.renderBandsTypeahead();  
       });
@@ -54,7 +55,7 @@ define([
 
       require(['views/modal'], function (ModalView) {
         // Pass the appView down into the footer so we can render the visualisation
-        var modalView = Vm.create(parent, 'ModalView', ModalView);
+        var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent});
         modalView.render();
       });
 

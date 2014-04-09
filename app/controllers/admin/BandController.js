@@ -71,17 +71,17 @@ BandController.prototype.indexAction = function(req, res) {
     // if filter add to query
     if (filter) {
         var filters = {};
-	var andFilters = [];
-	var orFilters = [];
+        var andFilters = [];
+        var orFilters = [];
 
 
-	// different fields will be seperated by AND
-	// different values for a given field will be
-	// separated by OR 
+	    // different fields will be seperated by AND
+	    // different values for a given field will be
+	    // separated by OR 
         _.forEach(filter, function(values, field) {
-	    var andFilter = {};
-	    var orFilter = {};
-	    orFilters = [];
+	        var andFilter = {};
+	        var orFilter = {};
+	        orFilters = [];
 
             // see if multiple values were passed, use or
             if (typeof values === 'object') {
@@ -90,9 +90,9 @@ BandController.prototype.indexAction = function(req, res) {
                     orFilter[field] = { $in: [ value ] };
                     orFilters.push(orFilter);  
                 });
-		var andFilter = {};
-		andFilter = { $or: orFilters };
-		andFilters.push(andFilter);
+		        var andFilter = {};
+		        andFilter = { $or: orFilters };
+		        andFilters.push(andFilter);
             } else {
                 andFilter[field] = { $in: [ values ] };
                 andFilters.push(andFilter);
@@ -100,9 +100,9 @@ BandController.prototype.indexAction = function(req, res) {
 
         });
       
-	filterQuery = {
-	    $and: andFilters
-	}
+	    filterQuery = {
+	        $and: andFilters
+	    }
     }
 
     
@@ -289,43 +289,6 @@ BandController.prototype.lookupsAction = function(req, res) {
     });
 }
 
-BandController.prototype.editAction = function(req, res) {
-    var data = this.data;
-    var query = {'band_id': req.params.id};
-    var bandRepository = this.bandRepository;
-    var apisEnabled = {
-        "facebook": nconf.get('facebook:enabled'),
-        "lastfm": nconf.get('lastfm:enabled'),
-        "echonest": nconf.get('echonest:enabled'),
-        "soundcloud": nconf.get('soundcloud:enabled'),
-        "bandcamp": nconf.get('bandcamp:enabled'),
-        "musicbrainz": nconf.get('musicbrainz:enabled'),
-        "youtube": nconf.get('youtube:enabled'),
-    }
-    _.extend(data, {
-        "json": {},
-        "apis_enabled": apisEnabled 
-    });
-
-    if (req.params.id === "0") {
-        // this is a new record
-        data.band = {};
-        data.json.band = JSON.stringify({});
-    } else {
-        // get the record from the db
-        this.bandRepository.findOne(query, function(err, band) {
-            if ((err) || (!band)) {
-                res.send({status: "error", error: "band not found"});
-                return false;
-            }
-            delete band._id;
-            data.band = band;
-            data.json.band = JSON.stringify(band);
-            res.send(data);
-        });
-    }
-}
-
 BandController.prototype.articlesAction = function(req, res) {
     var data = this.data;
     var query = {'band_id': req.params.id};
@@ -406,6 +369,49 @@ BandController.prototype.createAction = function(req, res) {
     });
 }
 
+BandController.prototype.importAction = function(req, res) {
+    var parent = this;
+    if (req.route.method != "post") {
+        var data = {
+            status: "error",
+            error: "import must be post action and must include bands",
+            method: req.route.method,
+            values: req.body.values 
+        };
+        res.send(data);
+    }    
+    var finalResults = [];
+    async.forEach(req.body.bands, function(band, cb) {
+        var result = {
+            "band_name": band.band_name,
+            "duplicate": false,
+            "added": false
+        };
+
+        var query = {
+            $and: [
+                {"band_name": band.band_name},
+                {"regions": { $in: [ band.regions[0] ] } }, 
+                {"genres": { $in: [ band.genres[0] ] } }, 
+                {"external_ids.facebook_id": band.external_ids.facebook_id},
+                {"external_ids.lastfm_id": band.external_ids.lastfm_id},
+            ] 
+        };
+        // see if this band already exists
+        parent.bandRepository.find(query, {}, function(err, bandResults) {
+            if (bandResults.length > 0) {
+                result.duplicate = true;
+                finalResults.push(result);
+                cb(err);
+            } 
+        });
+    },
+    function(err) {
+        res.send(finalResults);
+    });
+ 
+},
+
 BandController.prototype.duplicatesAction = function(req, res) {
     var data = this.data;
     var parent = this;
@@ -415,7 +421,7 @@ BandController.prototype.duplicatesAction = function(req, res) {
         var finalResults = [];
         async.forEach(results, function(band, cb) {
 
-	    // add field to mark 'not_duplicate' records
+	        // add field to mark 'not_duplicate' records
             parent.bandRepository.find({"band_name": band.band_name}, {}, function(err, bandResults) {
                 if (err) util.log(err);
 

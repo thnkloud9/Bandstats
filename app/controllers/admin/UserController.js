@@ -82,6 +82,37 @@ UserController.prototype.countAction = function(req, res) {
     });
 }
 
+UserController.prototype.updatePasswordAction = function(req, res) {
+    var parent = this;
+    if (req.route.method != "put") {
+        res.send({status: "error", error: "update must be put action and must include values"});
+        return false;
+    }
+
+    // make sure this is the current user or admin
+    if (req.user.user_id != req.body.user_id) {
+      util.log(req.user.user_id, req.body.user_id);
+      if (req.user.role != 'admin') {
+        res.send({status: "error", error: "you do not have permission to update this users password"});
+        return false;
+      }
+    }
+
+    this.userRepository.findOne({user_id: req.body.user_id}, function(err, user) {
+      user.password = req.body.password;
+      parent.userRepository.encryptPassword(user, function(err, user) {
+        parent.userRepository.update({user_id: user.user_id}, user, {}, function(err, updated) {
+          // handle errors
+          if (err) {
+            res.send({status: "Error"});
+            return false;
+          }
+          res.send({status: "Success"});
+        });
+      });
+    });
+}
+
 UserController.prototype.updateAction = function(req, res) {
     if (req.route.method != "put") {
         res.send({status: "error", error: "update must be put action and must include values"});

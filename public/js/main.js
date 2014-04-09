@@ -62,12 +62,12 @@ require([
     success: function(data) {
 
       if (data.user.role === 'admin') {
-        // create the app view
-        var appView = Vm.create({}, 'AppView', AppView, {session: data});
-        appView.render();
-
         // create events aggregator
-        var vent = _.extend({}, Backbone.Events); 
+        var vent = _.extend({}, Backbone.Events);
+ 
+        // create the app view
+        var appView = Vm.create({}, 'AppView', AppView, {session: data, vent: vent});
+        appView.render();
 
         // start backbone history
         Router.initialize({appView: appView, session: data, vent: vent});  // The router now has a copy of all main appview

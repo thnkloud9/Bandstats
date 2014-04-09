@@ -5,17 +5,24 @@ define([
   'models/user',
   'collections/users',
   'collections/bands',
+  'text!templates/users/password_update.html',
   'text!templates/users/user_detail.html',
   'typeahead'
-], function($, _, Backbone, UserModel, UserCollection, BandsCollection, template) {
+], function($, _, Backbone, UserModel, UserCollection, BandsCollection, passwordUpdateTemplate, template) {
 
   var UserDetailView = Backbone.View.extend({
 
     el: "#content",
 
     template: _.template(template),
+    passwordUpdateTemplate: _.template(passwordUpdateTemplate),
 
-    initialize: function () {
+    initialize: function (options) {
+      this.vent = options.vent;
+      if (this.vent) {
+        _.bindAll(this, "updatePassword");
+        this.vent.bind("userDetailView.updatePassword", this.updatePassword);
+      }
     },
 
      // typeahead setup for bands list
@@ -60,6 +67,8 @@ define([
     events: {
       'click #user-save': 'saveUser',
       'click #user-delete': 'deleteUser',
+      'click #update-password': 'updatePassword',
+      'click #show-password-modal': 'showPasswordModal',
     }, 
 
     loadUser: function (id) {
@@ -77,6 +86,44 @@ define([
       this.renderBandsTypeahead();  
 
       return this;
+    },
+
+    showPasswordModal: function () {
+       $('#admin-modal-title').html('Update Password');
+       $('.admin-modal-content').html(this.passwordUpdateTemplate());
+       $('#modal-save').attr('data-trigger-event', 'userDetailView.updatePassword');
+    },
+
+    updatePassword: function(ev) {
+      var parent = this;
+      var url = '/admin/user/updatePassword'; 
+
+      if ($('#password').val() != $('#password-confirm').val()) {
+        $('.modal-flash-message').addClass('alert-danger').text('password and confirm password must match').show();
+      }
+
+      var formValues = {
+        user_id: this.model.get('user_id'),
+        password: $('#password').val(),
+      };
+
+      $.ajax({
+	    url: url,
+	    type: 'PUT',
+        data: formValues,
+	    dataType: 'json',
+	    success: function (data) {
+          if (data.status === "Success") {
+            $('.flash-message').addClass('alert-success').text("Password Updated").show();
+          } else {
+            $('.flash-message').addClass('alert-danger').text(data.status).show();
+          }
+	    },
+	    error: function (data) {
+          $('.flash-message').addClass('alert-danger').text(data).show();
+	    }
+      });
+      
     },
 
     saveUser: function(ev) {

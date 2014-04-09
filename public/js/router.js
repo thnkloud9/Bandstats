@@ -212,7 +212,7 @@ define([
 
     router.on('route:user', function (id) {
       require(['views/users/user_detail'], function (UserDetailView) {
-        var userPage = Vm.create(appView, 'UserDetailView', UserDetailView);
+        var userPage = Vm.create(appView, 'UserDetailView', UserDetailView, {vent: vent});
         userPage.loadUser(id);
         userPage.render();
       });
