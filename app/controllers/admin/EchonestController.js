@@ -189,6 +189,22 @@ EchonestController.prototype.biographiesAction = function(req, res) {
     });
 }
 
+EchonestController.prototype.songsAction = function(req, res) {
+    if (req.params.id === "songs") {
+        res.send({"status": "error", "error": "must be called with id param"});
+        return false;
+    }
+
+    this.echonestManager.getSongs(req.params.id, function(err, results) {
+        if (err) {
+            res.send({"status": "error", "error": err});
+            return false;
+        }
+        res.send(results);
+        
+    });
+}
+
 EchonestController.prototype.hotttnesssAction = function(req, res) {
     if (req.params.id === "hotttnesss") {
         res.send({"status": "error", "error": "must be called with id param"});

@@ -159,7 +159,7 @@ BandController.prototype.indexAction = function(req, res) {
     };
 
     // DEBUG
-    util.log(JSON.stringify(orderedQuery));
+    //util.log(JSON.stringify(orderedQuery));
    
     this.bandRepository.count(unorderedQuery, function(err, count) { 
       parent.bandRepository.find(orderedQuery, options, function(err, bands) {
@@ -371,18 +371,21 @@ BandController.prototype.createAction = function(req, res) {
 
 BandController.prototype.importAction = function(req, res) {
     var parent = this;
+    var finalResults = [];
+
     if (req.route.method != "post") {
         var data = {
             status: "error",
             error: "import must be post action and must include bands",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body.bands 
         };
         res.send(data);
     }    
-    var finalResults = [];
+
     async.forEach(req.body.bands, function(band, cb) {
         var result = {
+            "band_id": band.band_id,
             "band_name": band.band_name,
             "duplicate": false,
             "added": false
@@ -397,13 +400,22 @@ BandController.prototype.importAction = function(req, res) {
                 {"external_ids.lastfm_id": band.external_ids.lastfm_id},
             ] 
         };
+
         // see if this band already exists
         parent.bandRepository.find(query, {}, function(err, bandResults) {
+            // mark duplicate
             if (bandResults.length > 0) {
                 result.duplicate = true;
                 finalResults.push(result);
                 cb(err);
-            } 
+            } else {
+                // or add the band
+                parent.bandRepository.insert(band, {}, function(err, newBand) {
+                    result.added = true;
+                    finalResults.push(result);
+                    cb(err);
+                });
+            }
         });
     },
     function(err) {

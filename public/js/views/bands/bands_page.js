@@ -27,7 +27,6 @@ define([
       this.filter.genres = [];
       this.filter.regions = [];
 	  this.sort['running_stats.facebook_likes.current'] = "desc";
-
     },
 
     applySessionFilter: function () {
@@ -202,6 +201,8 @@ define([
      * child view render functions 
      */
     renderViewType: function () {
+      console.log('view type: ' + this.viewType);
+
       if (this.viewType === 'tile') {
         this.renderBandTile();
       }

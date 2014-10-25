@@ -282,7 +282,7 @@ function articleHasMatch(site, article, band) {
 function sanitizeSearchString(text) {
     sanitized_text = text.toLowerCase();
     sanitized_text = sanitized_text.replace('&', 'and')
-        .replace(/[\+\,\.\?\!\-\;\:\'\(\)]+/g, '')
+        .replace(/[\+\,\.\?\!\-\;\:\'\(\)\*]+/g, '')
         .replace(/[\"“\'].+[\"”\']/g, '')
         .replace(/[\n\r]/g, '')
         .replace(/[\[\]]/g, '')

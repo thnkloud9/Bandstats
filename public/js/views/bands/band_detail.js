@@ -168,8 +168,8 @@ define([
       }
 
       this.model.set({
-          band_name: $('#band-name').val(),
-	  active: $('active').is(':checked')
+        band_name: $('#band-name').val(),
+        active: $('active').is(':checked')
       });
 
       // remove id if this is a new model
@@ -191,7 +191,12 @@ define([
 
     deleteBand: function (ev) {
       ev.preventDefault();
-      console.log('delete band ' + this.model.get('band_id'));
+
+      this.model.destroy({
+        success: function(band, response) {
+          $('.flash-message').addClass('alert-success').text("Success").show();
+        }
+      });
     },    
 
     destroyChildren: function () {

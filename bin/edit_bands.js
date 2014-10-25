@@ -46,7 +46,7 @@ program
  */
 program
     .command('add')
-    .description('adds a field to band document records')
+    .description('adds a field to all band records')
     .action(function() { 
 
         var query = buildQuery();
@@ -86,7 +86,7 @@ program
  */
 program
     .command('delete')
-    .description('not implemented')
+    .description('remove a field from all band records')
     .action(function() {
 
         var query = buildQuery();

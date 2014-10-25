@@ -10,6 +10,7 @@ require.config({
     typeahead: 'libs/typeahead/typeahead.bundle',
     moment: 'libs/moment/moment',
     chart: 'libs/chart/chart.min',
+    jqueryIframeTransport: 'libs/jquery-iframe-transport/jquery.iframe-transport',
 
     // Require.js plugins
     text: 'libs/require/text',
@@ -35,6 +36,9 @@ require.config({
       exports: 'Backbone.Paginator'
     },
     'bootstrap': {
+      deps: ['jquery']
+    },
+    'jquery-iframe-transport': {
       deps: ['jquery']
     },
     'typeahead': {

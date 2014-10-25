@@ -29,15 +29,15 @@ define([
       var url = '/admin/dashboard/bandStats'; 
 
       $.ajax({
-	url: url,
-	type: 'GET',
-	dataType: 'json',
-	success: function (data) {
-	  parent.renderValidBandsChart(data);
-	},
-	error: function (data) {
-	  console.log("error: " + data);
-	}
+	    url: url,
+	    type: 'GET',
+	    dataType: 'json',
+	    success: function (data) {
+	      parent.renderValidBandsChart(data);
+	    },
+	    error: function (data) {
+	      console.log("error: " + data);
+	    }
       });
     },
 

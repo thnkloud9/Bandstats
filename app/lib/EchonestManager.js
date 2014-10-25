@@ -214,4 +214,24 @@ EchonestManager.prototype.getImages = function(echonestId, callback) {
     });
 }
 
+EchonestManager.prototype.getSongs = function(echonestId, callback) {
+    var options = { 
+        url: this.apiDomain +'/artist/songs?id=' + echonestId + '&api_key=' + this.apiKey + '&format=json',
+        json: true
+    };
+
+    request(options, function (err, response, body) {
+        if (err || response.statusCode != 200) {
+            callback('error, bad response from echonest ' + err);
+            return false;
+        }
+        if ((!body.response) || (!body.response.songs)) {
+            callback('error, could not find songs for ' + echonestId);
+            return false;
+        }
+
+        callback(null, body.response.songs);
+    });
+}
+
 module.exports = EchonestManager;

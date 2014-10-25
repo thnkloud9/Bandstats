@@ -66,6 +66,8 @@ app.configure(function() {
 
 /**
  * Load the JobSchedule
+ * TODO: allow for a switch to init job scheduler so that we can have multiple
+ *       worker processes, but only one job scheduler
  */
 var JobScheduler = require('./app/lib/JobScheduler.js');
 var jobScheduler = new JobScheduler(db);

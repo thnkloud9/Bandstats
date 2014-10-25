@@ -30,6 +30,7 @@ define([
       'bands/search/:query': 'bandsearch',
       'bands/missing/:field': 'missing_external_id',
       'bands/bad/:field': 'bad_external_id',
+      'bands/import/load': 'bands_import',
       'sites/:id': 'site',
       'sites': 'sites',
       'jobs/:id': 'job',
@@ -132,6 +133,13 @@ define([
         var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView, {vent: vent});
         bandPage.loadBand(id);
         bandPage.render();
+      });
+    });
+
+    router.on('route:bands_import', function () {
+      require(['views/bands/band_import', 'views/bands/bands_page'], function (BandImportView, BandsPageView) {
+        var bandsImportPage = Vm.create(appView, 'BandImportView', BandImportView, {vent: vent});
+        bandsImportPage.render();
       });
     });
 

@@ -104,8 +104,12 @@ BandRepository.prototype.addDefaultValues = function(band) {
             "daily_stats": emptyArray
         }
     }
-    band.regions = emptyArray;
-    band.genres = emptyArray;
+    if (!band.regions) {
+        band.regions = emptyArray;
+    }
+    if (!band.genres) {
+        band.genres = emptyArray;
+    }
     band.mentions = emptyArray;
     band.last_updated = new Date();
     return band;
