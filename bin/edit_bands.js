@@ -193,18 +193,17 @@ function deleteField(bands, field, callback) {
 
 function addField(bands, field, value, callback) {
     async.forEach(bands, function(band, cb) {
-        if (!band.running_stats[program.field]) {
-            jobStats.errors++;
-            cb();
-            return false;
+        var setObject = {};
+        setObject[field] = value;
+        var set = {
+            $set: setObject
         }
-            
-        cb()       
-        //db.collection('bands').update({"band_id": bandId}, set, function(err, result) {
-        //    if (err) jobStats.errors++;
-        //    util.log('updated band_id ' + bandId);
-        //    cb();
-        //});
+
+        db.collection('bands').update({"band_id": band.band_id}, set, function(err, result) {
+            if (err) jobStats.errors++;
+            util.log('updated band_id ' + band.band_id);
+            cb();
+        });
     },
     function (err) {
         util.log('done with update');
