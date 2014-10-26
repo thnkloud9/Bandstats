@@ -7,17 +7,19 @@
           <ul class="list-group">
 
             <li class="list-group-item">
-	      <div class="btn-group" style="width: 100%">
-                <button type="button" class="btn btn-default" style="width: 90%">Id: <%= external_ids.lastfm_id %></button>
-    		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-      		  <span class="caret"></span>
-		  <span class="sr-only">Toggle Dropdown</span>
-     		</button>
-    		<ul class="dropdown-menu" role="menu">
-      		  <li><a class="lnk-lastfm-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Lookup</a></li>
-      		  <li><a class="lnk-lastfm-collect" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Collect Now</a></li>
-      		  <li><a class="lnk-lastfm-clear" data-band-id="<%= band_id %>">Clear</a></li>
+              <span><%= external_ids.lastfm_id %></span>
+	          <div class="btn-group" style="width: 50%; margin-left: 20%">
+                <button type="button" class="btn btn-default" style="width: 40%">Actions</button>
+    		    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+      		      <span class="caret"></span>
+		          <span class="sr-only">Toggle Dropdown</span>
+     		    </button>
+    		    <ul class="dropdown-menu" role="menu">
+      		      <li><a class="lnk-lastfm-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Lookup</a></li>
+      		      <li><a class="lnk-lastfm-collect" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Collect Now</a></li>
+      		      <li><a class="lnk-lastfm-clear" data-band-id="<%= band_id %>">Clear</a></li>
     	     	</ul>
+              </div>
             </li>
 
             <li class="list-group-item">
@@ -30,7 +32,7 @@
               Incremental Average <span class="badge"><%= running_stats.lastfm_listeners.incremental_avg %></span>
             </li>
             <li class="list-group-item">
-              Error <span class="label label-info pull-right"><%= running_stats.lastfm_listeners.error %></span>
+              Error (<%= failed_lookups.lastfm %>) <span class="label label-info pull-right"><%= running_stats.lastfm_listeners.error %></span>
             </li>
             <li class="list-group-item">
               Last Updated <span class="label label-info pull-right"><%= running_stats.lastfm_listeners.last_updated %></span>
