@@ -146,7 +146,7 @@ BandRepository.prototype.clearRunningStats = function(band) {
     return band;
 }
 
-BandRepository.prototype.updateRunningStat = function(query, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
+BandRepository.prototype.updateRunningStat = function(query, provider, stat, value, incremental, incrementalTotal, incrementalAvg, callback) {
     var db = this.db;
     var collection = this.collection
     var parent = this;
@@ -171,6 +171,8 @@ BandRepository.prototype.updateRunningStat = function(query, stat, value, increm
             if (typeof value == "string") {
 
                 setFields["running_stats." + stat + ".error"] = value;
+                setFields["failed_lookups." + provider] = 0;
+                // TODO: reset failed_lookups to 0 here
                 var set = {
                     $set: setFields
                 }
@@ -439,6 +441,20 @@ BandRepository.prototype.getDistinctValues = function(field, query, callback) {
         callback(err, results);
     });
     
+}
+
+BandRepository.prototype.incrementFailedLookups = function(query, provider, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var set = {};
+    set["failed_lookups." + provider] = 1;
+    db.collection(collection).update(query, {$inc: set}, {}, function(err, updated) {
+        if (err) {
+            console.log(err); 
+        }
+        callback(null, updated);
+    });
+
 }
 
 module.exports = BandRepository;

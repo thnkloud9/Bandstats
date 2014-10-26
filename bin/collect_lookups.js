@@ -242,10 +242,7 @@ function collectLookups(query, provider, resource, bandField, callback) {
                             });
                         } else {
                             console.log('could not find match for ' + bandName);
-                            var field = "failed_lookups." + provider;
-                            var set = {};
-                            set[field] = 1;
-                            bandRepository.update({"band_id": bandId}, {$inc: set}, {}, function(err, updated) {
+                            bandRepository.incrementFailedLookups({"band_id": bandId}, provider, function(err, updated) {
                                 if (err) {
                                     console.log(err); 
                                 }
@@ -254,10 +251,7 @@ function collectLookups(query, provider, resource, bandField, callback) {
                         }
                     } else {
                         console.log('could not find match for ' + bandName);
-                        var field = "failed_lookups." + provider;
-                        var set = {};
-                        set[field] = 1;
-                        bandRepository.update({"band_id": bandId}, {$inc: set}, {}, function(err, updated) {
+                        bandRepository.incrementFailedLookups({"band_id": bandId}, provider, function(err, updated) {
                             if (err) {
                                 console.log(err); 
                             }

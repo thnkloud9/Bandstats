@@ -239,15 +239,27 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     // save the record 
                     if (save) {
                         util.log('updating ' + bandName + ' using id ' + search + ' with ' + value);
-                        bandRepository.updateRunningStat({"band_id": bandId}, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
+                        bandRepository.updateRunningStat({"band_id": bandId}, provider, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
                             if (err) {
                                 jobStats.errors++;
                                 util.log(err); 
+                                // increase failed_lookups here
+                                bandRepository.incrementFailedLookups({"band_id": bandId}, provider, function(failedErr, failedUpdated) {
+                                    if (err) {
+                                        console.log(failedErr);
+                                    }
+                                });
                             }
 
                             if (typeof value == "string") {
                                 // this indicaates a bad external id
                                 jobStats.errors++;
+                                // increase failed_lookups here
+                                bandRepository.incrementFailedLookups({"band_id": bandId}, provider, function(failedErr, failedUpdated) {
+                                    if (err) {
+                                        console.log(failedErr);
+                                    }
+                                });
                             } else {
                                 jobStats.success++;
                             }
