@@ -18,8 +18,8 @@
     <% } %>
   </td>
 
-  <td><%= running_stats.facebook_likes.current %></td>
-  <td><%= running_stats.lastfm_listeners.current %></td>
+  <td><%= running_stats.facebook_likes.current %> / <%= running_stats.facebook_likes.incremental_avg %></td>
+  <td><%= running_stats.lastfm_listeners.current %> / <%= running_stats.lastfm_listeners.incremental_avg %></td>
   <td><%= mentions.length %></td>
   <td><%= created %></td>
   <td><%= last_updated %></td>
