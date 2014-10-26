@@ -395,9 +395,7 @@ BandController.prototype.importAction = function(req, res) {
             $and: [
                 {"band_name": band.band_name},
                 {"regions": { $in: [ band.regions[0] ] } }, 
-                {"genres": { $in: [ band.genres[0] ] } }, 
-                {"external_ids.facebook_id": band.external_ids.facebook_id},
-                {"external_ids.lastfm_id": band.external_ids.lastfm_id},
+                {"genres": { $in: [ band.genres[0] ] } }
             ] 
         };
 
