@@ -166,15 +166,16 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
         updateToday: function(cb) {
             var runningStat = {};
             var setFields = {};
+            var incFields = {};
 
             // if this is an error, update the error and skip the stat
             if (typeof value == "string") {
 
                 setFields["running_stats." + stat + ".error"] = value;
-                setFields["failed_lookups." + provider] = 0;
-                // TODO: reset failed_lookups to 0 here
+                incFields["failed_lookups." + provider] = 0;
                 var set = {
-                    $set: setFields
+                    $set: setFields,
+                    $inc: incFields
                 }
 
             } else { 
@@ -184,6 +185,8 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
                 setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
                 setFields["running_stats." + stat + ".incremental_avg"] = incrementalAvg;
                 setFields["running_stats." + stat + ".last_updated"] = now;
+                setFields["running_stats." + stat + ".error"] = "";
+                setFields["failed_lookups." + provider] = 0;
                 var set = { 
                     $addToSet: runningStat,
                     $set: setFields 
