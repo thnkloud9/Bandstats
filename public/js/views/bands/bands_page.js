@@ -26,7 +26,7 @@ define([
       this.children = {};
       this.filter.genres = [];
       this.filter.regions = [];
-	  this.sort['running_stats.facebook_likes.current'] = "desc";
+	  //this.sort['running_stats.facebook_likes.current'] = "desc";
     },
 
     applySessionFilter: function () {

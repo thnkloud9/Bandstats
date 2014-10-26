@@ -40,13 +40,13 @@ define([
       });
 
       _.forEach(this.filter, function(values, field) {
-	if (typeof values === "object") {
-	    _.forEach(values, function(value) {
-                path+= "&filter[" + field + "]=" + value;
-	    });
-	} else {
-            path+= "&filter[" + field + "]=" + values;
-	}
+        if (typeof values === "object") {
+          _.forEach(values, function(value) {
+            path+= "&filter[" + field + "]=" + value;
+	      });
+        } else {
+          path+= "&filter[" + field + "]=" + values;
+        }
       });
     
       return path;

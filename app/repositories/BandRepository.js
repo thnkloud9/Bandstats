@@ -86,6 +86,11 @@ BandRepository.prototype.addDefaultValues = function(band) {
         "facebook_id": "",
         "echonest_id": ""
     }
+    band.failed_lookups = {
+        "lastfm": 0,
+        "facebook": 0,
+        "echonest": 0
+    }
     band.running_stats = {
         "facebook_likes": {
             "current": 0,
@@ -111,6 +116,7 @@ BandRepository.prototype.addDefaultValues = function(band) {
         band.genres = emptyArray;
     }
     band.mentions = emptyArray;
+    band.mentions_total = 0;
     band.last_updated = new Date();
     return band;
 }
@@ -305,8 +311,8 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
     };
    
     // overwrite in case it was already collected today
-    async.series({
-        checkForOld: function(cb) {
+    async.waterfall([
+        function(cb) {
             var query = {
                 "mentions.link": link
             };
@@ -319,16 +325,28 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
                 }
             }); 
         },
-        addNew: function(cb) {
+        function(cb) {
             db.collection(collection).update(query, set, function(err, results) {
                 if (err) {
                     cb(err);
                     return false;
                 }
-                cb(err, results);
+                cb();
             });
         },
-    },
+        function(cb) {
+            db.collection(collection).findOne(query, function(err, results) {
+                var mentionsTotal = results.mentions.length;
+                db.collection(collection).update(query, {$set: {"mentions_total": mentionsTotal}}, function(err, results) {
+                    if (err) {
+                        cb(err);
+                        return false;
+                    }
+                    cb(err, results);
+                });
+            });
+        }
+    ],
     function(err, results) {
         if (err) {
             callback(err);

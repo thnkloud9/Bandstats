@@ -242,11 +242,27 @@ function collectLookups(query, provider, resource, bandField, callback) {
                             });
                         } else {
                             console.log('could not find match for ' + bandName);
-                            rcb(null, result);
+                            var field = "failed_lookups." + provider;
+                            var set = {};
+                            set[field] = 1;
+                            bandRepository.update({"band_id": bandId}, {$inc: set}, {}, function(err, updated) {
+                                if (err) {
+                                    console.log(err); 
+                                }
+                                rcb(null, updated);
+                            });
                         }
                     } else {
                         console.log('could not find match for ' + bandName);
-                        rcb(null, result);
+                        var field = "failed_lookups." + provider;
+                        var set = {};
+                        set[field] = 1;
+                        bandRepository.update({"band_id": bandId}, {$inc: set}, {}, function(err, updated) {
+                            if (err) {
+                                console.log(err); 
+                            }
+                            rcb(null, updated);
+                        });
                     }
                      
                 },
