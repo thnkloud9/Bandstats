@@ -1,0 +1,3 @@
+run clear_mentions.js
+run clear_failed_lookups.js
+run import from current bandstats url or file http://www.thedelimagazine.com/bandstats/api/bands_export.php?limit=10000

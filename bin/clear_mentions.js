@@ -62,7 +62,7 @@ program
                 
 		        var bandId = result.band_id;
 
-                db.collection('bands').update({"band_id": bandId}, {$set: {"mentions": []}}, { "multi": true}, function(err, result) {
+                db.collection('bands').update({"band_id": bandId}, {$set: {"mentions": [], "mentions_total": 0}}, { "multi": true}, function(err, result) {
                     if (err) jobStats.errors++;
                     util.log('updated band_id ' + bandId);
                     cb();
