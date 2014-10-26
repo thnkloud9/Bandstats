@@ -47,7 +47,7 @@ define([
           job_arguments: $('#job-arguments').val(),
           job_schedule: $('#job-schedule').val(),
           job_description: $('#job-description').val(),
-          job_active: $('job-active').is(':checked')
+          job_active: ($('#job-active').prop('checked')) ? "true" : "false"
       });
 
       // remove id if this is a new model
