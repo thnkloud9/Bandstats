@@ -26,33 +26,33 @@ define([
       var dateLabels = [];
       var facebookLikesData = [];
       _.forEach(this.model.attributes.running_stats.facebook_likes.daily_stats, function(stat) {
-	dateLabels.push(stat.date);
-	facebookLikesData.push(stat.value);	
+        dateLabels.push(stat.date);
+        facebookLikesData.push(stat.value);	
       });
 
       var lastfmListenersData = [];
       _.forEach(this.model.attributes.running_stats.lastfm_listeners.daily_stats, function(stat) {
-	lastfmListenersData.push(stat.value);	
+        lastfmListenersData.push(stat.value);	
       });
 
       var chartData = {
-	labels : dateLabels,
-	datasets : [
-		{
+        labels : dateLabels,
+        datasets : [
+		  {
 			fillColor : "rgba(220,220,220,0.5)",
 			strokeColor : "rgba(220,220,220,1)",
 			pointColor : "rgba(220,220,220,1)",
 			pointStrokeColor : "#fff",
 			data : facebookLikesData
-		},
-		{
+		  },
+		  {
 			fillColor : "rgba(151,187,205,0.5)",
 			strokeColor : "rgba(151,187,205,1)",
 			pointColor : "rgba(151,187,205,1)",
 			pointStrokeColor : "#fff",
 			data : lastfmListenersData
-		}
-	]
+		  }
+        ]
       }
       var chartOptions = {};
 

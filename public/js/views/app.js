@@ -74,7 +74,7 @@ define([
       var search = new Bloodhound({
         datumTokenizer: function(d) { 
 	    return Bloodhound.tokenizers.whitespace(d.band_name); 
-	},
+        },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: '/admin/band/list?limit=5&search=%QUERY',
         prefetch: '/admin/band/list?limit=50'
@@ -120,23 +120,22 @@ define([
       this.render(ev);
     },
 
-    destroyChildren: function() {
-      var parent = this;
-
+    destroyChildren: function () {
       _.each(this.children, function(child, name) {
-        if (parent.requiredViews.indexOf(name) < 0) {
-          if (child.close) {
+        if (this.requiredViews.indexOf(name) < 0) {
+          if (typeof child.close === 'function') {
             child.close();
           }
-          child.remove();
+          child.vmClose();
+          // TODO: figure out why this doesn't work
+          //child.remove();
           child.undelegateEvents();
           child.unbind();
-
-          delete parent.children[name];
+          child.off();
+          delete this.children[name];
         }
       }, this);
     }
-
   });
   return AppView;
 });

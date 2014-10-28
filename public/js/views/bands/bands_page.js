@@ -19,11 +19,11 @@ define([
     filter: {},
     sort: {},
     viewType: 'tile',
+    requiredViews: [],
 
     initialize: function(options) {
       this.session = options.session; 
       this.vent = options.vent;
-      this.children = {};
       this.filter.genres = [];
       this.filter.regions = [];
 	  //this.sort['running_stats.facebook_likes.current'] = "desc";
@@ -201,8 +201,6 @@ define([
      * child view render functions 
      */
     renderViewType: function () {
-      console.log('view type: ' + this.viewType);
-
       if (this.viewType === 'tile') {
         this.renderBandTile();
       }
@@ -277,24 +275,21 @@ define([
 	  this.render();
     },
 
-    close: function () {
-      this.undelegateEvents();
-      this.unbind();
-    },
-
     destroyChildren: function () {
-      var parent = this;
       _.each(this.children, function(child, name) {
-        if (typeof child.close === 'function') {
-          child.close();
+        if (this.requiredViews.indexOf(name) < 0) {
+          if (typeof child.close === 'function') {
+            child.close();
+          }
+          child.vmClose();
+          child.remove();
+          child.undelegateEvents();
+          child.unbind();
+          child.off();
+          delete this.children[name];
         }
-        child.remove();
-        child.undelegateEvents();
-        child.unbind();
       }, this);
-      this.children = {};
     }
-
   });
   return BandsPage;
 });

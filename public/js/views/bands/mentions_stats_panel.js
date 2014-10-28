@@ -38,10 +38,10 @@ define([
       });
 
       var data = {
-	total: total,
-	total_this_week: total_this_week,
-	total_this_month: total_this_month,
-	last_updated: now
+	    total: total,
+	    total_this_week: total_this_week,
+	    total_this_month: total_this_month,
+	    last_updated: now
       }
       $(this.el).html(this.template(data));
 

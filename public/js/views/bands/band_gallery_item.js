@@ -23,30 +23,17 @@ define([
     render: function () {
       $(this.el).html(this.template(this.model.toJSON()));
 
-      this.destroyChildren();
-     
-      var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model, vent: this.vent});
+      var viewName = 'FacebookStatsPanelView' + this.model.get("band_id");
+      var facebookStatsPanelView = Vm.create(this, viewName, FacebookStatsPanelView, {model: this.model, vent: this.vent});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el)); 
 
-      var lastfmStatsPanelView = Vm.create(this, 'LastfmStatsPanelView', LastfmStatsPanelView, {model: this.model, vent: this.vent});
+      var viewName = 'LastfmStatsPanelView' + this.model.get("band_id");
+      var lastfmStatsPanelView = Vm.create(this, viewName, LastfmStatsPanelView, {model: this.model, vent: this.vent});
       $(lastfmStatsPanelView.render().el).appendTo($('#lastfm-stats-content', this.el)); 
 
       return this;
     },
  
-    destroyChildren: function() {
-      var parent = this;
-      _.each(this.children, function(child, name) {
-        if (typeof child.close === 'function') {
-          child.close();
-        }
-        child.remove();
-        child.undelegateEvents();
-        child.unbind();
-      }, this);
-      this.children = {};
-    }
-
   });
 
   return BandGalleryItemView;

@@ -20,8 +20,7 @@ define([
     initialize: function (options) {
       this.vent = options.vent;
       if (this.vent) {
-        _.bindAll(this, "updatePassword");
-        this.vent.bind("userDetailView.updatePassword", this.updatePassword);
+        this.listenTo(this.vent, "userDetailView.updatePassword", this.updatePassword);
       }
     },
 

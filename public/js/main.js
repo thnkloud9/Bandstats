@@ -79,7 +79,7 @@ require([
       }
 
       if (data.user.role === 'manager') {
-	console.log('load band manager page');
+        console.log('load band manager page');
       }
 	
       

@@ -25,6 +25,25 @@ define([
       var jobsListView = Vm.create(this, 'JobListView', JobListView, {collection: jobsCollection});
       jobsListView.render();
 
+    },
+
+    close: function () {
+      this.destroyChildren();
+      this.undelegateEvents();
+      this.unbind();
+    },
+
+    destroyChildren: function () {
+      var parent = this;
+      _.each(this.children, function(child, name) {
+        if (typeof child.close === 'function') {
+          child.close();
+        }
+        child.remove();
+        child.undelegateEvents();
+        child.unbind();
+      }, this);
+      this.children = {};
     }
 
   });

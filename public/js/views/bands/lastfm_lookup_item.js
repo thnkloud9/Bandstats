@@ -31,14 +31,14 @@ define([
       var bandModel = new BandModel({band_id: bandId});
       bandModel.fetch({
         success: function (model, response) {
-	  // only update lastfm_id, copy rest from previous
+	      // only update lastfm_id, copy rest from previous
           var externalIds = model.get('external_ids');
           externalIds.lastfm_id = lastfmId;
-	  model.set({external_ids: externalIds}); 
+	      model.set({external_ids: externalIds}); 
 
           model.save(null, { 
             success: function(band, saveResponse) {
-	      console.log(bandId + ' saved');
+	          console.log(bandId + ' saved');
               $('.flash-message').addClass('alert-success').text("Success").show();
             }, 
             error: function(band, saveResponse) {
@@ -46,8 +46,7 @@ define([
               $('.flash-message').addClass('alert-danger').text(response.statusText).show();
             }
           });
-          
-	}
+	    }
       });
 
     }

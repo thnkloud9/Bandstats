@@ -24,14 +24,9 @@ define([
       this.model.bind("fetch", this.render, this);
 
       if (this.vent) {
-        _.bindAll(this, "lookupFacebookId"); 
-        this.vent.bind("facebookStatsPanel.lookupFacebookId", this.lookupFacebookId);
-
-        _.bindAll(this, "collectFacebookLikes"); 
-        this.vent.bind("facebookStatsPanel.collectFacebookLikes", this.collectFacebookLikes);
-
-        _.bindAll(this, "clearFacebookId"); 
-        this.vent.bind("facebookStatsPanel.clearFacebookId", this.clearFacebookId);
+        this.listenTo(this.vent, "facebookStatsPanel.lookupFacebookId", this.lookupFacebookId);
+        this.listenTo(this.vent, "facebookStatsPanel.collectFacebookLikes", this.collectFacebookLikes);
+        this.listenTo(this.vent, "facebookStatsPanel.clearFacebookId", this.clearFacebookId);
       }
     },
 
@@ -123,6 +118,7 @@ define([
          }
       }); 	
     },
+
 
   });
 

@@ -61,6 +61,7 @@ define([
     var vent = options.vent;
  
     router.on('route:defaultAction', function (actions) {
+      appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.render();
@@ -68,6 +69,7 @@ define([
     });
 
     router.on('route:dashboard', function () {
+      appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.render();
@@ -75,6 +77,7 @@ define([
     });
 
     router.on('route:dashboard_genres', function () {
+      appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.renderGenres();
@@ -82,6 +85,7 @@ define([
     });
 
     router.on('route:dashboard_regions', function () {
+      appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
         var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
         dashboardPage.renderRegions();
@@ -89,35 +93,39 @@ define([
     });
 
     router.on('route:bandsearch', function (query) {
+      appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
         var bandsCollection = new BandsCollection(query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
 
     router.on('route:missing_external_id', function (field) {
+      appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
 	    var query = '{"external_ids.' + field + '": ""}';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
 
     router.on('route:bad_external_id', function (field) {
+      appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
 	    var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(this, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
         searchResultsView.render();
       });
     });
 
     router.on('route:bands', function () {
+      appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
         var bandsCollection = new BandsCollection();
         var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
@@ -127,16 +135,18 @@ define([
     });
 
     router.on('route:band', function (id) {
+      appView.destroyChildren();
       require(['views/bands/band_detail', 'views/bands/bands_page'], function (BandDetailView, BandsPageView) {
         // create the bandsPageView to ensure event handling
         var bandsPage = Vm.create(appView, 'BandsPageView', BandsPageView, {vent: vent});
-        var bandPage = Vm.create(appView, 'BandDetailView', BandDetailView, {vent: vent});
+        var bandPage = Vm.create(bandsPage, 'BandDetailView', BandDetailView, {vent: vent});
         bandPage.loadBand(id);
         bandPage.render();
       });
     });
 
     router.on('route:bands_import', function () {
+      appView.destroyChildren();
       require(['views/bands/band_import', 'views/bands/bands_page'], function (BandImportView, BandsPageView) {
         var bandsImportPage = Vm.create(appView, 'BandImportView', BandImportView, {vent: vent});
         bandsImportPage.render();
@@ -144,6 +154,7 @@ define([
     });
 
     router.on('route:site', function (id) {
+      appView.destroyChildren();
       require(['views/sites/site_detail'], function (SiteDetailPage) {
         var sitePage = Vm.create(appView, 'SiteDetailPage', SiteDetailPage);
         sitePage.loadSite(id);
@@ -152,6 +163,7 @@ define([
     });
 
     router.on('route:sites', function () {
+      appView.destroyChildren();
       require(['views/sites/sites_page', 'collections/sites'], function (SitesPage, SitesCollection) {
         var sitesCollection = new SitesCollection();
         sitesCollection.fetch();  
@@ -161,6 +173,7 @@ define([
     });
 
     router.on('route:job', function (id) {
+      appView.destroyChildren();
       require(['views/jobs/job_detail'], function (JobDetailPage) {
         var jobPage = Vm.create(appView, 'JobDetailPage', JobDetailPage);
         jobPage.loadJob(id);
@@ -169,6 +182,7 @@ define([
     });
 
     router.on('route:jobs', function () {
+      appView.destroyChildren();
       require(['views/jobs/jobs_page', 'collections/jobs'], function (JobsPage, JobsCollection) {
         var jobsCollection = new JobsCollection();
         jobsCollection.fetch();
@@ -178,24 +192,27 @@ define([
     });
 
     router.on('route:running_jobs', function () {
+      appView.destroyChildren();
       require(['views/jobs/jobs_page', 'collections/running_jobs'], function (JobsPage, RunningJobsCollection) {
         var runningJobsCollection = new RunningJobsCollection();
         runningJobsCollection.fetch();
-        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: runningJobsCollection});
-        jobsPage.render();
+        var runningJobsPage = Vm.create(appView, 'RunningJobsPage', JobsPage, {collection: runningJobsCollection});
+        runningJobsPage.render();
       });
     });
 
     router.on('route:jobs_log', function () {
+      appView.destroyChildren();
       require(['views/jobs/jobs_page', 'collections/jobs_log'], function (JobsPage, JobsLogCollection) {
         var jobsLogCollection = new JobsLogCollection();
         jobsLogCollection.fetch();
-        var jobsPage = Vm.create(appView, 'JobsPage', JobsPage, {collection: jobsLogCollection});
-        jobsPage.render();
+        var jobsLogPage = Vm.create(appView, 'JobsLogPage', JobsPage, {collection: jobsLogCollection});
+        jobsLogPage.render();
       });
     });
 
     router.on('route:settings', function () {
+      appView.destroyChildren();
       require(['views/settings/settings_page'], function (SettingsPage) {
         var settingsPage = Vm.create(appView, 'SettingsPage', SettingsPage);
         settingsPage.render();
@@ -203,6 +220,7 @@ define([
     });
 
     router.on('route:login', function () {
+      appView.destroyChildren();
       require(['views/login'], function (LoginPage) {
         var loginPage = Vm.create(appView, 'LoginPage', LoginPage);
         loginPage.render();
@@ -210,6 +228,7 @@ define([
     });
 
     router.on('route:users', function () {
+      appView.destroyChildren();
       require(['views/users/users_page','collections/users'], function (UsersPageView, UsersCollection) {
         var usersCollection = new UsersCollection();
         usersCollection.fetch();
@@ -219,6 +238,7 @@ define([
     });
 
     router.on('route:user', function (id) {
+      appView.destroyChildren();
       require(['views/users/user_detail'], function (UserDetailView) {
         var userPage = Vm.create(appView, 'UserDetailView', UserDetailView, {vent: vent});
         userPage.loadUser(id);

@@ -16,31 +16,37 @@ define([
       regions: [],
       genres: [],
       mentions: [],
+      mentions_total: 0,
       created: new Date,
       last_updated: new Date,
       active: true,
       external_ids: {
-        "lastfm_id": "",
-        "facebook_id": "",
-        "echonest_id": ""
+        lastfm_id: "",
+        facebook_id: "",
+        echonest_id: ""
       },
       running_stats: {
-        "facebook_likes": {
-            "current": 0,
-            "incremental_avg": 0,
-            "incremental_total": 0,
-            "last_updated": "",
-            "incremental": 0,
-            "daily_stats": [] 
+        facebook_likes: {
+            current: 0,
+            incremental_avg: 0,
+            incremental_total: 0,
+            last_updated: "",
+            incremental: 0,
+            daily_stats: [] 
         },
-        "lastfm_listeners": {
-            "current": 0,
-            "incremental_avg": 0,
-            "incremental_total": 0,
-            "last_updated": "",
-            "incremental": 0,
-            "daily_stats": [] 
+        lastfm_listeners: {
+            current: 0,
+            incremental_avg: 0,
+            incremental_total: 0,
+            last_updated: "",
+            incremental: 0,
+            daily_stats: [] 
         }
+      },
+      failed_lookups: {
+        facebook: 0,
+        lastfm: 0,
+        echonest: 0
       }
     },
 

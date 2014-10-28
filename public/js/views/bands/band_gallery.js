@@ -21,11 +21,8 @@ define([
     },
 
     render: function () {
-      this.destroyChildren();
       this.$el.empty();
       this.$el.html(bandListTemplate);
-
-      this.destroyChildren();
 
       var parent = this;
       _.each(this.collection.models, function (model) {
@@ -39,23 +36,10 @@ define([
     },
 
     renderBand: function (model) {
-      var bandGalleryItemView = Vm.create(this, 'BandGalleryItemView', BandGalleryItemView, {model: model, vent: this.vent});
+      var viewName = 'BandGalleryItemView' + model.get("band_id");
+      var bandGalleryItemView = Vm.create(this, viewName, BandGalleryItemView, {model: model, vent: this.vent});
       $('#band-list', this.el).append(bandGalleryItemView.render().el); 
     },
-
-    destroyChildren: function() {
-      var parent = this;
-      _.each(this.children, function(child, name) {
-        if (typeof child.close === 'function') {
-          child.close();
-        }
-        child.remove();
-        child.undelegateEvents();
-        child.unbind();
-      }, this);
-      this.children = {};
-    }
-
 
   });
   return BandGalleryView;

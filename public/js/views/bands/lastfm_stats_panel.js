@@ -24,14 +24,9 @@ define([
       this.model.bind("fetch", this.render, this);
 
       if (this.vent) {
-        _.bindAll(this, "lookupLastfmId"); 
-        this.vent.bind("lastfmStatsPanel.lookupLastfmId", this.lookupLastfmId);
-
-        _.bindAll(this, "collectLastfmLikes"); 
-        this.vent.bind("lastfmStatsPanel.collectLastfmLikes", this.collectLastfmLikes);
-
-        _.bindAll(this, "clearLastfmId"); 
-        this.vent.bind("lastfmStatsPanel.clearLastfmId", this.clearLastfmId);
+        this.listenTo(this.vent, "lastfmStatsPanel.lookupLastfmId", this.lookupLastfmId);
+        this.listenTo(this.vent, "lastfmStatsPanel.collectLastfmLikes", this.collectLastfmLikes);
+        this.listenTo(this.vent, "lastfmStatsPanel.clearLastfmId", this.clearLastfmId);
       }
     },
 

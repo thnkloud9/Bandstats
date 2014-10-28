@@ -41,7 +41,6 @@ define([
 
     initialize: function (options) {
       this.vent = options.vent;
-      this.children = {};
     },
 
     addGenre: function () {
@@ -197,20 +196,7 @@ define([
           $('.flash-message').addClass('alert-success').text("Success").show();
         }
       });
-    },    
-
-    destroyChildren: function () {
-      var parent = this;
-      _.each(this.children, function(child, name) {
-        if (child.close) {
-          child.close();
-        }
-        child.remove();
-        child.undelegateEvents();
-        child.unbind();
-      }, this);
-      this.children = {};
-    }
+    },
 
   });
 
