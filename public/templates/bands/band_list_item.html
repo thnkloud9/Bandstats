@@ -21,6 +21,19 @@
   <td><%= running_stats.facebook_likes.current %> / <%= running_stats.facebook_likes.incremental_avg %></td>
   <td><%= running_stats.lastfm_listeners.current %> / <%= running_stats.lastfm_listeners.incremental_avg %></td>
   <td><%= mentions.length %></td>
-  <td><%= created %></td>
-  <td><%= last_updated %></td>
-  <td><%= active %></td>
+  <td><% var createdDate = new Date(created); print(createdDate.toLocaleDateString()) %>
+  <td><% var lastUpdatedDate = new Date(last_updated); print(lastUpdatedDate.toLocaleDateString()) %></td>
+  <td>
+    <ul class="list-inline">
+      <li>
+        <% if (active === "true") { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success band-deactivate">Active</button>
+        <% } else { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger band-activate">Hidden</button>
+        <% } %>
+      </li>
+      <li>
+        <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger band-delete">Delete</button>
+      </li>
+    </ul>
+  </td>

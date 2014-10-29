@@ -153,9 +153,10 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
     var today = moment().format('YYYY-MM-DD');
     var now = moment().format('YYYY-MM-DD HH:mm:ss');
 
-    // add toays stat with upsert to overwrite in case it was already collected today
-    async.series({
-        deleteToday: function(cb) {
+    // add todays stat with upsert to overwrite in case it was already collected today
+    async.series([
+        // delete today
+        function(cb) {
             var runningStat = {};
             runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today };
             var set = { $pull: runningStat };
@@ -163,7 +164,26 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
                 cb(err, result);
             });
         },
-        updateToday: function(cb) {
+        // remove last tag
+        function (cb) {
+            var thisStat = stat;
+            db.collection('bands').findOne(query, function(err, band, stat) {
+                var runningStats = band.running_stats;
+                var dailyStats = runningStats[thisStat].daily_stats;
+                for (var s in dailyStats) {
+                    var dailyStat = dailyStats[s];
+                    if (dailyStat.last) {
+                        delete dailyStat.last;
+                    }
+                }
+                var set = { $set: { "running_stats": runningStats }};
+                db.collection(collection).update(query, set, {"multi":true}, function(err, result) { 
+                    cb(err, result);
+                });
+            });
+        },
+        // update today
+        function(cb) {
             var runningStat = {};
             var setFields = {};
             var incFields = {};
@@ -179,7 +199,12 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
                 }
 
             } else { 
-                runningStat["running_stats." + stat + ".daily_stats"] = { "date":  today, "value": value, "incremental": incremental };
+                runningStat["running_stats." + stat + ".daily_stats"] = { 
+                    "date":  today, 
+                    "value": value, 
+                    "incremental": incremental, 
+                    "last": true 
+                };
                 setFields["running_stats." + stat + ".current"] = value;
                 setFields["running_stats." + stat + ".incremental"] = incremental;
                 setFields["running_stats." + stat + ".incremental_total"] = incrementalTotal;
@@ -197,7 +222,8 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
                 cb(err, result);
             });
         },
-        deleteOld: function(cb) {
+        // delete old stats
+        function(cb) {
 
             var expire = moment().subtract(parent.retentionPeriod, parent.retentionValue).format('YYYY-MM-DD');
             var expireStat = {};
@@ -208,7 +234,7 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
                 cb(err, result);
             });
         },
-    },
+    ],
     function(err, results) {
         callback(err, results);
     });

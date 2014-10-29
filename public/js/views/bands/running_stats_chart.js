@@ -30,11 +30,6 @@ define([
         facebookLikesData.push(stat.value);	
       });
 
-      var lastfmListenersData = [];
-      _.forEach(this.model.attributes.running_stats.lastfm_listeners.daily_stats, function(stat) {
-        lastfmListenersData.push(stat.value);	
-      });
-
       var chartData = {
         labels : dateLabels,
         datasets : [
@@ -44,13 +39,6 @@ define([
 			pointColor : "rgba(220,220,220,1)",
 			pointStrokeColor : "#fff",
 			data : facebookLikesData
-		  },
-		  {
-			fillColor : "rgba(151,187,205,0.5)",
-			strokeColor : "rgba(151,187,205,1)",
-			pointColor : "rgba(151,187,205,1)",
-			pointStrokeColor : "#fff",
-			data : lastfmListenersData
 		  }
         ]
       }

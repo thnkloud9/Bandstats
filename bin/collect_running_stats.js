@@ -119,21 +119,10 @@ function start(save) {
     });
 }
 
-function sanitizeSearchString(text) {
-    sanitized_text = text.toLowerCase();
-    sanitized_text = sanitized_text.replace('&', 'and')
-        .replace(/[\+\,\.\?\!\-\;\:\'\(\)]+/g, '')
-        .replace(/[\"“\'].+[\"”\']/g, '')
-        .replace(/[\n\r]/g, '')
-        .replace(/[\[\]]/g, '')
-        .replace(/[\\\/]/g, '');
- 
-    return sanitized_text;
-}
-
 function collectRunningStats(save, query, provider, resource, runningStat, callback) {
     var lookupFunction = resource;
     var yesterday = moment().subtract('days', 1).format('YYYY-MM-DD');
+    var today = moment().format('YYYY-MM-DD');
 
     util.log('starting ' + runningStat + ' collection using ' + resource);
 
@@ -166,21 +155,42 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
  
         // build searchObj
         async.forEach(results, function(band, cb) {
-            // find yesterdays stat
-            var previous = null;
             var incrementalTotal = 0;
             var totalStats = 0;
+            var maxLastValue = 0;
 
-            // see if we running_stat already exists
+            // see if running_stat already exists
             if (band.running_stats[runningStat]) {
                 var existingRunningStats = band.running_stats[runningStat].daily_stats;
                 for (var s in existingRunningStats) {
                     var stat = existingRunningStats[s];
+                    // if there is a stat from esterday, use it
                     if (stat.date == yesterday) {
-                       previous = stat.value;
+                       var previous = stat.value;
+                    }
+
+                    // if we don't have a stat from yesterday, and the last marked stat is not from today, use it
+                    if ((typeof previous === 'undefined')  && 
+                        (stat.last == true) &&
+                        (stat.date != today)) {
+                      var previous = stat.value;
                     }
                     incrementalTotal += stat.incremental; 
                     totalStats++;
+                    if ((stat.value > maxLastValue) && (stat.date != today)) {
+                      maxLastValue = stat.value;
+                    }
+                }
+            }
+
+            // if there was no stat from yesterday, no stat marked last use:
+            if (typeof previous === 'undefined') {
+                if (totalStats > 0) {
+                    // use the last max stat we have
+                    var previous = maxLastValue;
+                } else {
+                    // or set to zero
+                    var previous = 0;
                 }
             }
 
@@ -214,8 +224,6 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     return false;
                 }
 
-                util.log('finished ' + runningStat + ' collection using ' + resource);
-
                 // save results here
                 async.forEach(results, function(result, rcb) {
                     var bandId = result.band_id;
@@ -223,23 +231,36 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var search = result.search;
                     var value = result.results;
                     var previous = result.previous;
-                    // do not calculate incremental if this is the first collection
-                    if (previous === null) {
-                        var incremental = 0;
+                    var totalStats = result.totalStats;
+
+                    // first collection gets 1 incremental to 
+                    if (totalStats === 0) {
+                        var incremental = 1;
+                        var previous = parseInt(value) - 1;
                     } else {
+                        // we SHOULD non have a non 0 previous here,
+                        // if there is a problem with stats, dump previous here
+                        // and see if its 0
                         var incremental = parseInt(value) - parseInt(previous); 
                     }
                     var totalStats = result.total_stats;
-                    var incrementalTotal = result.incremental_total;
-                    incrementalTotal += incremental;
+                    var incrementalTotal = parseInt(result.incremental_total) + incremental;
                     var incrementalAvg = Math.round(incrementalTotal / totalStats);
 
                     jobStats.processed++;
 
                     // save the record 
                     if (save) {
-                        util.log('updating ' + bandName + ' using id ' + search + ' with ' + value);
-                        bandRepository.updateRunningStat({"band_id": bandId}, provider, runningStat, value, incremental, incrementalTotal, incrementalAvg, function(err, updated) {
+                        util.log('updating ' + bandName + ' using id ' + search + ' with ' + value + ' incr ' + incremental + ' prev ' + previous);
+                        bandRepository.updateRunningStat(
+                            {"band_id": bandId}, 
+                            provider, 
+                            runningStat, 
+                            value, 
+                            incremental, 
+                            incrementalTotal, 
+                            incrementalAvg, 
+                            function(err, updated) {
                             if (err) {
                                 jobStats.errors++;
                                 util.log(err); 

@@ -59,8 +59,6 @@ define([
 
     Events.trigger('viewCreated');
 
-    console.log(views);
-
     return view;
   };
   

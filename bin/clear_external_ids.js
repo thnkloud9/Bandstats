@@ -23,14 +23,13 @@ db.collection('bands').find().toArray(function(err, results) {
 
     var results = results;
     async.forEach(results, function(result, cb) {
-        var facebookId = result.running_stats.facebook_likes.facebook_id;
         var bandId = result.band_id;
         var bandName = result.band_name;
         var updateQuery = { "band_id": result.band_id };
         var set = {
             $set: {
                 "external_ids": {
-                    "facebook_id": facebookId,
+                    "facebook_id": "",
                     "lastfm_id": bandName,
                     "musicbrainz_id": "",
                     "bandcamp_id": "",

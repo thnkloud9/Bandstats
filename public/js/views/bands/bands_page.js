@@ -24,6 +24,7 @@ define([
     initialize: function(options) {
       this.session = options.session; 
       this.vent = options.vent;
+      this.breadcrumb = options.breadcrumb;
       this.filter.genres = [];
       this.filter.regions = [];
 	  //this.sort['running_stats.facebook_likes.current'] = "desc";
@@ -130,7 +131,8 @@ define([
       var templateData = {
         genres: this.filter.genres,
         regions: this.filter.regions,
-	    sorts: sorts
+	    sorts: sorts,
+        breadcrumb: this.breadcrumb,
       };
 
       this.$el.html(this.template(templateData));

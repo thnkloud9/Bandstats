@@ -79,7 +79,7 @@ define([
     router.on('route:dashboard_genres', function () {
       appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
-        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
+        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage, {breadcrumb: 'Genres'});
         dashboardPage.renderGenres();
       });
     });
@@ -87,7 +87,7 @@ define([
     router.on('route:dashboard_regions', function () {
       appView.destroyChildren();
       require(['views/dashboard/dashboard_page'], function (DashboardPage) {
-        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage);
+        var dashboardPage = Vm.create(appView, 'DashboardPage', DashboardPage, {breadcrumb: 'Regions'});
         dashboardPage.renderRegions();
       });
     });
@@ -108,7 +108,7 @@ define([
 	    var query = '{"external_ids.' + field + '": ""}';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Missing ' + field});
         searchResultsView.render();
       });
     });
@@ -119,7 +119,7 @@ define([
 	    var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
         var bandsCollection = new BandsCollection(null, query);
         bandsCollection.getFirstPage();
-        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent});
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Bad ' + field});
         searchResultsView.render();
       });
     });
@@ -196,7 +196,7 @@ define([
       require(['views/jobs/jobs_page', 'collections/running_jobs'], function (JobsPage, RunningJobsCollection) {
         var runningJobsCollection = new RunningJobsCollection();
         runningJobsCollection.fetch();
-        var runningJobsPage = Vm.create(appView, 'RunningJobsPage', JobsPage, {collection: runningJobsCollection});
+        var runningJobsPage = Vm.create(appView, 'RunningJobsPage', JobsPage, {collection: runningJobsCollection, breadcrumb: 'Running Jobs'});
         runningJobsPage.render();
       });
     });
@@ -206,7 +206,7 @@ define([
       require(['views/jobs/jobs_page', 'collections/jobs_log'], function (JobsPage, JobsLogCollection) {
         var jobsLogCollection = new JobsLogCollection();
         jobsLogCollection.fetch();
-        var jobsLogPage = Vm.create(appView, 'JobsLogPage', JobsPage, {collection: jobsLogCollection});
+        var jobsLogPage = Vm.create(appView, 'JobsLogPage', JobsPage, {collection: jobsLogCollection, breadcrumb: 'Job Log'});
         jobsLogPage.render();
       });
     });

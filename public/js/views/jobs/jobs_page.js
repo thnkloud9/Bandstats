@@ -8,9 +8,15 @@ define([
 ], function($, _, Backbone, Vm, JobListView, jobsPageTemplate){
   var JobsPage = Backbone.View.extend({
     el: '#content',
+    template: _.template(jobsPageTemplate),
+
+    initialize: function(options) {
+        this.breadcrumb = options.breadcrumb;
+    },
 
     render: function () {
-      this.$el.html(jobsPageTemplate);
+      var templateData = {breadcrumb: this.breadcrumb};
+      this.$el.html(this.template(templateData));
       this.renderJobList();
     },
 

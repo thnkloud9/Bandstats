@@ -168,7 +168,7 @@ define([
 
       this.model.set({
         band_name: $('#band-name').val(),
-        active: $('active').is(':checked')
+        active: ($('#active').prop('checked')) ? "true" : "false",
       });
 
       // remove id if this is a new model

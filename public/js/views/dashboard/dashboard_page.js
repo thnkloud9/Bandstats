@@ -23,11 +23,17 @@ define([
 
   var DashboardPage = Backbone.View.extend({
     el: '#content',
+    template: _.template(dashboardPageTemplate),
+
+    initialize: function(options) {
+      this.breadcrumb = options.breadcrumb;
+    },
 
     renderGenres: function () {
       this.destroyChildren();
 
-      $(this.el).html(dashboardPageTemplate);
+      var templateData = { breadcrumb: this.breadcrumb };
+      $(this.el).html(this.template(templateData));
 
       var genresDashboardView = Vm.create(this, 'GenresDashboardView', GenresDashboardView);
       $(genresDashboardView.render().el).appendTo($('#dashboard-list', this.el));
@@ -36,14 +42,16 @@ define([
     renderRegions: function () {
       this.destroyChildren();
 
-      $(this.el).html(dashboardPageTemplate);
+      var templateData = { breadcrumb: this.breadcrumb };
+      $(this.el).html(this.template(templateData));
 
       var regionsDashboardView = Vm.create(this, 'RegionsDashboardView', RegionsDashboardView);
       $(regionsDashboardView.render().el).appendTo($('#dashboard-list', this.el));
     },
 
     render: function () {
-      $(this.el).html(dashboardPageTemplate);
+      var templateData = { breadcrumb: this.breadcrumb };
+      $(this.el).html(this.template(templateData));
 
       var usersDashboardView = Vm.create(this, 'UsersDashboardView', UsersDashboardView);
       $(usersDashboardView.render().el).appendTo($('#dashboard-list', this.el));

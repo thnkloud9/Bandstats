@@ -363,8 +363,8 @@ BandController.prototype.createAction = function(req, res) {
             values: req.body.values 
         };
         res.send(data);
-    }    
-    this.bandRepository.insert(req.body.values, {}, function(err, band) {
+    }
+    this.bandRepository.insert(req.body, {}, function(err, band) {
         res.send({status: "success", band: band});
     });
 }

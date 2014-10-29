@@ -1,7 +1,9 @@
+<ol class="breadcrumb">
+  <li><a href="#bands">Bands</a></li>
+  <li class="active"><%= band_name %></li>
+</ol>
+
 <div id="band-detail-content" class="row">
-
-            <legend>Band Details</legend>
-
 	    <ul class="list-inline">
 
 	      <li style="vertical-align: top">
@@ -55,7 +57,7 @@
 
                  <div class="form-group">
                  <label for="active" class="control-label">Active: </label>
-                 <input class="form-control" type="checkbox" id="active" name="active" value="true" <%= active == "true" ? 'checked' : '' %>/>
+                 <input class="form-control" type="checkbox" id="active" value="true" <%= active == "true" ? 'checked' : '' %>/>
                  </div>
 
 		<div class="input-group" style="width: 100%">
