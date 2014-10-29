@@ -5,6 +5,7 @@
  */
 
 var request = require('request');
+var util = require('util');
 var async = require('async');
 var _ = require('underscore');
 
@@ -121,26 +122,24 @@ SiteController.prototype.articlesAction = function(req, res) {
 
 SiteController.prototype.updateAction = function(req, res) {
     if (req.route.method != "put") {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(500);
-        res.send();
+        res.send({status: "error", error: "update must be put action and must include values"});
         return false;
     }
     var query = {'site_id': req.params.id};
-    var values = req.body;
+    var site = req.body;
     var siteRepository = this.siteRepository
 
-    delete values._id;
+    delete site._id;
 
-    siteRepository.update(query, values, {}, function(err, updated) {
+    siteRepository.update(query, site, {}, function(err, updated) {
         if ((err) || (!updated)) {
             res.setHeader('Content-Type', 'application/json');
             res.status(500);
             res.send();
             return false;
         }
-        // send updated site back
-        util.log('updated site ' + values.site_id);
+        // send updated site back   
+        util.log('updated site ' + site.site_id);
         res.setHeader('Content-Type', 'application/json');
         res.status(200);
         res.send();

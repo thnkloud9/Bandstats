@@ -5,8 +5,14 @@ define([
   'collections/sites',
   'views/paginator',
   'views/sites/site_list_item',
+  'text!templates/sites/site_list_header.html',
   'text!templates/sites/site_list.html'
-], function($, _, Backbone, SitesCollection, PaginatorView, SiteListItemView, siteListTemplate){
+], function($, _, Backbone, 
+    SitesCollection,
+    PaginatorView, 
+    SiteListItemView,
+    siteListHeaderTemplate,
+    siteListTemplate){
   var SiteListView = Backbone.View.extend({
     el: '#site-list-container',
 
@@ -20,6 +26,8 @@ define([
     render: function () {
 
       this.$el.html(siteListTemplate);
+
+      $('#site-list', this.el).html(siteListHeaderTemplate);
 
       var parent = this;
       _.each(this.collection.models, function (model) {
