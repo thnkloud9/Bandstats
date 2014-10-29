@@ -10,11 +10,6 @@ define([
 
     render: function () {
       this.$el.html(settingsPageTemplate);
-      require(['views/sidenav/settings_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
-        sideNavView.render();                                      
-      });
-
       this.getData();
     },
 

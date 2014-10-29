@@ -21,11 +21,6 @@ define([
     render: function () {
       this.$el.html(usersPageTemplate);
       this.renderUserGallery();
-
-      require(['views/sidenav/users_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
-        sideNavView.render();                                      
-      });
     },
 
     renderUserGallery: function (model) {

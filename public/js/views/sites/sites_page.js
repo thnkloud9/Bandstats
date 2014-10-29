@@ -21,10 +21,6 @@ define([
 
       this.renderSiteList();
 
-      require(['views/sidenav/sites_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
-        sideNavView.render();                                      
-      });
     },
 
     renderSiteGallery: function(model) {

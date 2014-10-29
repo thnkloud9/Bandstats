@@ -11,7 +11,7 @@ define([
   var AppView = Backbone.View.extend({
     el: 'body',
     session: null,
-    requiredViews: ['TopNavView', 'SideNavView', 'FooterView', 'ModalView'],
+    requiredViews: ['TopNavView', 'FooterView', 'ModalView'],
 
     initialize: function (options) {
       this.vent = options.vent;
@@ -41,11 +41,6 @@ define([
         parent.renderBandsTypeahead();  
       });
 
-
-      require(['views/sidenav/' + section + '_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
-        sideNavView.render();
-      });
 
       require(['views/footer/footer'], function (FooterView) {
         // Pass the appView down into the footer so we can render the visualisation

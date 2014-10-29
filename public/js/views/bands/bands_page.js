@@ -138,11 +138,6 @@ define([
       this.renderGenreTypeahead();
       this.renderRegionTypeahead();
     
-      require(['views/sidenav/bands_menu'], function (SideNavView) {
-        var sideNavView = Vm.create(parent, 'SideNavView', SideNavView);
-        sideNavView.render();                                      
-      });
-
       this.renderViewType();
     },
 

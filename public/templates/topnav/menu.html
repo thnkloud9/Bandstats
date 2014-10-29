@@ -11,20 +11,104 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a class="topnav-link" id="dashboard" href="#dashboard">Dashboard</a></li>
-            <li><a class="topnav-link" id="bands" href="#bands">Bands</a></li>
-            <li><a class="topnav-link" id="sites" href="#sites">Sites</a></li>
-            <li><a class="topnav-link" id="jobs" href="#jobs">Jobs</a></li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dashboard <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#">Overview</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#dashboard/genres">Genre Stats</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#dashboard/regions">Region Stats</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Bands <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#bands">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/0">Create</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/missing/facebook_id">Missing Facebbok Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/bad/facebook_likes">Bad Facebook Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/missing/lastfm_id">Missing Lastfm Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/bad/lastfm_listeners">Bad Lastfm Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/import/load">Import</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sites <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#sites">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#sites/0">Create</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Jobs <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#jobs">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#jobs/0">Create</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#running_jobs">Running</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#jobs_log">Log</a>
+                </li>
+              </ul>
+            </li>
+
             <li><a class="topnav-link" id="settings" href="#settings">Settings</a></li>
-            <li><a class="topnav-link" id="users" href="#users">Users</a></li>
-            <!-- <li><a class="topnav-link" id="logout" href="/logout">Logout</a></li>  -->
-	    <li class="dropdown">
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Users <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#users">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#users/0">Create</a>
+                </li>
+              </ul>
+            </li>
+
+	        <li class="dropdown">
     	      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
       	        <%= user.username %> <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-		<li><a class="topnav-link" id="view-profile" href="#users/<%= user.user_id %>">Edit Profile</a></li>
-		<li><a class="topnav-link" id="logout" href="/logout">Logout</a></li>
+		        <li>
+                  <a class="topnav-link" id="view-profile" href="#users/<%= user.user_id %>">Edit Profile</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" id="logout" href="/logout">Logout</a>
+                </li>
               </ul>
             </li>
           </ul>
