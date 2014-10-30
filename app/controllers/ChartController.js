@@ -35,6 +35,7 @@ ChartController.prototype.indexAction = function(req, res) {
     var orderByList = req.query.orderBy;
     var regionList = req.query.region;
     var genreList = req.query.genre;
+    var jsonpCallback = req.query.callback;
     var conditions = [];
 
     if (req.query.search) {
@@ -105,7 +106,11 @@ ChartController.prototype.indexAction = function(req, res) {
         var results = {
             "bands": bands
         }
-        res.send(results);
+        if (jsonpCallback) {
+            res.send(jsonpCallback + '(' + JSON.stringify(results) + ')');
+        } else {
+            res.send(results);
+        }
     });
 }
 
