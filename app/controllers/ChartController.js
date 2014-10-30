@@ -31,12 +31,17 @@ ChartController.prototype.indexAction = function(req, res) {
     var query = {};
     var parent = this;
     var limit = req.query.limit;
-    var start = req.query.start;
+    var skip = req.query.skip;
+    var page = req.query.page;
     var orderByList = req.query.orderBy;
     var regionList = req.query.region;
     var genreList = req.query.genre;
     var jsonpCallback = req.query.callback;
     var conditions = [];
+
+    if (page) {
+        skip = (page * limit) + 1;
+    }
 
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
@@ -64,6 +69,7 @@ ChartController.prototype.indexAction = function(req, res) {
         orderBys.push("running_stats.lastfm_listeners.current");
         orderBys.push("running_stats.facebook_likes.current");
     }
+
     for (var o in orderBys) {
         var condition =  {};
         condition[orderBys[o]] = {$not: {$type: 2}};
@@ -86,7 +92,8 @@ ChartController.prototype.indexAction = function(req, res) {
         "external_ids": 1,
         "regions": 1,
         "genres": 1,
-        "limit": limit
+        "limit": limit,
+        "skip": skip,
     };
 
     // add sorting
