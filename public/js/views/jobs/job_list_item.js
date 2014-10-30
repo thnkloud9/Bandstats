@@ -18,7 +18,10 @@ define([
     },
 
     events: {
-        'click .btn-run-job': 'runJob'
+      'click .btn-run-job': 'runJob',
+      'click .job-activate': 'activateJob',
+      'click .job-deactivate': 'deactivateJob',
+      'click .job-delete': 'deleteJob'
     },
 
     render: function () {
@@ -60,6 +63,52 @@ define([
                 }
             }
         }); 
+    },
+
+    deleteJob: function () {
+      parent = this;
+      this.model.destroy({
+        success: function(job, response) {
+          $('.flash-message').addClass('alert-success').text("Success").show();
+          parent.undelegateEvents();
+          parent.unbind();
+          parent.remove();
+          parent.off();
+        }
+      });
+    },
+
+    activateJob: function () {
+      console.log('Updating job ' + this.model.get('job_id'));
+      parent = this;
+      this.model.set({ job_active: "true" });
+
+      this.model.save(null, {
+        success: function(job, response) {
+          parent.render();
+          $('.flash-message').addClass('alert-success').text("Success").show();
+        }, 
+        error: function(job, response) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
+    },
+
+    deactivateJob: function () {
+      parent = this;
+      this.model.set({ job_active: "false" });
+
+      this.model.save(null, {
+        success: function(job, response) {
+          parent.render();
+          $('.flash-message').addClass('alert-success').text("Success").show();
+        }, 
+        error: function(job, response) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
     }
 
   });

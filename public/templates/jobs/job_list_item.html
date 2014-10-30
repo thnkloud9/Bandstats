@@ -32,13 +32,18 @@
    </td>
 
    <td>
-     <% if (job_active == "true" ) { %>
-        <span class="label label-success">Active</span>
-     <% } else { %>
-        <span class="label label-danger">Inactive</span>
-     <% }  %>
-   </td>
-
-   <td>
-     <button data-job-id="<%= job_id %>" class="btn btn-primary btn-run-job">Run Now</button>
+    <ul class="list-inline">
+      <li>
+        <% if (job_active == "true" ) { %>
+          <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-success job-deactivate">Active</button>
+        <% } else { %>
+          <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-danger job-activate">Inactive</button>
+        <% }  %>
+      </li>
+      <li>
+        <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-primary btn-run-job">Run Now</button>
+      </li>
+      <li>
+        <button type="button" data-band-id="<%= job_id %>" class="btn btn-xs btn-danger job-delete">Delete</button>
+      </li>
    </td>
