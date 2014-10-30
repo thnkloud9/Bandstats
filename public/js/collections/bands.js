@@ -17,9 +17,6 @@ define([
       if (startQuery) {
         this.startQuery = startQuery;
       }
-
-      //this.sort['running_stats.facebook_likes.current'] = "desc"; 
-    
     },
 
     url: function() {
@@ -27,8 +24,10 @@ define([
       path += "?limit=" + this.paginatorOptions.perPage;
       path += "&skip=" + (this.paginatorOptions.currentPage * this.paginatorOptions.perPage);
 
+      // note: these are saved queries referrenced by name
+      // not actual mongo queries
       if (this.startQuery) {
-        path += "&q=" + this.startQuery;
+        path += "&startQuery=" + this.startQuery;
       }
 
       if (this.bandSearch) {

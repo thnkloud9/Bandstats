@@ -405,17 +405,8 @@ BandRepository.prototype.count = function(query, callback) {
 
 BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
     var statId = "running_stats." + stat + ".error";
-    var errorQuery = {};
-    var stringQuery ={};
-    errorQuery[statId] = /^error.*/;
-    stringQuery[statId] = {$type: 1};
-
-    var query = {
-        $or: [
-            errorQuery,
-            stringQuery 
-        ]
-    };
+    var query = {};
+    query[statId] = { $exists: true, $nin: [ "", null ] }
 
     this.count(query, function(err, results) {
         if (err) util.log(err);

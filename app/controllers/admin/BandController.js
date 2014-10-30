@@ -118,8 +118,9 @@ BandController.prototype.indexAction = function(req, res) {
         });
     }
 
-    if (req.query.q) {
-      var startQuery = JSON.parse(req.query.q);
+    if (req.query.startQuery) {
+      //var startQuery = JSON.parse(decodeURIComponent(req.query.q));
+      var startQuery = this.getStartQuery(req.query.startQuery);
     } else {
       var startQuery = {};
     }
@@ -128,7 +129,7 @@ BandController.prototype.indexAction = function(req, res) {
     var orderedQuery = {
         $query: { 
             $and: [
-		startQuery, 
+	        	startQuery, 
                 searchQuery, 
                 filterQuery 
             ]
@@ -139,7 +140,7 @@ BandController.prototype.indexAction = function(req, res) {
     // unordered query for count
     var unorderedQuery = {
         $and: [
-	    startQuery, 
+	        startQuery, 
             searchQuery,
             filterQuery
         ]
@@ -174,6 +175,48 @@ BandController.prototype.indexAction = function(req, res) {
         }
       });
     });
+}
+
+BandController.prototype.getStartQuery = function(queryName) {
+    if (queryName === "facebook_likes_errors") {
+        var query = {};
+        query["running_stats.facebook_likes.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "lastfm_listeners_errors") {
+        var query = {};
+        query["running_stats.lastfm_listeners.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "facebook_id_missing") {
+        var query = {};
+        query["external_ids.facebook_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "lastfm_id_missing") {
+        var query = {};
+        query["external_ids.lastfm_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    return {};
 }
  
 BandController.prototype.countAction = function(req, res) {

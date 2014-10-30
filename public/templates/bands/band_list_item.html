@@ -18,10 +18,34 @@
     <% } %>
   </td>
 
-  <td><%= running_stats.facebook_likes.current %> / <%= running_stats.facebook_likes.incremental_avg %></td>
-  <td><%= running_stats.lastfm_listeners.current %> / <%= running_stats.lastfm_listeners.incremental_avg %></td>
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total likes">
+      <%= running_stats.facebook_likes.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg likes">
+      <%= running_stats.facebook_likes.incremental_avg %>
+    </span>
+  </td>
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total listener">
+      <%= running_stats.lastfm_listeners.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg listeners">
+      <%= running_stats.lastfm_listeners.incremental_avg %>
+    </span>
+  </td>
+
   <td><%= mentions.length %></td>
-  <td><% var createdDate = new Date(created); print(createdDate.toLocaleDateString()) %>
+
+  <td>
+    <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="facebook errors">
+      <%= failed_lookups.facebook %>
+    </i>
+    <i class="fa fa-lastfm-square bs-tooltip" data-toggle="tooltip" title="lastfm errors">
+       <%= failed_lookups.lastfm %>
+    </i>
+  </td>
+
   <td><% var lastUpdatedDate = new Date(last_updated); print(lastUpdatedDate.toLocaleDateString()) %></td>
   <td>
     <ul class="list-inline">

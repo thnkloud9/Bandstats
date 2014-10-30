@@ -44,18 +44,14 @@ define([
     renderValidBandsChart: function (data) {
       this.data = data;
 
-      var missingBoth = Math.min(data.missing_facebook, data.missing_lastfm);
-      var badBoth = Math.min(data.bad_facebook, data.bad_lastfm);
-      var missingFacebook = data.missing_facebook - missingBoth;
-      var missingLastfm = data.missing_lastfm - missingBoth;
-      var badFacebook = data.bad_facebook - badBoth;
-      var badLastfm = data.bad_lastfm - badBoth;
-      var good = data.total - (missingBoth + badBoth + missingFacebook + missingLastfm + badFacebook + badLastfm);
+      var missingFacebook = data.missing_facebook;
+      var missingLastfm = data.missing_lastfm;
+      var badFacebook = data.bad_facebook;
+      var badLastfm = data.bad_lastfm;
+      var good = data.total - (missingFacebook + missingLastfm + badFacebook + badLastfm);
 
 
       $('#good').html(good);
-      $('#missing-both').html(missingBoth);
-      $('#bad-both').html(badBoth);
       $('#missing-facebook').html(missingFacebook);
       $('#missing-lastfm').html(missingLastfm);
       $('#bad-facebook').html(badFacebook);
@@ -66,8 +62,6 @@ define([
 
       var pieData = [
 		{ value: good, color:"#5cb85c" },
-		{ value: missingBoth, color:"#400002" },
-		{ value : badBoth, color : "#7F0003" },
 		{ value : missingFacebook, color : "#FF0007" },
 		{ value : badFacebook, color : "#5ACCBB" },
 		{ value : missingLastfm, color : "#B200B2" },

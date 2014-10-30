@@ -10,6 +10,7 @@ require.config({
     typeahead: 'libs/typeahead/typeahead.bundle',
     moment: 'libs/moment/moment',
     chart: 'libs/chart/chart.min',
+    simpleDragAndDrop: 'libs/bandstats/simple-drag-n-drop.js',
     jqueryIframeTransport: 'libs/jquery-iframe-transport/jquery.iframe-transport',
 
     // Require.js plugins

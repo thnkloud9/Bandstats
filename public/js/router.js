@@ -105,10 +105,11 @@ define([
     router.on('route:missing_external_id', function (field) {
       appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
-	    var query = '{"external_ids.' + field + '": ""}';
-        var bandsCollection = new BandsCollection(null, query);
+	    var startQuery = field + '_missing';
+        var bandsCollection = new BandsCollection(null, startQuery);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Missing ' + field});
+        searchResultsView.applySessionFilter();
         searchResultsView.render();
       });
     });
@@ -116,10 +117,11 @@ define([
     router.on('route:bad_external_id', function (field) {
       appView.destroyChildren();
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
-	    var query = '{"running_stats.' + field + '.error": { "$exists": true } }';
-        var bandsCollection = new BandsCollection(null, query);
+	    var startQuery = field + '_errors';
+        var bandsCollection = new BandsCollection(null, startQuery);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Bad ' + field});
+        searchResultsView.applySessionFilter();
         searchResultsView.render();
       });
     });

@@ -20,6 +20,11 @@ define([
     initialize: function () {
       this.model.bind("change", this.render, this);
       this.model.bind("destroy", this.close, this);
+      var failedLookups = this.model.get("failed_lookups");
+      if (parseInt(failedLookups.facebook + failedLookups.lastfm) > 0) {
+        this.$el.addClass('danger');
+      }
+      $('.bs-tooltip').tooltip();
     },
 
     render: function () {

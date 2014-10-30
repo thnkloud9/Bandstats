@@ -12,7 +12,6 @@ define([
       site_name: '',
       site_url: '',
       site_weight: '',
-      album_name_field: '',
       band_name_field: '',
       created: new Date,
       description_field: '',
@@ -20,7 +19,6 @@ define([
       last_updated: new Date,
       link_field: '',
       publish_date_field: '',
-      track_name_field: '',
       site_image_src: ''
     },
 

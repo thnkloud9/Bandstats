@@ -13,6 +13,7 @@ define([
   'views/bands/running_stats_chart',
   'text!templates/bands/band_detail.html',
   'typeahead',
+  'simpleDragAndDrop',
 ], function($, _, Backbone, Vm, 
     BandModel, 
     FacebookStatsPanelView, 

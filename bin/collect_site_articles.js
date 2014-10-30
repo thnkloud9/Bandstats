@@ -256,8 +256,6 @@ function articleHasMatch(site, article, band) {
         var band_name = sanitizeSearchString(band.band_name);
         var search_fields = [ 
             'band_name_field',
-            'album_name_field', 
-            'track_name_field', 
             'description_field' ];
         for (var f in search_fields) {
             var search_field = search_fields[f];
