@@ -40,7 +40,9 @@ ChartController.prototype.indexAction = function(req, res) {
     var conditions = [];
 
     if (page) {
-        skip = (page * limit) + 1;
+        if (page > 1) {
+            skip = (page * limit) + 1;
+        }
     }
 
     if (req.query.search) {
