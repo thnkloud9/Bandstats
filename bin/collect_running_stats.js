@@ -166,7 +166,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var stat = existingRunningStats[s];
                     // if there is a stat from esterday, use it
                     if (stat.date == yesterday) {
-                       var previous = stat.value;
+                      var previous = stat.value;
                     }
 
                     // if we don't have a stat from yesterday, and the last marked stat is not from today, use it
@@ -231,10 +231,10 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var search = result.search;
                     var value = result.results;
                     var previous = result.previous;
-                    var totalStats = result.totalStats;
+                    var totalStats = result.total_stats;
 
                     // first collection gets 1 incremental to 
-                    if ((totalStats < 0) || (typeof totalStats === 'undefined')) {
+                    if ((totalStats < 1) || (typeof totalStats === 'undefined')) {
                         var incremental = 1;
                         var previous = parseInt(value) - 1;
                     } else {
