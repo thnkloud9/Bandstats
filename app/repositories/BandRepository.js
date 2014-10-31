@@ -81,9 +81,10 @@ BandRepository.prototype.remove = function(query, options, callback) {
 BandRepository.prototype.addDefaultValues = function(band) {
     var emptyObject = {};
     var emptyArray = [];
+    var facebookId = (band.external_ids.facebook_id) ? band.external_ids.facebook_id : ""; 
     band.external_ids = {
         "lastfm_id": band.band_name,
-        "facebook_id": "",
+        "facebook_id": facebookId,
         "echonest_id": ""
     }
     band.failed_lookups = {
@@ -192,7 +193,7 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
             if (typeof value == "string") {
 
                 setFields["running_stats." + stat + ".error"] = value;
-                incFields["failed_lookups." + provider] = 0;
+                incFields["failed_lookups." + provider] = 1;
                 var set = {
                     $set: setFields,
                     $inc: incFields
