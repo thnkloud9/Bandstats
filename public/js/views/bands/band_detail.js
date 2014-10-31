@@ -167,8 +167,14 @@ define([
         ev.preventDefault();
       }
 
+      var externalIds = this.model.get('external_ids');
+      externalIds.facebook_id = $('#facebook-id').val();
+      externalIds.lastfm_id = $('#lastfm-id').val();
+
       this.model.set({
         band_name: $('#band-name').val(),
+        band_url: $('#band-url').val(),
+        external_ids: externalIds,
         active: ($('#active').prop('checked')) ? "true" : "false",
       });
 
