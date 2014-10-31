@@ -167,6 +167,8 @@ body {
 
 .admin-modal-content {
   padding: 15px;
+  height: 350px;
+  overflow: scroll;
 }
 
 .facebook-lookup-item {
