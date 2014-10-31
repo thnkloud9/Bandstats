@@ -40,8 +40,8 @@ ChartController.prototype.indexAction = function(req, res) {
     var jsonpCallback = req.query.callback;
 
     // only used for delimagazine charts
-    var highLastFm = req.query.highLastFm;
-    var lowLastFm = req.query.lowLastFm;
+    var highLastFM = req.query.highLastFM;
+    var lowLastFM = req.query.lowLastFM;
 
     var conditions = [];
 
@@ -69,12 +69,12 @@ ChartController.prototype.indexAction = function(req, res) {
         conditions.push({"genres": { $in: genres }});
     }
 
-    if (highLastFm) {
-        conditions.push({"running_stats.lastfm_listeners.current": {$lt: parseInt(highLastFm)}});
+    if (highLastFM) {
+        conditions.push({"running_stats.lastfm_listeners.current": {$lt: parseInt(highLastFM)}});
     }
 
-    if (lowLastFm) {
-        conditions.push({"running_stats.lastfm_listeners.current": {$gt: parseInt(lowLastFm)}});
+    if (lowLastFM) {
+        conditions.push({"running_stats.lastfm_listeners.current": {$gt: parseInt(lowLastFM)}});
     }
 
     // dont show failed lookups or bands without score 
