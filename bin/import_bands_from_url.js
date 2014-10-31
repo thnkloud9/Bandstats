@@ -78,6 +78,10 @@ program
                         {"genres": { $in: [ band.genres[0] ] } }
                     ] 
                 };
+                
+                if (band.external_ids.facebook_id) {
+                    util.log(band.band_name + ' has ' + band.external_ids.facebook_id);
+                }
 
                 // see if this band already exists
                 bandRepository.find(query, {}, function(err, bandResults) {

@@ -18,7 +18,7 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
 });
 
 
-db.collection('counters').update({_id: "bands"}, {$set: { "seq": 0 }}, function(err, results) {
+db.collection('bands').remove(function(err, results) {
     if (err) util.log(err);
 
     console.log('done with update');
