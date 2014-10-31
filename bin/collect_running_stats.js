@@ -234,7 +234,7 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                     var totalStats = result.totalStats;
 
                     // first collection gets 1 incremental to 
-                    if (totalStats === 0) {
+                    if ((totalStats < 0) || (typeof totalStats === 'undefined')) {
                         var incremental = 1;
                         var previous = parseInt(value) - 1;
                     } else {

@@ -37,6 +37,7 @@ define([
     },
 
     clearFacebookId: function (ev) {
+      var parent = this;
       var bandId = $(ev.currentTarget).data("band-id");
       if (bandId != this.model.attributes.band_id) {
         return false;
@@ -46,10 +47,23 @@ define([
 
       var externalIds = this.model.get('external_ids');
       externalIds.facebook_id = "";
+
+      var runningStats = this.model.get('running_stats');
+      runningStats.facebook_likes = {
+        current: 0,
+        incremental_avg: 0,
+        incremental_total: 0,
+        last_updated: "",
+        incremental: 0,
+        daily_stats: [] 
+      }
+
       this.model.set({external_ids: externalIds});
+      this.model.set({running_stats: runningStats});
       this.model.save(null, {
         success: function(band, saveResponse) {
           console.log(bandId + ' saved');
+          parent.render();
           $('.flash-message').addClass('alert-success').text("Success").show();
         },
         error: function(band, saveResponse) {
@@ -74,6 +88,7 @@ define([
         type: "GET",
         dataType: "json",
           success: function(data) {
+            parent.render();
 	        $('.admin-modal-content', this.el).html('<h4>Success, latest results will be updated in 5 seconds</h4>');
             // refresh in 5 secods
             setTimeout(function(){
