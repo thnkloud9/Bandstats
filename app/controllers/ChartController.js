@@ -7,6 +7,7 @@
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
+var util = require('util');
 
 var BandRepository = require('./../repositories/BandRepository.js');
 
@@ -37,6 +38,11 @@ ChartController.prototype.indexAction = function(req, res) {
     var regionList = req.query.region;
     var genreList = req.query.genre;
     var jsonpCallback = req.query.callback;
+
+    // only used for delimagazine charts
+    var highLastFm = req.query.highLastFm;
+    var lowLastFm = req.query.lowLastFm;
+
     var conditions = [];
 
     if (page) {
@@ -61,6 +67,14 @@ ChartController.prototype.indexAction = function(req, res) {
     if (genreList) {
         genres = genreList.split(',');
         conditions.push({"genres": { $in: genres }});
+    }
+
+    if (highLastFm) {
+        conditions.push({"running_stats.lastfm_listeners.current": {$lt: parseInt(highLastFm)}});
+    }
+
+    if (lowLastFm) {
+        conditions.push({"running_stats.lastfm_listeners.current": {$gt: parseInt(lowLastFm)}});
     }
 
     // dont show failed lookups or bands without score 
@@ -110,6 +124,8 @@ ChartController.prototype.indexAction = function(req, res) {
         $query: query,
         $orderby: orderby
     }
+
+    util.log(JSON.stringify(orderedQuery));
 
     parent.bandRepository.find(orderedQuery, options, function(err, bands) {
         var results = {
