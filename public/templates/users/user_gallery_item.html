@@ -9,14 +9,14 @@
 
     <div class="col-xs-4 col-md-2">
       <a href="#users/<%= user_id %>">
-        <img src="<%= user_image_src %>" alt="not available" class="img-rounded thumbnail-small pull-left">
+        <img src="<%= (user_image_src) ? user_image_src : '/images/default_profile.jpg'  %>" alt="not available" class="img-rounded thumbnail-small pull-left">
       </a>
     </div>
 
     <div class="col-md-10">
 
       <p>
-        <a href="<%= role %>"><%= role %></a>
+        Role: <%= role %>
       </p>
 
       <p>

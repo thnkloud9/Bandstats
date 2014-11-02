@@ -9,7 +9,7 @@ define([
 
     defaults: {
       username: '',
-      user_image_src: '',
+      user_image_src: '/images/default_profile.jpg',
       password: '',
       role: 'manager',
       bands: {},

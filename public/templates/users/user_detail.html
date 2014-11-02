@@ -8,6 +8,15 @@
 
         <div class="row">
             <div class="col-lg-6">
+                <div class="well">
+                    <p><img id="picture" width="100" src="<%= (user_image_src) ? user_image_src : '/images/default_profile.jpg'  %>"/></p>
+                    <p>To change the picture, drag a new picture from your file system onto the box above.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
                 <label for="user-id" class="control-label">Id:</label>
                 <div class="controls">
                     <input class="form-control" id="user-id" name="user_id" type="text" value="<%= user_id === null ? '' : user_id %>" class="span2" disabled/>
@@ -63,15 +72,6 @@
                 <label for="user-active" class="control-label">Active: </label>
                 <div class="controls">
                     <input class="form-control" type="checkbox" id="user-active" name="active" value="true" <%= active == true ? 'checked' : '' %>/>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="well">
-                    <p><img id="picture" width="180" src="<%= user_image_src === null ? 'pics/generic.jpg' : user_image_src  %>"/></p>
-                    <p>To change the picture, drag a new picture from your file system onto the box above.</p>
                 </div>
             </div>
         </div>
