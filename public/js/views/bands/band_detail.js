@@ -200,7 +200,8 @@ define([
 
       this.model.destroy({
         success: function(band, response) {
-          $('.flash-message').addClass('alert-success').text("Success").show();
+          var html = "<a href='#bands'>Band List</a>";
+          $('.flash-message').addClass('alert-success').html("Success " + html).show();
         }
       });
     },
