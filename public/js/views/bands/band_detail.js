@@ -49,6 +49,7 @@ define([
       genres.push($('#genre-typeahead').val());
       this.model.set('genres', genres);
       this.model.save();
+      this.render();
     },
 
     deleteGenre: function (ev) {
@@ -57,6 +58,7 @@ define([
       genres.splice(genres.indexOf(genre), 1);
       this.model.set('genres', genres);
       this.model.save();
+      this.render();
     },
 
     addRegion: function () {
@@ -64,14 +66,17 @@ define([
       regions.push($('#region-typeahead').val());
       this.model.set('regions', regions);
       this.model.save();
+      this.render();
     },
 
     deleteRegion: function (ev) {
+      console.log('calling delete region');
       var region = $(ev.currentTarget).data("region");
       var regions =  this.model.get('regions');
       regions.splice(regions.indexOf(region), 1);
       this.model.set('regions', regions);
       this.model.save();
+      this.render();
     },
 
     loadBand: function (id) {
