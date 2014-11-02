@@ -53,7 +53,8 @@ define([
             type:'GET',
             dataType:"json",
             success:function (response) {
-                $('.flash-message').addClass('alert-success').text('Sucess').show();
+                var html = "<a href='#running_jobs'>Running Jobs</a> or <a href='#jobs_log'>Job Log</a>";
+                $('.flash-message').addClass('alert-success').html('Success ' + html).show();
             },
             error: function (response) {
                 if(response.message) {  // If there is an error, show the error messages

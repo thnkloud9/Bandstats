@@ -10,6 +10,7 @@ define([
   'text!templates/jobs/job_list_jobs_header.html',
   'text!templates/jobs/job_list_running_header.html',
   'text!templates/jobs/job_log_header.html',
+  'text!templates/jobs/job_log_menu.html',
   'text!templates/jobs/job_list.html'
 ], function($, _, Backbone, 
     JobsCollection, 
@@ -20,6 +21,7 @@ define([
     jobListJobsHeaderTemplate,
     jobListRunningHeaderTemplate,
     jobLogHeaderTemplate,
+    jobLogMenuTemplate,
     jobListTemplate){
   var JobListView = Backbone.View.extend({
     el: '#job-list-container',
@@ -30,11 +32,31 @@ define([
     },
 
     events: {
-        'click #btn-close-log-output': 'closeLogOutput'
+      'click #btn-close-log-output': 'closeLogOutput',
+      'click #clear-log': 'clearLog'
     },
     
     closeLogOutput: function() {
-        $('#log-output-container').hide();
+      $('#log-output-container').hide();
+    },
+
+    clearLog: function () {
+      var parent = this;
+      $('.flash-message').addClass('alert-warning').text("Processing...").show();
+      $.ajax({
+          type: 'DELETE',
+          url: '/admin/job/clearLog',
+          contentType: 'application/json',
+          success: function (response) {
+            $('.flash-message').removeClass('alert-warning').addClass('alert-success').html("Success").show();
+            // clear all rows that are not th rows
+            $('#job-list tr').not(function(){if ($(this).has('th').length){return true}}).remove();
+          },
+          error: function (err, response) {
+            console.log("error: " + err.responseText);
+            $('.flash-message').addClass('alert-danger').text(response.message).show();
+          }
+      });
     },
 
     render: function () {
@@ -64,7 +86,8 @@ define([
       }
 
       if (this.collection.getName() == "JobsLog") {
-              // add table and header
+          // add menu, table, and header
+          $('#job-list-menu', this.el).html(jobLogMenuTemplate);
           $('#job-list', this.el).html(jobLogHeaderTemplate);
 
           var parent = this;

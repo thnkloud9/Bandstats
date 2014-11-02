@@ -13,7 +13,11 @@
    </td>
 
    <td>
-     <%= readable_duration %>
+     <% if (action === "ended") { %>
+       <%= readable_duration %>
+     <% } else { %>
+        ----
+     <% } %>
    </td>
 
    <td>

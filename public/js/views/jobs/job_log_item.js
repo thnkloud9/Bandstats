@@ -18,7 +18,7 @@ define([
       this.model.bind("destroy", this.close, this);
 
       if (this.model.attributes.action === "started") {
-	  this.$el.addClass('success');;
+	    this.$el.addClass('success');;
       }
 
       //if (this.model.attributes.action === "ended") {

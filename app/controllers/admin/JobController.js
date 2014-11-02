@@ -307,15 +307,16 @@ JobController.prototype.clearLogAction = function(req, res) {
         res.send(data);
         return false;
     }
-    this.db.collection('job_log').remove({}, function(err, newJob) {
+    this.db.collection('job_log').remove({}, function(err, results) {
         if (err) {
-            var data = {
-                status: "error",
-                error: err
-            };
-            res.send(data);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send({"status": false, "message": err});
+            return false;
         }
-        
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send({"status": true, "message": "log cleared"});
     });
 }
 

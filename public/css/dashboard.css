@@ -178,6 +178,10 @@ body {
   min-width: 500px;
 }
 
+#job-list-menu {
+  margin-left: 92%;
+}
+
 .admin-modal-content {
   padding: 15px;
   height: 350px;
