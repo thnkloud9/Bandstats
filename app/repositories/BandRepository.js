@@ -416,40 +416,46 @@ BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
     });
 }
 
-BandRepository.prototype.findDuplicates = function(callback) {
+BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, callback) {
     var db = this.db;
     var collection = this.collection;
+    var pipeline = [
+        { $sort: sort },
+        { $match: query},
+        { $group: { 
+            _id: { band_name: "$band_name" },
+            bands: { $push: "$$ROOT" },
+            count: { $sum: 1 } 
+        }}, 
+        { $match: { 
+            count: { $gt: 1 }
+        }},
+        { $skip: skip },
+        { $limit: limit  }
+    ];
 
-    var map = function(){
-        if(this.band_name) {
-            emit(this.band_name, 1);
-        }
-    }
-
-    var reduce = function(key, values){
-        var result = 0;
-        values.forEach(function(value) {
-          result += value;
-        });
-        return result;
-    }
-
-    db.collection(collection).mapReduce(map, reduce, {out:{ inline : 1}}, function(err, results) { 
-        var duplicates = [];
+    db.collection(collection).aggregate(pipeline, function(err, results) { 
+        var duplicateBands = [];
         if (err) {
             util.log(err);
             return false;
         }
-    
-        for (var r in results) {
-            if (results[r].value > 1) {
-                duplicates.push({
-                    "band_name": results[r]._id,
-                    "value": results[r].value
-                });
-            }
-        }
-        callback(null, duplicates);
+        async.forEach(results, function(result, cb) {
+            if (err) cb(err);
+
+            async.forEach(result.bands, function(band, cb2) {
+                if (err) cb2(err);
+
+                duplicateBands.push(band);
+            },
+            function(err) {
+                cb2();
+            });
+
+            cb();
+        }, function(err) {
+            callback(null, duplicateBands);
+        });
     });
 }
 

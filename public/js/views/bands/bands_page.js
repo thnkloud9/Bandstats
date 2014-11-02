@@ -269,7 +269,7 @@ define([
       this.session.set('filter', this.filter);
       this.session.set('sort', this.sort);
 
-	  this.render();
+      $('#band-list-filter').empty();
     },
 
     destroyChildren: function () {

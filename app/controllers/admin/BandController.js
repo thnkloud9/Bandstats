@@ -52,6 +52,8 @@ BandController.prototype.indexAction = function(req, res) {
     var sort = req.query.sort;
     var searchQuery = {};
     var filterQuery = {};
+    var orderby = {};
+
     var options = {};
     var parent = this;
 
@@ -70,52 +72,13 @@ BandController.prototype.indexAction = function(req, res) {
 
     // if filter add to query
     if (filter) {
-        var filters = {};
-        var andFilters = [];
-        var orFilters = [];
-
-
-	    // different fields will be seperated by AND
-	    // different values for a given field will be
-	    // separated by OR 
-        _.forEach(filter, function(values, field) {
-	        var andFilter = {};
-	        var orFilter = {};
-	        orFilters = [];
-
-            // see if multiple values were passed, use or
-            if (typeof values === 'object') {
-                _.forEach(values, function(value) {
-                    var orFilter = {};
-                    orFilter[field] = { $in: [ value ] };
-                    orFilters.push(orFilter);  
-                });
-		        var andFilter = {};
-		        andFilter = { $or: orFilters };
-		        andFilters.push(andFilter);
-            } else {
-                andFilter[field] = { $in: [ values ] };
-                andFilters.push(andFilter);
-            }
-
-        });
-      
-	    filterQuery = {
-	        $and: andFilters
-	    }
+	    filterQuery = this.buildFilterQuery(filter);
     }
 
     
     // add sorting
-    var orderby = {};
     if (sort) {
-        _.forEach(sort, function(direction, field) {
-            if (direction === "asc") {
-                orderby[field] = 1; 
-            } else {
-                orderby[field] = -1; 
-            }
-        });
+        orderby = this.buildSortQuery(sort);
     }
 
     if (req.query.startQuery) {
@@ -468,26 +431,37 @@ BandController.prototype.importAction = function(req, res) {
 BandController.prototype.duplicatesAction = function(req, res) {
     var data = this.data;
     var parent = this;
-    this.bandRepository.findDuplicates(function(err, results) {
+    var limit = (req.query.limit) ? parseInt(req.query.limit) : 0;
+    var skip = (req.query.skip) ? parseInt(req.query.skip) : 0;
+    var filter = req.query.filter;
+    var sort = req.query.sort;
+    var duplicateBands = [];
+    var filterQuery = {};
+    var orderby = {};
+
+    // if filter add to query
+    if (filter) {
+	    filterQuery = this.buildFilterQuery(filter);
+    }
+
+    // add sorting
+    if (sort) {
+        orderby = this.buildSortQuery(sort);
+    } else {
+        orderby = { band_name: -1 };
+    }
+
+    this.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, results) {
         if (err) res.send(err);
-        
-        var finalResults = [];
+       
         async.forEach(results, function(band, cb) {
-
-	        // add field to mark 'not_duplicate' records
-            parent.bandRepository.find({"band_name": band.band_name}, {}, function(err, bandResults) {
-                if (err) util.log(err);
-
-                for (var b in bandResults) {
-                    finalResults.push(bandResults[b]);
-                }
-                cb();
-            }); 
+            duplicateBands.push(band);
+            cb();
         },
         function(err) {
             var results = {
-                "totalRecords": finalResults.length,
-                "data": finalResults
+                "totalRecords": duplicateBands.length,
+                "data": duplicateBands
             }
             res.send(results);
         });
@@ -547,5 +521,59 @@ BandController.prototype.regionsAction = function(req, res) {
     });
 }
 
+BandController.prototype.buildFilterQuery = function(filter) {
+    var filterQuery = {}
+    var filters = {};
+    var andFilters = [];
+    var orFilters = [];
+
+
+	// different fields will be seperated by AND
+	// different values for a given field will be
+	// separated by OR 
+    _.forEach(filter, function(values, field) {
+	    var andFilter = {};
+	    var orFilter = {};
+	    orFilters = [];
+
+        // see if multiple values were passed, use or
+        if (typeof values === 'object') {
+            _.forEach(values, function(value) {
+                var orFilter = {};
+                orFilter[field] = { $in: [ value ] };
+                orFilters.push(orFilter);  
+            });
+		    var andFilter = {};
+		    andFilter = { $or: orFilters };
+		    andFilters.push(andFilter);
+        } else {
+            andFilter[field] = { $in: [ values ] };
+            andFilters.push(andFilter);
+        }
+
+    });
+  
+	filterQuery = {
+	    $and: andFilters
+	}
+
+    return filterQuery;
+}
+
+BandController.prototype.buildSortQuery = function(sort) {
+    var orderby = {}
+    // add sorting
+    if (sort) {
+        _.forEach(sort, function(direction, field) {
+            if (direction === "asc") {
+                orderby[field] = 1; 
+            } else {
+                orderby[field] = -1; 
+            }
+        });
+    }
+
+    return orderby;
+}
 /* export the class */
 exports.controller = BandController;
