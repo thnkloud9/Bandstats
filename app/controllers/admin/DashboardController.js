@@ -63,6 +63,11 @@ DashboardController.prototype.bandStatsAction = function(req, res) {
                 cb(err, count);
                 }); 
         },
+        duplicates: function(cb) {
+                parent.bandRepository.countDuplicates({}, function(err, count) {
+                cb(err, count);
+                }); 
+        },
     },
     function(err, data) {
 	    res.send(data);
