@@ -148,9 +148,22 @@ body {
   height: 200px
 }
 
-.flash-message-content {
-  margin-top: 10px;
+.flash-message-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: 9999;
 }
+
+.flash-message {
+  min-width: 300px;
+  display: none;
+  cursor:pointer;
+  box-shadow: 5px 5px 2px #eeeeee;
+}
+
 
 #bands-filter-list-content {
   margin-top: 10px;

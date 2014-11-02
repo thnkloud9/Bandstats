@@ -20,7 +20,8 @@ define([
 
     events: {
       'click .topnav-link': 'renderMenuItem',
-      'keyup  #band-search': 'searchBands'
+      'keyup  #band-search': 'searchBands',
+      'click .flash-message': 'closeFlashMessage'
     },
 
     render: function (ev) {
@@ -130,7 +131,11 @@ define([
           delete this.children[name];
         }
       }, this);
-    }
+    },
+
+    closeFlashMessage: function() {
+      $('.flash-message').hide();
+    } 
   });
   return AppView;
 });
