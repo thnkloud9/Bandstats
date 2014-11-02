@@ -61,7 +61,6 @@ define([
           var parent = this;
 
           if ($e.is('option')) {
-            console.log('on an option');
             $(this).popover('destroy');
             $(this).popover({
               trigger: 'manual',
