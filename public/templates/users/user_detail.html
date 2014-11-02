@@ -2,88 +2,69 @@
   <li><a href="#users">Users</a></li>
   <li class="active"><%= username %></li>
 </ol>
+  
+<div id="user-detail-content" class="row">
+  <ul class="list-inline">
+    <li style="vertical-align: top">   
+      <div style="width: 300px">
+        <div class="well">
+          <p><img id="picture" width="200" src="<%= (user_image_src) ? user_image_src : '/images/default_profile.jpg'  %>"/></p>
+          <p>To change the picture, drag a new picture from your file system onto the box above.</p>
+        </div>
+      </div>
+    </li>
 
-    <form role="form">
-        <fieldset>
+    <li>
+      <div style="width: 300px">
 
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="well">
-                    <p><img id="picture" width="100" src="<%= (user_image_src) ? user_image_src : '/images/default_profile.jpg'  %>"/></p>
-                    <p>To change the picture, drag a new picture from your file system onto the box above.</p>
-                </div>
-            </div>
+        <div class="form-group">
+          <div class="controls">
+            <input class="form-control" id="user-id" name="user_id" type="text" value="<%= user_id === null ? '' : user_id %>" class="span2" disabled/>
+          </div>
+       </div>
+
+        <div class="form-group">
+          <label for="user-username" class="control-label">Username:</label>
+          <input class="form-control" type="text" id="user-username" name="username" value="<%= username %>"/>
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-id" class="control-label">Id:</label>
-                <div class="controls">
-                    <input class="form-control" id="user-id" name="user_id" type="text" value="<%= user_id === null ? '' : user_id %>" class="span2" disabled/>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="user-role" class="control-label">Role:</label>
+          <select class="form-control"  id="user-role" name="role" value="">
+            <option>admin</option>
+            <option>manager</option>
+            <option>editor</option>
+          </select>
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-username" class="control-label">Username:</label>
-                <div class="controls">
-                    <input class="form-control" type="text" id="user-username" name="username" value="<%= username %>"/>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="user-description" class="control-label">Description:</label>
+          <input class="form-control" type="text" id="user-description" name="description" value="<%= description %>"/>
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-role" class="control-label">Role:</label>
-                <div class="controls">
-                    <select class="form-control"  id="user-role" name="role" value="">
-                        <option>admin</option>
-                        <option>manager</option>
-                        <option>editor</option>
-                    </select>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="user-bands" class="control-label">Bands:</label>
+          <div class="input-group">
+            <input class="bands-typeahead form-control tt-input-with-btn" type="text" id="user-bands" name="bands" value=""/>
+             <span class="input-group-btn">
+               <button class="btn btn-default" type="button">Add</button>
+             </span>
+           </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-description" class="control-label">Description:</label>
-                <div class="controls">
-                    <input class="form-control" type="text" id="user-description" name="description" value="<%= description %>"/>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="user-active" class="control-label">Active: </label>
+          <input class="form-control" type="checkbox" id="user-active" name="active" value="true" <%= active == true ? 'checked' : '' %>/>
         </div>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-bands" class="control-label">Bands:</label>
-                <div class="input-group">
-                    <input class="bands-typeahead form-control tt-input-with-btn" type="text" id="user-bands" name="bands" value=""/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Add</button>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <label for="user-active" class="control-label">Active: </label>
-                <div class="controls">
-                    <input class="form-control" type="checkbox" id="user-active" name="active" value="true" <%= active == true ? 'checked' : '' %>/>
-                </div>
-            </div>
-        </div>
-
-        </fieldset>
 
         <div class="form-actions">
             <a href="#" id="user-save" class="btn btn-primary save">Save</a>
             <a href="#" id="show-password-modal" class="btn btn-primary" data-toggle="modal" data-target="#admin-modal">Update Password</a>
-            <a href="#" id="user-delete" class="btn delete">Delete</a>
+            <a href="#" id="user-delete" class="btn btn-danger delete">Delete</a>
         </div>
 
-    </form>
-
+      </div>
+    </li>
+  </ul>
+</div>
 
