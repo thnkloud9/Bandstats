@@ -416,6 +416,32 @@ BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
     });
 }
 
+BandRepository.prototype.countDuplicates = function(query, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var pipeline = [
+        { $match: query},
+        { $group: { 
+            _id: { band_name: "$band_name" },
+            bands: { $push: "$$ROOT" },
+            count: { $sum: 1 } 
+        }}, 
+        { $match: { 
+            count: { $gt: 1 }
+        }}
+    ];
+
+    db.collection(collection).aggregate(pipeline, function(err, results) { 
+        var duplicateBands = [];
+        if (err) {
+            util.log(err);
+            return false;
+        }
+
+        callback(err, results.length);
+    });
+}
+
 BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, callback) {
     var db = this.db;
     var collection = this.collection;

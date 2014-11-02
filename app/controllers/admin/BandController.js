@@ -451,19 +451,21 @@ BandController.prototype.duplicatesAction = function(req, res) {
         orderby = { band_name: -1 };
     }
 
-    this.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, results) {
-        if (err) res.send(err);
-       
-        async.forEach(results, function(band, cb) {
-            duplicateBands.push(band);
-            cb();
-        },
-        function(err) {
-            var results = {
-                "totalRecords": duplicateBands.length,
-                "data": duplicateBands
-            }
-            res.send(results);
+    this.bandRepository.countDuplicates(filterQuery, function(err, count) {
+        parent.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, results) {
+            if (err) res.send(err);
+           
+            async.forEach(results, function(band, cb) {
+                duplicateBands.push(band);
+                cb();
+            },
+            function(err) {
+                var results = {
+                    "totalRecords": count,
+                    "data": duplicateBands
+                }
+                res.send(results);
+            });
         });
     });
 }

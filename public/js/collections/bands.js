@@ -7,9 +7,10 @@ define([
     filter: {},
     sort: {},
     bandSearch: null,
-    startQuery: null, 
+    startQuery: null,
+    altPath: null, 
 
-    initialize : function(bandSearch, startQuery){
+    initialize : function(bandSearch, startQuery, altPath){
       if (bandSearch) {
         this.bandSearch = bandSearch;
       }
@@ -17,10 +18,14 @@ define([
       if (startQuery) {
         this.startQuery = startQuery;
       }
+
+      if (altPath) {
+        this.altPath = altPath;
+      }
     },
 
     url: function() {
-      var path = "/admin/band";
+      var path = (this.altPath) ? this.altPath : "/admin/band";
       path += "?limit=" + this.paginatorOptions.perPage;
       path += "&skip=" + (this.paginatorOptions.currentPage * this.paginatorOptions.perPage);
 

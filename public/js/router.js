@@ -30,6 +30,7 @@ define([
       'bands/search/:query': 'bandsearch',
       'bands/missing/:field': 'missing_external_id',
       'bands/bad/:field': 'bad_external_id',
+      'bands/duplicates/list': 'band_duplicates',
       'bands/import/load': 'bands_import',
       'sites/:id': 'site',
       'sites': 'sites',
@@ -121,6 +122,18 @@ define([
         var bandsCollection = new BandsCollection(null, startQuery);
         bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Bad ' + field});
+        searchResultsView.applySessionFilter();
+        searchResultsView.render();
+      });
+    });
+
+    router.on('route:band_duplicates', function (field) {
+      appView.destroyChildren();
+      require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
+	    var altPath = '/admin/band/duplicates';
+        var bandsCollection = new BandsCollection(null, null, altPath);
+        bandsCollection.getFirstPage();
+        var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Duplicate Bands'});
         searchResultsView.applySessionFilter();
         searchResultsView.render();
       });
