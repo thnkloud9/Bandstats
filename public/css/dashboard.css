@@ -104,6 +104,12 @@ body {
   margin-bottom: 5px;
 }
 
+.thumbnail-gallery {
+  width: 200px !important;
+  height: 200px !important;
+  margin-bottom: 5px;
+}
+
 .thumbnail-container {
   position: relative;
   display: inline-block;
