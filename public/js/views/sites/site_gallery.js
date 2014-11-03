@@ -11,8 +11,6 @@ define([
 
     el: '#site-list-container',
 
-    page: 1, 
-
     initialize: function() {
       this.collection.on('reset', this.render, this);
       this.collection.on('sync', this.render, this);

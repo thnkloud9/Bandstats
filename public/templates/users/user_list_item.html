@@ -1,16 +1,14 @@
-<ul class="list-unstyled list-inline">
-  <li>
-    <a href="#users/<%= user_id %>" class="list plain">
-      <h5><%= username %></h5>
-    </a>
-  </li>
+<td>
+  <a href="#users/<%= user_id %>" class="list plain">
+    <h5><%= username %></h5>
+  </a>
+</td>
 
-  <li><%= role %></li>
+<td><%= role %></td>
 
-  <li>
-    <% for (var i = 0; i < bands.length; i++) { %>
-      <% var band = bands[i]; %>
-      <%= band %>
-    <% } %>
-  </li>
-</ul>
+<td>
+  <% for (var i = 0; i < bands.length; i++) { %>
+    <% var band = bands[i]; %>
+    <%= band %>
+  <% } %>
+</td>

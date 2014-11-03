@@ -7,8 +7,8 @@ define([
 
   var UserListItemView = Backbone.View.extend({
 
-    tagName: "li",
-    className: "span10",
+    tagName: "tr",
+    className: "",
     template: _.template(template),
 
     initialize: function () {

@@ -5,8 +5,14 @@ define([
   'collections/users',
   'views/paginator',
   'views/users/user_list_item',
+  'text!templates/users/user_list_header.html',
   'text!templates/users/user_list.html'
-], function($, _, Backbone, UsersCollection, PaginatorView, UserListItemView, userListTemplate){
+], function($, _, Backbone, 
+    UsersCollection, 
+    PaginatorView, 
+    UserListItemView, 
+    userListHeaderTemplate, 
+    userListTemplate){
   var UserListView = Backbone.View.extend({
     el: '#user-list-container',
 
@@ -15,11 +21,11 @@ define([
       this.collection.on('sync', this.render, this);
     },
 
-    page: 1,
-
     render: function () {
 
       this.$el.html(userListTemplate);
+
+      $('#user-list', this.el).html(userListHeaderTemplate);
 
       var parent = this;
       _.each(this.collection.models, function (model) {
