@@ -188,7 +188,7 @@ SiteController.prototype.createAction = function(req, res) {
         };
         res.send(data);
     }    
-    this.siteRepository.insert(req.body.values, {}, function(err, site) {
+    this.siteRepository.insert(req.body, {}, function(err, site) {
         res.send({status: "success", site: site});
     });
 }
