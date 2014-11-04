@@ -8,7 +8,7 @@ define([
   var SiteGalleryItemView = Backbone.View.extend({
 
     tagName: "li",
-    className: "span3",
+    className: "list-unstyled",
     template: _.template(template),
 
     initialize: function () {

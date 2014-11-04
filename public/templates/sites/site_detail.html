@@ -3,168 +3,148 @@
   <li class="active"><%= site_name %></li>
 </ol>
 
-<div class="row">
-    <form class="form-horizontal span12">
-        <fieldset>
-            <br/>
-            <div class="row">
-                <div class="col-lg-6 form-group">
-                        <label for="siteId" class="control-label">Id:</label>
-                        <div class="controls">
-                            <input id="siteId" name="site_id" type="text" value="<%= site_id === null ? '' : site_id %>" class="span2" disabled/>
-                        </div>
-                </div>
-            </div>
+<div id="site-detail-content" class="row">
+  <ul class="list-inline">
 
-            <div class="row">
-                <div class="col-lg-6 form-group">
-                    <label for="site-name" class="control-label">Name:</label>
-                    <div class="controls">
-                        <input type="text" id="site-name" value="<%= site_name %>"/>
-                        <span class="help-inline"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-6 form-group">
-                    <label for="site-url" class="control-label">Feed Url:</label>
-                    <div class="controls">
-                        <input type="text" size="70" id="site-url" value="<%= site_url %>"/>
-                        <span class="help-inline"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-2 form-group">
-                    <label for="band-name-field" class="control-label">Band Name Field:</label>
-                    <div class="controls">
-                        <select size="2" id="band-name-field" class="form-control bs-popover-select">
-                        <% for (var i = 0; i < articleFields.length; i++) { %>
-                          <% 
-                             var article = articles[1]; 
-                             var thisField = articleFields[i];
-                             var exampleValue = article[thisField]; 
-                          %>
-                          <option data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (band_name_field === articleFields[i]) { %>selected<% } %>>
-                            <%= articleFields[i] %>
-                          </option>
-                        <% } %>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-2 form-group">
-                    <label for="description-field" class="control-label">Description Field:</label>
-                    <div class="controls">
-                        <select size="2" id="description-field" class="form-control bs-popover-select">
-                        <% for (var i = 0; i < articleFields.length; i++) { %>                         
-                          <% 
-                            var article = articles[1];
-                            var thisField = articleFields[i];
-                            var exampleValue = article[thisField]; 
-                          %>
-                          <option data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (description_field === articleFields[i]) { %>selected<% } %>>
-                            <%= articleFields[i] %>
-                          </option>
-                        <% } %>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-2 form-group">
-                    <label for="publish-date-field" class="control-label">Publish Date Field:</label>
-                    <div class="controls">
-                        <select size="2" id="publish-date-field" class="form-control bs-popover-select">
-                        <% for (var i = 0; i < articleFields.length; i++) { %>                         
-                          <% 
-                            var article = articles[1];
-                            var thisField = articleFields[i];
-                            var exampleValue = article[thisField]; 
-                          %>
-                          <option data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (publish_date_field === articleFields[i]) { %>selected<% } %>>
-                            <%= articleFields[i] %>
-                          </option>
-                        <% } %>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-2 form-group">
-                    <label for="linkField" class="control-label">Link Field:</label>
-                    <div class="controls">
-                        <select size="2" id="link-field" class="form-control bs-popover-select">
-                        <% for (var i = 0; i < articleFields.length; i++) { %>                         
-                          <% 
-                            var article = articles[1];
-                            var thisField = articleFields[i];
-                            var exampleValue = article[thisField]; 
-                          %>
-                          <option data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (link_field === articleFields[i]) { %>selected<% } %>>
-                            <%= articleFields[i] %>
-                          </option>
-                        <% } %>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-2 form-group">
-                    <div class="well">
-                        <p><img id="picture" width="180" src="<%= site_image_src === null ? 'pics/generic.jpg' : site_image_src  %>"/></p>
-                        <p>To change the picture, drag a new picture from your file system onto the box above.</p>
-                    </div>
-                </div>
-            </div>
-
-        </fieldset>
-
-        <div class="form-actions">
-            <a id="site-save" href="#" class="btn btn-primary save">Save</a>
-            <a id="site-delete" href="#" class="btn btn-danger delete">Delete</a>
+    <!-- column one -->
+    <li style="vertical-align: top">
+      <div style="width: 250px">
+        <div class="well">
+          <p><img id="picture" width="180" src="<%= site_image_src === null ? 'pics/generic.jpg' : site_image_src  %>"/></p>
+          <p>To change the picture, drag a new picture from your file system onto the box above.</p>
         </div>
-    </form>
+      </div>
 
-    <br />
+      <div class="form-actions">
+        <a id="site-save" class="btn btn-primary save">Save</a>
+        <a id="site-delete" class="btn btn-danger delete">Delete</a>
+      </div>
 
-    <h4>Latest Articles</h4>
+      <div class="form-group">
+        <span class="label label-info"><%= last_updated %></span>
+      </div>
 
-    <div class="panel-group" id="accordion">
-      <% for (var i = 0; i < articles.length; i++) { %>
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title bs-tooltip" data-toggle="tooltip" data-placement="top" title="title field">
-              <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= i %>">
-                <%= articles[i].title %>
-              </a>
-            </h4>
-          </div>
-          <% if (i === 0) { %>
-            <div id="collapse<%= i %>" class="panel-collapse collapse in">
-          <% } else { %>
-            <div id="collapse<%= i %>" class="panel-collapse collapse">
-          <% } %>
-            <div class="panel-body bs-tooltip" data-toggle="tooltip" data-placement="top" title="description field">
-              <%= articles[i].description %>
+    </li>
+
+
+    <!-- column one -->
+    <li style="vertical-align: top">
+      <div style="width: 300px">
+
+        <div class="form-group">
+          <label for="siteId" class="control-label">Id:</label>
+          <input id="siteId" name="site_id" type="text" value="<%= site_id === null ? '' : site_id %>" class="span2" disabled/>
+        </div>
+
+        <div class="form-group">
+          <label for="site-name" class="control-label">Name:</label>
+          <input type="text" id="site-name" value="<%= site_name %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="site-url" class="control-label">Feed Url:</label>
+          <input type="text" size="43" id="site-url" value="<%= site_url %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="site-name" class="control-label">Wieght:</label>
+          <input type="text" id="site-weight" value="<%= site_weight %>"/>
+
+         <div class="form-group">
+           <label for="band-name-field" class="control-label">Band Name Field:</label> 
+           <button class="btn btn-default toggle-select pull-right" data-field="band-name-field"><%= band_name_field %></button>
+           <select size="10" id="band-name-field" class="form-control bs-popover-select" style="display: none">
+             <% for (var i = 0; i < articleFields.length; i++) { 
+                  var article = articles[1]; 
+                  var thisField = articleFields[i];
+                  var exampleValue = article[thisField]; 
+             %>
+             <option class="article-field" data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (band_name_field === articleFields[i]) { %>selected<% } %>>
+               <%= articleFields[i] %>
+             </option>
+             <% } %>
+           </select>
+         </div>
+
+         <div class="form-group">
+           <label for="description-field" class="control-label">Description Field:</label>
+           <button class="btn btn-default toggle-select pull-right" data-field="description-field"><%= description_field %></button>
+           <select size="10" id="description-field" class="form-control bs-popover-select" style="display: none">
+             <% for (var i = 0; i < articleFields.length; i++) {
+                  var article = articles[1];
+                  var thisField = articleFields[i];
+                  var exampleValue = article[thisField]; 
+             %>
+             <option class="article-field" data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (description_field === articleFields[i]) { %>selected<% } %>>
+               <%= articleFields[i] %>
+             </option>
+             <% } %>
+           </select>
+         </div>
+
+         <div class="form-group">
+           <label for="publish-date-field" class="control-label">Publish Date Field:</label>
+           <button class="btn btn-default toggle-select pull-right" data-field="publish-date-field"><%= publish_date_field %></button>
+           <select size="10" id="publish-date-field" class="form-control bs-popover-select" style="display: none">
+             <% for (var i = 0; i < articleFields.length; i++) { 
+                  var article = articles[1];
+                  var thisField = articleFields[i];
+                  var exampleValue = article[thisField]; 
+             %>
+             <option class="article-field" data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (publish_date_field === articleFields[i]) { %>selected<% } %>>
+               <%= articleFields[i] %>
+             </option>
+             <% } %>
+           </select>
+         </div>
+
+         <div class="form-group">
+           <label for="linkField" class="control-label">Link Field:</label>
+           <button class="btn btn-default toggle-select pull-right" data-field="link-field"><%= link_field %></button>
+           <select size="10" id="link-field" class="form-control bs-popover-select" style="display: none">
+             <% for (var i = 0; i < articleFields.length; i++) {
+                  var article = articles[1];
+                  var thisField = articleFields[i];
+                  var exampleValue = article[thisField]; 
+             %>
+             <option class="article-field" data-title="<%= articleFields[i] %>" data-content="<%= exampleValue %>" <% if (link_field === articleFields[i]) { %>selected<% } %>>
+               <%= articleFields[i] %>
+             </option>
+             <% } %>
+           </select>
+         </div>
+
+      </div>
+    </li>
+
+    <li style="verticle-align: top">
+      <div class="col-md-12">
+        <h4>Latest Articles</h4>
+
+        <div class="panel-group site-article-panel" id="accordion">
+          <% for (var i = 0; i < articles.length; i++) { %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title bs-tooltip" data-toggle="tooltip" data-placement="top" title="title field">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapse<%= i %>">
+                  <%= articles[i].title %>
+                </a>
+              </h4>
+            </div>
+            <% if (i === 0) { %>
+              <div id="collapse<%= i %>" class="panel-collapse collapse in">
+            <% } else { %>
+              <div id="collapse<%= i %>" class="panel-collapse collapse">
+            <% } %>
+              <div class="panel-body bs-tooltip" data-toggle="tooltip" data-placement="top" title="description field">
+                 <%= articles[i].description %>
+              </div>
             </div>
           </div>
-        </div>
-      <% } %>  
-    </div>
+        <% } %>  
+      </div>
+
+    </li>
+  </ul>
 </div>
 
-<div class="row status-bar">
-    <div class="span12">
-        <div class="alert alert-success" style="display: none">
-            <b>Success!</b> Site saved successfully
-        </div>
-    </div>
-</div>

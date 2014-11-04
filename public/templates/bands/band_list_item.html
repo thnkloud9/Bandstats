@@ -50,6 +50,13 @@
   <td>
     <ul class="list-inline">
       <li>
+        <% if ( article_matching === "true") { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success deactivate-mentions"><i class="fa fa-rss-square"></i> ON</button>
+        <% } else { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger activate-mentions"><i class="fa fa-rss-square"></i> OFF</button>
+        <% } %>
+      </li>
+      <li>
         <% if (active === "true") { %>
           <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success band-deactivate">Active</button>
         <% } else { %>

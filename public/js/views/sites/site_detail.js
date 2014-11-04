@@ -15,9 +15,22 @@ define([
     events: {
         'click #site-save': 'saveSite',
         'click #site-delete': 'deleteSite',
+        'click .toggle-select': 'toggleSelect',
+        'click .article-field': 'articleFieldSelect'
     },
 
     initialize: function () {
+    },
+
+    articleFieldSelect: function (e) {
+      var field = $(e.target).parent().attr('id');
+      $('.toggle-select[data-field="' + field + '"]') .html($("#" + field + " option:selected" ).text().trim());
+      $('#' + field).toggle();
+    },
+
+    toggleSelect: function (e) {
+      var field = $(e.target).attr("data-field");
+      $('#' + field).toggle();
     },
 
     loadSite: function (id) {
@@ -94,6 +107,7 @@ define([
       this.model.set({
         site_name: $('#site-name').val(),
         site_url: $('#site-url').val(),
+        site_weight: $('#site-weight').val(),
         band_name_field: $("#band-name-field option:selected" ).text().trim(),
         album_name_field: $("#album-name-field option:selected" ).text().trim(),
         track_name_field: $("#track-name-field option:selected" ).text().trim(),

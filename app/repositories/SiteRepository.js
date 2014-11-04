@@ -81,12 +81,16 @@ SiteRepository.prototype.getNewArticles = function(site, callback) {
     var req = {
         uri: site.site_url,
         headers: {
-            'If-Modified-Since': site.last_entry
+            'If-Modified-Since': site.last_entry,
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
         }
     }
+
+    
     feedparser.parseUrl(req, function(err, meta, articles) {
         // update site.last_entry so we don't reparse already read articles
         if (err || !meta) {
+            console.log(err);
             callback(err);
         }
         // make sure we actually have real string values

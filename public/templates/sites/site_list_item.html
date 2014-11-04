@@ -3,8 +3,21 @@
       <h5><%= site_name %></h5>
     </a>
   </td>
-
+  <td><%= site_weight %></td>
   <td><a href="<%= site_url %>" target="_blank"><%= site_url %></a></td>
   <td><%= last_entry %></td>
   <td><%= created %></td>
-</ul>
+  <td>
+    <ul class="list-inline">
+      <li>
+        <% if (site_active === "true") { %>
+          <button type="button" data-band-id="<%= site_id %>" class="btn btn-xs btn-success site-deactivate">Active</button>
+        <% } else { %>
+          <button type="button" data-band-id="<%= site_id %>" class="btn btn-xs btn-danger site-activate">Hidden</button>
+        <% } %>
+      </li>
+      <li>
+        <button type="button" data-band-id="<%= site_id %>" class="btn btn-xs btn-danger site-delete">Delete</button>
+      </li>
+    </ul>
+</td>

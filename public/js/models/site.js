@@ -19,7 +19,8 @@ define([
       last_updated: new Date,
       link_field: '',
       publish_date_field: '',
-      site_image_src: ''
+      site_image_src: '',
+      site_active: 'true'
     },
 
     initialize: function() {

@@ -108,11 +108,21 @@ SiteController.prototype.articlesAction = function(req, res) {
 
     this.siteRepository.findOne(query, function(err, site) {
         if ((err) || (!site)) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200);
             res.send({status: "error", error: "site not found"});
             return false;
         }
         // get articles
         siteRepository.getNewArticles(site, function(err, meta, articles) {
+                if (err) {
+                    // TODO: fix this so returning an error here doesn't kill the node process
+                    //res.setHeader('Content-Type', 'application/json');
+                    //res.status(200);
+                    //res.send({status: "error", error: err});
+                    return false;
+                }
+
                 data.articles = articles;
                 res.send(data);
         });

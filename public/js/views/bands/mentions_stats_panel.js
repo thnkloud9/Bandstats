@@ -13,9 +13,29 @@ define([
     className: "panel panel-default",
     template: _.template(template),
 
+    events: {
+      'click #lnk-mentions-clear': 'clearMentions',
+    },
+
     initialize: function () {
       this.model.bind("change", this.render, this);
       this.model.bind("destroy", this.close, this);
+    },
+
+    clearMentions: function () {
+      console.log('here');
+      this.model.set("mentions_total", 0);
+      this.model.set("mentions", []);
+       
+      this.model.save(null, {
+        success: function(band, response) {
+          $('.flash-message').addClass('alert-success').text("Success").show();
+        }, 
+        error: function(band, response) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
     },
 
     render: function () {
@@ -44,7 +64,8 @@ define([
 	    total_this_week: total_this_week,
 	    total_this_month: total_this_month,
 	    last_updated: now,
-        mentions_id: externalIds.mentions_id
+        mentions_id: externalIds.mentions_id,
+        band_id: this.model.get("band_id"),
       }
       $(this.el).html(this.template(data));
       $('.bs-tooltip').tooltip();
