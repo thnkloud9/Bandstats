@@ -366,7 +366,7 @@ BandController.prototype.createAction = function(req, res) {
             status: "error",
             error: "insert must be post action and must include values",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body 
         };
         res.send(data);
     }

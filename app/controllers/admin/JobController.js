@@ -302,7 +302,7 @@ JobController.prototype.clearLogAction = function(req, res) {
             status: "error",
             error: "clear-log must be delete action",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body
         };
         res.send(data);
         return false;

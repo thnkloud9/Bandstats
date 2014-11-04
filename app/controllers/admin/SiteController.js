@@ -179,12 +179,12 @@ SiteController.prototype.removeAction = function(req, res) {
 }
 
 SiteController.prototype.createAction = function(req, res) {
-    if ((req.route.method != "post") || (!req.body.values)) {
+    if ((req.route.method != "post") || (!req.body)) {
         var data = {
             status: "error",
             error: "insert must be post action and must include values",
             method: req.route.method,
-            values: req.body.values 
+            values: req.body 
         };
         res.send(data);
     }    

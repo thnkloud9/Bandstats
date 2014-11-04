@@ -37,7 +37,7 @@ SettingController.prototype.indexAction = function(req, res) {
 }
 
 SettingController.prototype.updateAction = function(req, res) {
-    if ((req.route.method != "put") || (!req.body.values)) {
+    if ((req.route.method != "put") || (!req.body)) {
         res.send({status: "error", error: "update must be put action and must include values"});
         return false;
     }
