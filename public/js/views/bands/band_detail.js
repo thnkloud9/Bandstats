@@ -12,8 +12,7 @@ define([
   'views/bands/mentions_stats_table',
   'views/bands/running_stats_chart',
   'text!templates/bands/band_detail.html',
-  'typeahead',
-  'simpleDragAndDrop',
+  'typeahead'
 ], function($, _, Backbone, Vm, 
     BandModel, 
     FacebookStatsPanelView, 
@@ -38,10 +37,42 @@ define([
       'click #btn-add-region': 'addRegion',
       'click .btn-delete-genre': 'deleteGenre',
       'click .btn-delete-region': 'deleteRegion',
+      'click #toggle-active': 'toggleActive',
+      'click #toggle-article-matching': 'toggleArticleMatching',
+      'dragstart .image-draggable': 'imageDrag',
+      'dragover .image-droppable': function (e) { e.preventDefault(); },
+      'drop .image-droppable': 'imageDrop'
     }, 
 
     initialize: function (options) {
       this.vent = options.vent;
+    },
+
+    imageDrag: function (e) {
+      e.originalEvent.dataTransfer.setData('src', 'http://icons.iconarchive.com/icons/franksouza183/fs/256/Actions-stock-save-as-icon.png');
+    },
+
+    imageDrop: function (e) {
+      e.preventDefault();
+      $(e.target).attr('src', e.originalEvent.dataTransfer.getData('src'));
+    },
+
+    toggleActive: function () {
+        if (this.model.get('active') == 'true') {
+            this.model.set('active', 'false');
+        } else {
+            this.model.set('active', 'true');
+        }
+        this.render();
+    },
+
+    toggleArticleMatching: function () {
+        if (this.model.get('article_matching') == 'true') {
+            this.model.set('article_matching', 'false');
+        } else {
+            this.model.set('article_matching', 'true');
+        }
+        this.render();
     },
 
     addGenre: function () {
@@ -116,6 +147,8 @@ define([
       var mentionsStatsPanelView = Vm.create(this, 'MentionsStatsPanelView', MentionsStatsPanelView, {model: this.model, vent: this.vent});
       $(mentionsStatsPanelView.render().el).appendTo($('#mentions-stats-content', this.el));
 
+      $('.bs-tooltip').tooltip();
+
       return this;
     },
 
@@ -175,12 +208,12 @@ define([
       var externalIds = this.model.get('external_ids');
       externalIds.facebook_id = $('#facebook-id').val();
       externalIds.lastfm_id = $('#lastfm-id').val();
+      externalIds.mentions_id = $('#mentions-id').val();
 
       this.model.set({
         band_name: $('#band-name').val(),
         band_url: $('#band-url').val(),
-        external_ids: externalIds,
-        active: ($('#active').prop('checked')) ? "true" : "false",
+        external_ids: externalIds
       });
 
       // remove id if this is a new model

@@ -206,3 +206,19 @@ body {
   width: 93%;
   margin: 20px;
 }
+
+.toggle-btn-right {
+  float: right;
+}
+
+#band-detail-tools {
+}
+
+.band-detail-tool-panel {
+  width: 635px;
+}
+
+
+.no-decoration {
+  text-decoration: none !important;
+}

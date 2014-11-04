@@ -195,7 +195,11 @@ program.parse(process.argv);
 function parseSiteArticles(site, save, callback) {
     util.log("processing " + site.site_name);
     // get band list
-    bandRepository.getBandsIndex({"band_name": { $ne: "" } }, function(err, bands) {
+    var query = {
+        "band_name": { $ne: "" },
+        "article_matching": { $eq: "true"}
+    }
+    bandRepository.getBandsIndex(query, function(err, bands) {
         // get new articles  
         siteRepository.getNewArticles(site, function(err, meta, articles) {
             if (err || !articles) {
@@ -252,8 +256,8 @@ function parseSiteArticles(site, save, callback) {
 }
 
 function articleHasMatch(site, article, band) {
-    if (band.band_name) {
-        var band_name = sanitizeSearchString(band.band_name);
+    if (band.external_ids.mentions_id) {
+        var mentions_id = sanitizeSearchString(band.external_ids.mentions_id);
         var search_fields = [ 
             'band_name_field',
             'description_field' ];
@@ -261,7 +265,7 @@ function articleHasMatch(site, article, band) {
             var search_field = search_fields[f];
             if (article[site[search_field]]) {
                 var search_text = sanitizeSearchString(article[site[search_field]].toString());
-                var re = new RegExp('\\b' + band_name + '\\b', 'g');
+                var re = new RegExp('\\b' + mentions_id + '\\b', 'g');
                 
                 if (search_text.match(re)) {
                     return true;

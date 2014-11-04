@@ -85,7 +85,11 @@ BandRepository.prototype.addDefaultValues = function(band) {
     band.external_ids = {
         "lastfm_id": band.band_name,
         "facebook_id": facebookId,
-        "echonest_id": ""
+        "echonest_id": "",
+        "mentions_id": band.band_name,
+        "spotify_id": "",
+        "bandcamp_id": "",
+        "twitter_id": ""
     }
     band.failed_lookups = {
         "lastfm": 0,
@@ -116,6 +120,7 @@ BandRepository.prototype.addDefaultValues = function(band) {
     if (!band.genres) {
         band.genres = emptyArray;
     }
+    band.article_matching = "true";
     band.mentions = emptyArray;
     band.mentions_total = 0;
     band.last_updated = new Date();
@@ -309,7 +314,7 @@ BandRepository.prototype.getBandsIndex = function(query, callback) {
     var db = this.db;
     var collection = this.collection;
 
-    this.db.collection(collection).find(query, {'band_name':1, 'band_id':1}).toArray(function(err, results) {
+    this.db.collection(collection).find(query, {'external_ids.mentions_id': 1, 'band_name':1, 'band_id':1}).toArray(function(err, results) {
         if (err) {
             util.log(err);
             return false;
@@ -336,6 +341,7 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
             "mentions": { 
                 "date": today,
                 "site_id": site.site_id,
+                "site_name": site.site_name,
                 "link": link, 
                 "description": description 
             } 

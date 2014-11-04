@@ -29,22 +29,26 @@ define([
 
       _.forEach(this.model.attributes.mentions, function (mention) {
         total++;
-	if (mention.date >= lastWeek) {
-	  total_this_week++;
-	}
-	if (mention.date >= lastMonth) {
-	  total_this_month++;
-	}	
+	    if (mention.date >= lastWeek) {
+	      total_this_week++;
+	    }
+	    if (mention.date >= lastMonth) {
+	      total_this_month++;
+	    }	
       });
 
+      var externalIds = this.model.get("external_ids");
+ 
       var data = {
 	    total: total,
 	    total_this_week: total_this_week,
 	    total_this_month: total_this_month,
-	    last_updated: now
+	    last_updated: now,
+        mentions_id: externalIds.mentions_id
       }
       $(this.el).html(this.template(data));
-
+      $('.bs-tooltip').tooltip();
+    
       return this;
     },
 

@@ -20,4 +20,4 @@ $(document).ready(function() {
         var source = e.originalEvent.dataTransfer.getData('src');
         $(this).attr('src', source); 
     });
-}
+});

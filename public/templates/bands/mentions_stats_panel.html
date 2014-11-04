@@ -1,9 +1,15 @@
       <!-- mentions stats panel -->
-        <div class="panel-heading">
-          <h3 class="panel-title">Article Mentions Overall Stats</h3>
-        </div>
-        <div class="panel-body">
           <ul class="list-group">
+            <li class="list-group-item">
+                <div class="form-group" style="width: 300px">
+                  <div class="input-group">
+                    <div class="input-group-addon">
+                      <i class="fa fa-rss-square bs-tooltip" data-toggle="tooltip" title="Enter text to use during article matching for this band" data-placement="right"></i>
+                    </div>
+                    <input class="form-control" id="mentions-id" type="text" value="<%= mentions_id %>">
+                  </div>
+                </div>
+            </li>
             <li class="list-group-item">
               Total Mentions <span class="badge"><%= total %></span>
             </li>
@@ -17,5 +23,4 @@
               Last Updated <span class="label label-info pull-right"><%= last_updated %></span>
             </li>
           </ul>
-        </div>
       <!-- end facebook stats panel -->

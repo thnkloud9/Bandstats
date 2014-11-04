@@ -20,10 +20,15 @@ define([
       created: new Date,
       last_updated: new Date,
       active: "true",
+      article_matching: "true",
       external_ids: {
         lastfm_id: "",
         facebook_id: "",
-        echonest_id: ""
+        echonest_id: "",
+        mentions_id: "",
+        spotify_id: "",
+        bandcamp_id: "",
+        twitter_id: ""
       },
       running_stats: {
         facebook_likes: {

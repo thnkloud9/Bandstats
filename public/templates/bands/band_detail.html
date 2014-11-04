@@ -6,141 +6,198 @@
 <div id="band-detail-content" class="row">
   <ul class="list-inline">
 
+    <!-- column one -->
     <li style="vertical-align: top">
+
       <div style="width: 300px">
         <div class="well">
-          <p><img id="picture" width="250" src="<%= band_image_src === null ? 'pics/generic.jpg' : band_image_src  %>"/></p>
+          <p><img id="picture" class="image-droppable" width="250" src="<%= band_image_src === null ? 'pics/generic.jpg' : band_image_src  %>"/></p>
           <p>To change the picture, drag a new picture from an external source on this page.</p>
         </div>
       </div>
+
+      <div class="form-actions">
+        <a id='band-save' class="btn btn-primary save">Save</a>
+        <a id='band-delete' class="btn btn-danger delete">Delete</a>
+      </div>
+
     </li>
 
-     <li>
-		 <div style="width: 300px">
-           <div class="form-group">
-             <label for="bandId" class="control-label">Id:</label>
-             <input id="bandId" class="form-control" type="text" value="<%= band_id === null ? '' : band_id %>" class="span2" disabled/>
-		   </div>
+    <!-- column two -->
+     <li style="vertical-align: top">
+	   <div style="width: 300px">
+
+         <div class="form-group">
+           <label for="bandId" class="control-label">Id:</label>
+           <input id="bandId" class="form-control" type="text" value="<%= band_id === null ? '' : band_id %>" class="span2" disabled/>
+	     </div>
 		
-           <div class="form-group">
-              <label for="band-name" class="control-label">Name:</label>
-             <input id="band-name" class="form-control" type="text" value="<%= band_name %>"/>
-		   </div>
+         <div class="form-group">
+           <label for="band-name" class="control-label">Name:</label>
+           <input id="band-name" class="form-control" type="text" value="<%= band_name %>"/>
+	     </div>
 
-           <div class="form-group">
-              <label for="band-url" class="control-label">Band Url:</label>
-             <input id="band-url" class="form-control" type="text" value="<%= band_url %>"/>
-		   </div>
+         <div class="form-group">
+           <label for="band-url" class="control-label">Band Url:</label>
+           <input id="band-url" class="form-control" type="text" value="<%= band_url %>"/>
+	     </div>
 
-    <!-- genres controls -->
-                 <div class="input-group">
-                 <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
-                 <span class="input-group-btn">
-                 <button id="btn-add-genre" class="btn btn-default" type="button">Add</button>
-                 </span>
-                 </div><!-- /input-group -->
+         <!-- genres controls -->
+         <div class="input-group">
+           <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+           <span class="input-group-btn">
+             <button id="btn-add-genre" class="btn btn-default" type="button">Add</button>
+           </span>
+        </div><!-- /input-group -->
 
-                 <% for (var i = 0; i < genres.length; i++) { %>
-                 <% var genre = genres[i]; %>
-                 <span class="label label-default genres btn-delete-genre" data-genre="<%= genre %>"><%= genre %></span>
-                 <% } %>
+        <% for (var i = 0; i < genres.length; i++) { %>
+          <% var genre = genres[i]; %>
+          <span class="label label-default genres btn-delete-genre" data-genre="<%= genre %>"><%= genre %></span>
+        <% } %>
     <!-- end genres controls -->
 
     <!-- region controls -->
-                 <div class="input-group">
-                 <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
-                 <span class="input-group-btn">
-                 <button id="btn-add-region" class="btn btn-default" type="button">Add</button>
-                 </span>
-                 </div><!-- /input-group -->
+        <div class="input-group">
+          <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+          <span class="input-group-btn">
+            <button id="btn-add-region" class="btn btn-default" type="button">Add</button>
+          </span>
+        </div><!-- /input-group -->
 
-                 <% for (var i = 0; i < regions.length; i++) { %>
-                 <% var region = regions[i]; %>
-                 <span class="label label-default regions btn-delete-region" data-region="<%= region %>"><%= region %></span>
-                 <% } %>
+        <% for (var i = 0; i < regions.length; i++) { %>
+          <% var region = regions[i]; %>
+          <span class="label label-default regions btn-delete-region" data-region="<%= region %>"><%= region %></span>
+        <% } %>
     <!-- end region controls -->
 
-                 <div class="form-group">
-                 <label for="active" class="control-label">Active: </label>
-                 <input class="form-control" type="checkbox" id="active" value="true" <%= active == "true" ? 'checked' : '' %>/>
-                 </div>
-
-		<div class="input-group" style="width: 100%">
-		<label class="control-label">Created: </label>
-		<span class="label label-info pull-right"><%= created %></span>
-		</div>
-
-		<div class="input-group" style="width: 100%">
-		<label class="control-label">Last Updated: </label>
-		<span class="label label-info pull-right"><%= last_updated %></span>
-		</div>
-
-		</div>
-	     </li>
- 	</ul>
-
-        <div class="form-actions">
-            <a id='band-save' class="btn btn-primary save">Save</a>
-            <a id='band-delete' class="btn btn-danger delete">Delete</a>
+        <div class="form-group">
+          <label class="control-label">Active: </label>
+          <div id="toggle-active" class="btn-group toggle-btn-right">
+            <% if (active == "true") { %> 
+              <button class="btn btn-xs btn-success active">ON</button>
+              <button class="btn btn-xs btn-default">OFF</button>
+            <% } else { %>
+              <button class="btn btn-xs btn-default">ON</button>
+              <button class="btn btn-xs btn-danger active">OFF</button>
+            <% } %>
+        </div>
+        
+        <div class="form-group">
+          <label class="control-label">Collect Article Matches: </label>
+          <div id="toggle-article-matching" class="btn-group toggle-btn-right"> 
+            <% if (article_matching == "true") { %> 
+              <button class="btn btn-xs btn-success active">ON</button>
+              <button class="btn btn-xs btn-default">OFF</button>
+            <% } else { %>
+              <button class="btn btn-xs btn-default">ON</button>
+              <button class="btn btn-xs btn-danger active">OFF</button>
+            <% } %>
+          </div>
         </div>
 
+	    <div class="input-group" style="width: 100%">
+		  <label class="control-label">Created: </label>
+		  <span class="label label-info pull-right"><%= created %></span>
+	    </div>
 
-</div>
-
-<div id="stats-content row">
-
-  <ul class="list-unstyled"> 
-
-    <li class="col-md-12">
-      <div id="running-stats-chart-content">
-      </div>
-    </li>
-
-    <li class="col-md-6">
-      <div id="facebook-stats-content">
-      </div>
-    </li>
-
-    <li class="col-md-6">
-      <div id="lastfm-stats-content">
-      </div>
-    </li>
-
-    <li class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Facebook Detailed Stats</h3>
+	    <div class="input-group" style="width: 100%">
+		  <label class="control-label">Last Updated: </label>
+		  <span class="label label-info pull-right"><%= last_updated %></span>
         </div>
+
+      </div>
+    </li>
+
+    <!-- column three -->
+    <li>
+      <div id="band-detail-tools" class="col-md-12">
+        <!-- START VERTICAL ACCORDIAN -->
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <i class="fa fa-facebook-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total likes"><%= running_stats.facebook_likes.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental likes"><%= running_stats.facebook_likes.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg likes"><%= running_stats.facebook_likes.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.facebook %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <!-- FACEBOOK PANELS GO HERE -->
+        <div id="facebook-stats-content">
+        </div>
+
+        <div id="running-stats-chart-content">
+        </div>
+
         <div id="facebook-stats-table" class="panel-body">
         </div>
+        <!-- END FACEBOOK PANELS -->
       </div>
-    </li>
-
-    <li class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Lastfm Detailed Stats</h3>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <i class="fa fa-lastfm-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total listeners"><%= running_stats.lastfm_listeners.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental listeners"><%= running_stats.lastfm_listeners.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg listeners"><%= running_stats.lastfm_listeners.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.lastfm %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <!-- LASTFM PANELS GO HERE -->
+        <div id="lastfm-stats-content">
         </div>
+
         <div id="lastfm-stats-table" class="panel-body">
         </div>
+        <!-- END LASTFM PANELS -->
       </div>
-    </li>
-
-    <li class="col-md-6">
-      <div id="mentions-stats-content">
-      </div>
-    </li>
-
-    <li class="col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Article Mentions Stats</h3>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <i class="fa fa fa-rss-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total article matches"><%= mentions_total %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <!-- ARTICLE PANELS GO HERE -->
+        <div id="mentions-stats-content">
         </div>
+
         <div id="mentions-stats-table" class="panel-body">
         </div>
+        <!-- END ARTICLE PANELS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- END VERTICAL ACCORDIAN -->
       </div>
     </li>
 
   </ul>
-
 </div>
+

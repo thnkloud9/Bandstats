@@ -1,39 +1,34 @@
       <!-- facebook stats panel -->
-        <div class="panel-heading">
-          <span class="panel-title"><i class="fa fa-facebook-square fa-2x"></i></span>
-        </div>
-        <div class="panel-body">
           <ul class="list-group">
             <li class="list-group-item">
-              <span><input id="facebook-id" type="text" value="<%= external_ids.facebook_id %>"></span>
-	          <div class="btn-group" style="width: 50%; margin-left: 10%">
-                <button type="button" class="btn btn-default" style="width: 40%">Actions</button>
-    		    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-      		      <span class="caret"></span>
-		          <span class="sr-only">Toggle Dropdown</span>
-     		    </button>
-    		    <ul class="dropdown-menu" role="menu">
-      		      <li><a class="lnk-facebook-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id %>" data-toggle="modal" data-target="#admin-modal">Lookup</a></li>
-      		      <li><a class="lnk-facebook-collect" data-band-id="<%= band_id %>"  data-toggle="modal" data-target="#admin-modal">Collect Now</a></li>
-      		      <li><a class="lnk-facebook-clear" data-band-id="<%= band_id %>">Clear</a></li>
-    	     	</ul>
-              </div>
+              <form class="form-inline" role="form">
+                <div class="form-group" style="width: 200px">
+                  <div class="input-group">
+                    <div class="input-group-addon lnk-facebook-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id%>" data-toggle="modal" data-target="#admin-modal">
+                      <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="Lookup Facebook Id" data-placement="right"></i>
+                    </div>
+                    <input class="form-control" id="facebook-id" type="text" value="<%= external_ids.facebook_id %>">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-sm btn-success lnk-facebook-collect" data-band-id="<%= band_id %>"  data-toggle="modal" data-target="#admin-modal">Collect Now</button>
+                </div>
+    
+                <div class="form-group">
+                  <button class="btn btn-sm btn-danger lnk-facebook-clear" data-band-id="<%= band_id %>">Clear</button>
+                </div>
+              </form>
             </li>
+
             <li class="list-group-item">
-              Total Likes <span class="badge"><%= running_stats.facebook_likes.current %></span>
-            </li>
-            <li class="list-group-item">
-              Incremental <span class="badge"><%= running_stats.facebook_likes.incremental %></span>
-            </li>
-            <li class="list-group-item">
-              Incremental Average <span class="badge"><%= running_stats.facebook_likes.incremental_avg %></span>
-            </li>
-            <li class="list-group-item">
-              Errors (<%= failed_lookups.facebook %>) <span class="label label-danger pull-right"><%= running_stats.facebook_likes.error %></span>
-            </li>
-            <li class="list-group-item">
-              Last Updated <span class="label label-info pull-right"><%= running_stats.facebook_likes.last_updated %></span>
+              <span class="label label-default"><%= running_stats.facebook_likes.current %> Likes</span>
+              <span class="label label-default"><%= running_stats.facebook_likes.incremental %> Incremental</span>
+              <span class="label label-default"><%= running_stats.facebook_likes.incremental_avg %> Incremental Avg</span>
+              <span class="label label-info"><%= running_stats.facebook_likes.last_updated %></span>
+              <br />
+              <span class="label label-danger"><%= failed_lookups.facebook %> Errors</span>
+              <span class="label label-danger"><%= running_stats.facebook_likes.error %></span>
             </li>
           </ul>
-        </div>
       <!-- end facebook stats panel -->
