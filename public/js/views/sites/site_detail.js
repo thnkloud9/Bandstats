@@ -47,36 +47,43 @@ define([
 
     render: function () {
       var parent = this;
-      this.loadSiteArticles(function(err, articles) {
+      if (this.model.get("site_id") > 0) {
+        this.loadSiteArticles(function(err, articles) {
+          var extendedModel = _.clone(parent.model.attributes);
+          extendedModel.articles = articles;
+          extendedModel.articleFields = _.keys(articles[0]);
+
+          $(parent.el).html(parent.template(extendedModel));
+
+          // bootstrap popovers
+          $(".bs-tooltip").tooltip();
+          $(".bs-popover-select").on('mouseover', function(e) {
+            var $e = $(e.target); 
+            var parent = this;
+
+            if ($e.is('option')) {
+              $(this).popover('destroy');
+              $(this).popover({
+                trigger: 'manual',
+                placement: 'right',
+                container: 'body',
+                title: $e.attr("data-title"),
+                content: $e.attr("data-content")
+              }).popover('show');
+            }
+          });
+          $(".bs-popover-select").on('mouseleave', function(e) {
+            $('.bs-popover-select').popover('destroy');
+          });
+          return this;
+        });
+      } else {
         var extendedModel = _.clone(parent.model.attributes);
-        extendedModel.articles = articles;
-        extendedModel.articleFields = _.keys(articles[0]);
-
+        extendedModel.articles = [];
+        extendedModel.articleFields = [];
         $(parent.el).html(parent.template(extendedModel));
-
-        // bootstrap popovers
-        $(".bs-tooltip").tooltip();
-        $(".bs-popover-select").on('mouseover', function(e) {
-          var $e = $(e.target); 
-          var parent = this;
-
-          if ($e.is('option')) {
-            $(this).popover('destroy');
-            $(this).popover({
-              trigger: 'manual',
-              placement: 'right',
-              container: 'body',
-              title: $e.attr("data-title"),
-              content: $e.attr("data-content")
-            }).popover('show');
-          }
-        });
-        $(".bs-popover-select").on('mouseleave', function(e) {
-          $('.bs-popover-select').popover('destroy');
-        });
-
         return this;
-      });
+      }
     },
 
     saveSite: function (ev) {
