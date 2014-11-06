@@ -1,6 +1,6 @@
 {
   "name": "node_bandstats",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "app.js",
   "bin": {
@@ -18,7 +18,7 @@
     "jinjs": "~0.3.6",
     "jquery": "~1.8.3",
     "later": "~0.0.14",
-    "moment": "~1.7.2",
+    "moment": "~2.8.3",
     "mongodb": "~1.2.11",
     "mongoskin": "~0.5.0",
     "nconf": "~0.6.7",
@@ -38,8 +38,10 @@
     "type": "git",
     "url": "git://github.com/thnkloud9/Bandstats.git"
   },
-  "author": "",
+  "author": "Mark Lewis",
   "license": "BSD",
-  "readmeFilename": "README.md",
-  "gitHead": "865722ae597389d275eeb951b591428a4ff8706a"
+  "bugs": {
+    "url": "https://github.com/thnkloud9/Bandstats/issues"
+  },
+  "homepage": "https://github.com/thnkloud9/Bandstats"
 }

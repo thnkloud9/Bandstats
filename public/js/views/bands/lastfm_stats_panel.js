@@ -62,8 +62,9 @@ define([
       this.model.save(null, {
         success: function(band, saveResponse) {
           console.log(bandId + ' saved');
-          parent.render();
           $('.flash-message').addClass('alert-success').text("Success").show();
+          parent.model.fetch();
+          parent.trigger('refreshParent');
         },
         error: function(band, saveResponse) {
           console.log('error:', response);
@@ -87,10 +88,11 @@ define([
         type: "GET",
         dataType: "json",
           success: function(data) {
-	        $('.admin-modal-content', this.el).html('<h4>Success, latest results will be updated in 5 seconds</h4>');
+            $('.flash-message').addClass('alert-success').text("Success").show();
             // refresh in 5 secods
             setTimeout(function(){
               parent.model.fetch();
+              parent.trigger('refreshParent');
             }, 5000);
           },
          error: function(data) {

@@ -374,8 +374,25 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
         },
         function(cb) {
             db.collection(collection).findOne(query, function(err, results) {
+                var retentionPeriod = nconf.get('retention:period');
+                var retentionValue = nconf.get('retention:value');
+                var minDate = moment().subtract(retentionValue, retentionPeriod);
+                var mentionsThisPeriod = 0;
                 var mentionsTotal = results.mentions.length;
-                db.collection(collection).update(query, {$set: {"mentions_total": mentionsTotal}}, function(err, results) {
+
+                for (m = 0; m < mentionsTotal; m++) {
+                    var mention = results.mentions[m];
+                    var mentionDate = moment(mention.date, "YYYY-MM-DD");
+                    if (mentionDate.isAfter(minDate)) {
+                        mentionsThisPeriod++;
+                    }
+                }
+
+                var set = {
+                    "mentions_total": mentionsTotal,
+                    "mentions_this_period": mentionsThisPeriod
+                }
+                db.collection(collection).update(query, {$set: set}, function(err, results) {
                     if (err) {
                         cb(err);
                         return false;

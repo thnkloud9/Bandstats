@@ -17,6 +17,7 @@ define([
       genres: [],
       mentions: [],
       mentions_total: 0,
+      mentions_this_period: 0,
       created: new Date,
       last_updated: new Date,
       active: "true",

@@ -25,6 +25,7 @@ define([
     clearMentions: function () {
       console.log('here');
       this.model.set("mentions_total", 0);
+      this.model.set("mentions_this_period", 0);
       this.model.set("mentions", []);
        
       this.model.save(null, {
@@ -62,7 +63,7 @@ define([
       var data = {
 	    total: total,
 	    total_this_week: total_this_week,
-	    total_this_month: total_this_month,
+	    mentions_this_period: this.model.get("mentions_this_period"),
 	    last_updated: now,
         mentions_id: externalIds.mentions_id,
         band_id: this.model.get("band_id"),

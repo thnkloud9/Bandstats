@@ -33,6 +33,7 @@ define([
     events: {
       'click #band-save': 'saveBand',
       'click #band-delete': 'deleteBand',
+      'click #band-clear-all': 'clearAllStats',
       'click #btn-add-genre': 'addGenre',
       'click #btn-add-region': 'addRegion',
       'click .btn-delete-genre': 'deleteGenre',
@@ -73,6 +74,32 @@ define([
             this.model.set('article_matching', 'true');
         }
         this.render();
+    },
+
+    clearAllStats: function () {
+      var runningStats =  this.model.get('running_stats');
+      runningStats.facebook_likes = {
+        current: 0,
+        incremental_avg: 0,
+        incremental_total: 0,
+        last_updated: "",
+        incremental: 0,
+        daily_stats: [] 
+      }
+      runningStats.lastfm_listeners = {
+        current: 0,
+        incremental_avg: 0,
+        incremental_total: 0,
+        last_updated: "",
+        incremental: 0,
+        daily_stats: [] 
+      }
+      this.model.set('running_stats', runningStats);
+      this.model.set('mentions', []);
+      this.model.set('mentions_total', 0);
+      this.model.set('mentions_this_period', 0);
+      this.model.save();
+      this.render();
     },
 
     addGenre: function () {
@@ -131,9 +158,11 @@ define([
  
       var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model, vent: this.vent});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el));
+      facebookStatsPanelView.on('refreshParent', this.render, this);
 
       var lastfmStatsPanelView = Vm.create(this, 'LastfmStatsPanelView', LastfmStatsPanelView, {model: this.model, vent: this.vent});
       $(lastfmStatsPanelView.render().el).appendTo($('#lastfm-stats-content', this.el));
+      lastfmStatsPanelView.on('refreshParent', this.render, this);
 
       var facebookStatsTableView = Vm.create(this, 'FacebookStatsTableView', FacebookStatsTableView, {model: this.model, vent: this.vent});
       $(facebookStatsTableView.render().el).appendTo($('#facebook-stats-table', this.el));
