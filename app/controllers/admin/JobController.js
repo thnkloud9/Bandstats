@@ -62,8 +62,13 @@ JobController.prototype.indexAction = function(req, res) {
         "_id": 0
     };
 
+    var orderedQuery = {
+        $query: query,
+        $orderby: {"job_category": 1}
+    }
+
     this.jobRepository.count(query, function(err, count) {
-        parent.jobRepository.find(query, {}, function(err, jobs) {
+        parent.jobRepository.find(orderedQuery, {}, function(err, jobs) {
             var results = {
                 "totalRecords": count,
                 "data": jobs

@@ -1,8 +1,25 @@
    <td>
+      <% if (job_category == "Import") { %>
+        <i class="fa fa-sign-in fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Export") { %>
+        <i class="fa fa-sign-out fa-2x"></i>
+      <% } %>
+      <% if (job_category == "System Maintenance") { %>
+        <i class="fa fa-cogs fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Stat Collector") { %>
+        <i class="fa fa-tachometer fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Profile Data Lookup") { %>
+        <i class="fa fa-user fa-2x"></i>
+      <% } %>
+
       <a href="#jobs/<%= job_id %>" class="list plain">
-      <h5><%= job_name %></h5>
+      <%= job_name %>
      </a>
    </td>
+
    <td>
      <%= readable_last_run %>
    </td>

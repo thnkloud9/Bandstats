@@ -20,6 +20,7 @@ define([
       job_description: '',
       job_failed: '',
       job_schedule: '',
+      job_category: '',
       pids: '',
     },
 
