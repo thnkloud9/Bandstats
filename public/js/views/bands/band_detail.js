@@ -153,8 +153,13 @@ define([
       this.renderGenreTypeahead();
       this.renderRegionTypeahead();
 
-      var runningStatsChartView = Vm.create(this, 'RunningStatsChartView', RunningStatsChartView, {model: this.model, vent: this.vent});
-      $(runningStatsChartView.render().el).appendTo($('#running-stats-chart-content', this.el));
+      var stats = this.model.attributes.running_stats.facebook_likes.daily_stats;
+      var facebookChartView = Vm.create(this, 'FacebookChartView', RunningStatsChartView, {model: this.model, vent: this.vent, chart_data: stats});
+      $(facebookChartView.render().el).appendTo($('#facebook-chart-content', this.el));
+
+      stats = this.model.attributes.running_stats.lastfm_listeners.daily_stats;
+      var lastfmChartView = Vm.create(this, 'LastfmChartView', RunningStatsChartView, {model: this.model, vent: this.vent, chart_data: stats});
+      $(lastfmChartView.render().el).appendTo($('#lastfm-chart-content', this.el));
  
       var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model, vent: this.vent});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el));

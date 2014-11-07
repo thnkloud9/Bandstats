@@ -14,8 +14,8 @@ define([
     template: _.template(template),
 
     initialize: function (options) {
-      this.field = options.field;
-      this.available_fields = options.available_fields;
+      this.chartData = options.chart_data;
+      this.availableFields = options.available_fields;
 
       this.model.bind("change", this.render, this);
       this.model.bind("destroy", this.close, this);
@@ -27,10 +27,10 @@ define([
       $(this.el).html( this.template() );
 
       var dateLabels = [];
-      var facebookLikesData = [];
-      _.forEach(this.model.attributes.running_stats.facebook_likes.daily_stats, function(stat) {
+      var statData = [];
+      _.forEach(this.chartData, function(stat) {
         dateLabels.push(stat.date);
-        facebookLikesData.push(stat.value);	
+        statData.push(stat.value);	
       });
 
       var chartData = {
@@ -41,7 +41,7 @@ define([
 			strokeColor : "rgba(220,220,220,1)",
 			pointColor : "rgba(220,220,220,1)",
 			pointStrokeColor : "#fff",
-			data : facebookLikesData
+			data : statData
 		  }
         ]
       }
