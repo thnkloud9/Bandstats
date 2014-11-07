@@ -13,7 +13,10 @@ define([
     className: "panel panel-default",
     template: _.template(template),
 
-    initialize: function () {
+    initialize: function (options) {
+      this.field = options.field;
+      this.available_fields = options.available_fields;
+
       this.model.bind("change", this.render, this);
       this.model.bind("destroy", this.close, this);
     },
