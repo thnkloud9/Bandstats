@@ -40,35 +40,7 @@ define([
     },
 
     render: function () {
-      var now = moment().format('YYYY-MM-DD'); 
-      var lastWeek = moment().subtract('days', 7).format('YYYY-MM-DD'); 
-      var lastMonth = moment().subtract('months', 1).format('YYYY-MM-DD'); 
-
-      var total = 0;
-      var total_this_week = 0;
-      var total_this_month = 0;
-
-      _.forEach(this.model.attributes.mentions, function (mention) {
-        total++;
-	    if (mention.date >= lastWeek) {
-	      total_this_week++;
-	    }
-	    if (mention.date >= lastMonth) {
-	      total_this_month++;
-	    }	
-      });
-
-      var externalIds = this.model.get("external_ids");
- 
-      var data = {
-	    total: total,
-	    total_this_week: total_this_week,
-	    mentions_this_period: this.model.get("mentions_this_period"),
-	    last_updated: now,
-        mentions_id: externalIds.mentions_id,
-        band_id: this.model.get("band_id"),
-      }
-      $(this.el).html(this.template(data));
+      $(this.el).html(this.template(this.model.attributes));
       $('.bs-tooltip').tooltip();
     
       return this;

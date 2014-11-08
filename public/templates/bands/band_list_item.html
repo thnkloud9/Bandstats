@@ -35,7 +35,17 @@
     </span>
   </td>
 
-  <td><%= mentions.length %></td>
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total mentions">
+      <%= mentions_total %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="total this period">
+      <%= mentions_this_period %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="total score this period">
+      <%= mentions_score_this_period %>
+    </span>  
+  </td>
 
   <td>
     <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="facebook errors">

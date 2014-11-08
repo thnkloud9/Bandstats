@@ -336,12 +336,14 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
     var today = moment().format('YYYY-MM-DD');
     var description = article[site['description_field']];
     var link = article[site['link_field']];
+    var mentionScore = parseInt(1 * site.site_weight);
     var set = { 
         $addToSet: {   
             "mentions": { 
                 "date": today,
                 "site_id": site.site_id,
                 "site_name": site.site_name,
+                "mention_score": mentionScore,
                 "link": link, 
                 "description": description 
             } 
@@ -378,19 +380,24 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
                 var retentionValue = nconf.get('retention:value');
                 var minDate = moment().subtract(retentionValue, retentionPeriod);
                 var mentionsThisPeriod = 0;
+                var mentionsScoreThisPeriod = 0;
+                var mentionsScoreTotal = 0;
                 var mentionsTotal = results.mentions.length;
 
                 for (m = 0; m < mentionsTotal; m++) {
                     var mention = results.mentions[m];
                     var mentionDate = moment(mention.date, "YYYY-MM-DD");
+                    mentionsScoreTotal += mention.mention_score;
                     if (mentionDate.isAfter(minDate)) {
                         mentionsThisPeriod++;
+                        mentionsScoreThisPeriod += mention.mention_score;
                     }
                 }
-
                 var set = {
                     "mentions_total": mentionsTotal,
-                    "mentions_this_period": mentionsThisPeriod
+                    "mentions_this_period": mentionsThisPeriod,
+                    "mentions_score_total": mentionsScoreTotal,
+                    "mentions_score_this_period": mentionsScoreThisPeriod
                 }
                 db.collection(collection).update(query, {$set: set}, function(err, results) {
                     if (err) {
