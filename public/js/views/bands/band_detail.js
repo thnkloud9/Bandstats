@@ -50,7 +50,8 @@ define([
     },
 
     imageDrag: function (e) {
-      e.originalEvent.dataTransfer.setData('src', 'http://icons.iconarchive.com/icons/franksouza183/fs/256/Actions-stock-save-as-icon.png');
+      var source = $(e.target).attr('src');
+      e.originalEvent.dataTransfer.setData('src', source);
     },
 
     imageDrop: function (e) {

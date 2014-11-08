@@ -66,10 +66,12 @@ define([
       'click .lnk-facebook-lookup': 'lookupFacebookId',
       'click .lnk-facebook-clear': 'clearFacebookId',
       'click .lnk-facebook-collect': 'collectFacebookLikes',
+      'click .lnk-facebook-view': 'viewFacebookProfile',
 
       'click .lnk-lastfm-lookup': 'lookupLastfmId',
       'click .lnk-lastfm-clear': 'clearLastfmId',
       'click .lnk-lastfm-collect': 'collectLastfmLikes',
+      'click .lnk-lastfm-view': 'viewLastfmProfile',
     },
 
     clearFacebookId: function (ev) {
@@ -78,6 +80,10 @@ define([
 
     collectFacebookLikes: function (ev) {
       this.vent.trigger("facebookStatsPanel.collectFacebookLikes", ev);
+    },
+
+    viewFacebookProfile: function (ev) {
+      this.vent.trigger("facebookStatsPanel.viewFacebookProfile", ev);
     },
 
     lookupFacebookId: function (ev) {
@@ -90,6 +96,10 @@ define([
 
     collectLastfmLikes: function (ev) {
       this.vent.trigger("lastfmStatsPanel.collectLastfmLikes", ev);
+    },
+
+    viewLastfmProfile: function (ev) {
+      this.vent.trigger("lastfmStatsPanel.viewLastfmProfile", ev);
     },
 
     lookupLastfmId: function (ev) {

@@ -27,6 +27,7 @@ define([
         this.listenTo(this.vent, "facebookStatsPanel.lookupFacebookId", this.lookupFacebookId);
         this.listenTo(this.vent, "facebookStatsPanel.collectFacebookLikes", this.collectFacebookLikes);
         this.listenTo(this.vent, "facebookStatsPanel.clearFacebookId", this.clearFacebookId);
+        this.listenTo(this.vent, "facebookStatsPanel.viewFacebookProfile", this.viewFacebookProfile);
       }
     },
 
@@ -102,6 +103,39 @@ define([
       }); 	
     },
 
+    viewFacebookProfile: function (ev) {
+      var parent = this;
+      var facebookId = this.model.attributes.external_ids.facebook_id;
+
+      if (facebookId === "") {
+        return false;
+      }
+
+      require(['views/modal'], function (ModalView) {
+        var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: {}});
+        modalView.render();
+        $('#admin-modal').modal('show');
+        $('#admin-modal-title').html('Facebook Profile: ' + facebookId);
+
+        $.ajax("/admin/facebook/" + facebookId, {
+          type: "GET",
+          dataType: "json",
+          success: function(data) {
+	        $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
+            
+	        var facebookLookupItemModel = new FacebookLookupItemModel(data);
+            facebookLookupItemModel.set('band_id', bandId);
+            var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
+	        facebookLookupItemView.render();
+
+          },
+          error: function(data) {
+	        console.log('error: ' + data);
+          }
+        }); 	
+      });
+    },
+
     lookupFacebookId: function (ev) {
       var parent = this;
       var search = $(ev.currentTarget).data("search");
@@ -116,28 +150,27 @@ define([
         var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: buttons});
         modalView.render();
         $('#admin-modal').modal('show');
+        $('#admin-modal-title').html('Facebook Lookup: ' + search);
+
+        $.ajax("/admin/facebook/search?search=" + search, {
+          type: "GET",
+          dataType: "json",
+            success: function(data) {
+	          $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
+
+	         _.forEach(data[0].results, function(result) {
+	           var facebookLookupItemModel = new FacebookLookupItemModel(result);
+               facebookLookupItemModel.set('band_id', bandId);
+               var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
+	           facebookLookupItemView.render();
+             });
+
+            },
+           error: function(data) {
+	         console.log('error: ' + data);
+           }
+        }); 	
       });
-
-      $('#admin-modal-title').html('Facebook Lookup: ' + search);
-
-      $.ajax("/admin/facebook/search?search=" + search, {
-        type: "GET",
-        dataType: "json",
-          success: function(data) {
-	        $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
-
-	       _.forEach(data[0].results, function(result) {
-	         var facebookLookupItemModel = new FacebookLookupItemModel(result);
-             facebookLookupItemModel.set('band_id', bandId);
-             var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
-	         facebookLookupItemView.render();
-	       });
-
-          },
-         error: function(data) {
-	       console.log('error: ' + data);
-         }
-      }); 	
     },
 
 

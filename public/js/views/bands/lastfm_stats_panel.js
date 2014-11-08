@@ -27,6 +27,7 @@ define([
         this.listenTo(this.vent, "lastfmStatsPanel.lookupLastfmId", this.lookupLastfmId);
         this.listenTo(this.vent, "lastfmStatsPanel.collectLastfmLikes", this.collectLastfmLikes);
         this.listenTo(this.vent, "lastfmStatsPanel.clearLastfmId", this.clearLastfmId);
+        this.listenTo(this.vent, "lastfmStatsPanel.viewLastfmProfile", this.viewLastfmProfile);
       }
     },
 
@@ -101,6 +102,39 @@ define([
       }); 	
     },
 
+    viewLastfmProfile: function (ev) {
+      var parent = this;
+      var lastfmId = this.model.attributes.external_ids.lastfm_id;
+
+      if (lastfmId === "") {
+        return false;
+      }
+
+      require(['views/modal'], function (ModalView) {
+        var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: {}});
+        modalView.render();
+        $('#admin-modal').modal('show');
+        $('#admin-modal-title').html('Lastfm Profile: ' + lastfmId);
+
+        $.ajax("/admin/lastfm/" + lastfmId, {
+          type: "GET",
+          dataType: "json",
+          success: function(data) {
+	        $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
+
+	        var lastfmLookupItemModel = new LastfmLookupItemModel(data);
+            lastfmLookupItemModel.set('band_id', bandId);
+            var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
+	        lastfmLookupItemView.render();
+
+          },
+          error: function(data) {
+	        console.log('error: ' + data);
+          }
+        }); 	
+      });
+    },
+
     lookupLastfmId: function (ev) {
       var parent = this;
 
@@ -116,30 +150,28 @@ define([
         var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: buttons});
         modalView.render();
         $('#admin-modal').modal('show');
+        $('#admin-modal-title').html('Lastfm Lookup: ' + search);
+
+        $.ajax("/admin/lastfm/search?search=" + search, {
+          type: "GET",
+          dataType: "json",
+          success: function(data) {
+	        $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
+
+	        _.forEach(data[0].results, function(result) {
+	          var lastfmLookupItemModel = new LastfmLookupItemModel(result);
+              lastfmLookupItemModel.set('band_id', bandId);
+              var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
+	          lastfmLookupItemView.render();
+	        });
+
+          },
+          error: function(data) {
+	        console.log('error: ' + data);
+          }
+        }); 	
       });
-
-      $('#admin-modal-title').html('Lastfm Lookup: ' + search);
-
-      $.ajax("/admin/lastfm/search?search=" + search, {
-       type: "GET",
-       dataType: "json",
-         success: function(data) {
-	   $('.admin-modal-content', this.el).html('<ul id="lastfm-lookup-results" class="list-inline"></ul>');
-
-	   _.forEach(data[0].results, function(result) {
-	     var lastfmLookupItemModel = new LastfmLookupItemModel(result);
-             lastfmLookupItemModel.set('band_id', bandId);
-             var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
-	     lastfmLookupItemView.render();
-	  });
-
-         },
-         error: function(data) {
-	   console.log('error: ' + data);
-         }
-      }); 	
     },
-
 
   });
 
