@@ -23,7 +23,6 @@ function JobController(db, jobScheduler) {
     this.db = db;
     this.jobRepository = new JobRepository({'db': db});
     this.jobScheduler = jobScheduler;
-    this.data = {"section": "job"};
 }
 
 JobController.prototype.indexAction = function(req, res) {
@@ -41,7 +40,6 @@ JobController.prototype.indexAction = function(req, res) {
     }
 
     var parent = this;
-    var data = this.data;
     var jobId = req.params.id;
     var limit = req.query.limit;
     var skip = req.query.skip;
@@ -101,7 +99,6 @@ JobController.prototype.runningAction = function(req, res) {
 
 JobController.prototype.logAction = function(req, res) {
     var parent = this;
-    var data = this.data;
     var limit = req.query.limit;
     var skip = req.query.skip;
     var query = {
@@ -135,43 +132,9 @@ JobController.prototype.logAction = function(req, res) {
 }
 
 JobController.prototype.scheduledAction = function(req, res) {
-    var data = this.data;
     var scheduledEvents = this.jobScheduler.getScheduledEvents();
     res.send(scheduledEvents);
 } 
-
-JobController.prototype.editAction = function(req, res) {
-    var parent = this;
-    var data = this.data;
-    var query = {'job_id': req.params.id};
-    var jobRepository = this.jobRepository;
-
-    _.extend(data, {json: {}});
-
-    jobRepository.getAvailableCommands(function(err, commands) {
-        if (err) util.log(err);
-
-        data.commands = commands; 
-        if (req.params.id === "0") {
-            // this is a new record
-            data.job = {};
-            data.json.job = JSON.stringify({});
-            res.send(data);
-        } else {
-            // get the record from the db
-            parent.jobRepository.findOne(query, function(err, job) {
-                if ((err) || (!job)) {
-                    res.send({status: "error", error: "job not found"});
-                    return false;
-                }
-                delete job._id;
-                data.job = job;
-                data.json.job = JSON.stringify(job);
-                res.send(data);
-            });
-        }
-    });
-}
 
 JobController.prototype.startAction = function(req, res) {
     if ((req.route.method != "get")) {

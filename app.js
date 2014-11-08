@@ -51,14 +51,13 @@ app.configure(function() {
     app.use(express.methodOverride());
 
     app.set("view options", { layout: false });
-    //app.set('views', __dirname + '/app/views');
 
     // setup public folder
     app.use(express.static(__dirname + '/public'));
 
     // authentication and sessions
     app.use(flash());
-    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge: sessionTimeout }})); // 30 minutes
+    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge:sessionTimeout }})); 
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);

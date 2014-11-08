@@ -121,18 +121,20 @@ JobScheduler.prototype.startJob = function(job) {
     // ad event listener to remove from runningJobs on exit
     cp.on('exit', function() {
         var now = moment().format('YYYY-MM-DD HH:mm:ss');
-        
+        var lastOutput = "";
+ 
         util.log('child ' + cpid + ' has exited');
 
         // remove the job from the runningJobs array
         for (var i = 0; i < parent.runningJobs.length; i++) {
             if (parent.runningJobs[i].pid === cpid) {
+                lastOutput = parent.runningJobs[i].output;
                 parent.runningJobs.splice(i, 1);
                 break;
             } 
         };
         // remove from the jobs pids in the database
-        parent.jobRepository.update({"job_id": job.job_id}, { $pull: {"pids": cpid} }, {"multi": true}, function(err, updated) {
+        parent.jobRepository.update({"job_id": job.job_id}, { $set: {"last_output": lastOutput }, $pull: {"pids": cpid} }, {"multi": true}, function(err, updated) {
             util.log('removing pid ' + cpid + ' from job_id ' + job.job_id);
         });
         // add to the job log

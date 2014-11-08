@@ -2,7 +2,7 @@
     "app": {
         "port": 4000,
         "title": "Bandstats",
-        "session_timeout": 1800000 
+        "session_timeout": 86400000
     },
     "retention": {
         "value": 2,
