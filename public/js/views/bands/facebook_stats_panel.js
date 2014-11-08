@@ -103,11 +103,14 @@ define([
       }); 	
     },
 
-    viewFacebookProfile: function (ev) {
+    viewFacebookProfile: function (e) {
       var parent = this;
       var facebookId = this.model.attributes.external_ids.facebook_id;
-
-      if (facebookId === "") {
+      var bandId = $(e.currentTarget).data("band-id");
+    
+      console.log(bandId, this.model.attributes.band_id);
+ 
+      if (bandId != this.model.attributes.band_id) {
         return false;
       }
 
@@ -122,7 +125,9 @@ define([
           dataType: "json",
           success: function(data) {
 	        $('.admin-modal-content', this.el).html('<ul id="facebook-lookup-results" class="list-inline"></ul>');
-            
+           
+            console.log(data);
+ 
 	        var facebookLookupItemModel = new FacebookLookupItemModel(data);
             facebookLookupItemModel.set('band_id', bandId);
             var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
@@ -136,10 +141,10 @@ define([
       });
     },
 
-    lookupFacebookId: function (ev) {
+    lookupFacebookId: function (e) {
       var parent = this;
-      var search = $(ev.currentTarget).data("search");
-      var bandId = $(ev.currentTarget).data("band-id");
+      var search = $(e.currentTarget).data("search");
+      var bandId = $(e.currentTarget).data("band-id");
 
       if (bandId != this.model.attributes.band_id) {
         return false;

@@ -53,6 +53,16 @@ DashboardController.prototype.bandStatsAction = function(req, res) {
                     cb(err, count);
                 });
         },
+        missing_echonest: function(cb) {
+                parent.bandRepository.count({"external_ids.echonest_id": ""}, function(err, count) {
+                    cb(err, count);
+                });
+        },
+        missing_spotify: function(cb) {
+                parent.bandRepository.count({"external_ids.spotify_id": ""}, function(err, count) {
+                    cb(err, count);
+                });
+        },
         bad_facebook: function(cb) {
                 parent.bandRepository.count({"failed_lookups.facebook": { $gt : 0 }}, function(err, count) {
                 cb(err, count);

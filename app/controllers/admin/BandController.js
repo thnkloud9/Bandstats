@@ -179,6 +179,24 @@ BandController.prototype.getStartQuery = function(queryName) {
         return query;
     }
 
+    if (queryName === "echonest_id_missing") {
+        var query = {};
+        query["external_ids.echonest_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "spotify_id_missing") {
+        var query = {};
+        query["external_ids.spotify_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
     return {};
 }
  

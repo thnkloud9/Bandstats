@@ -105,8 +105,9 @@ define([
     viewLastfmProfile: function (ev) {
       var parent = this;
       var lastfmId = this.model.attributes.external_ids.lastfm_id;
+      var bandId = $(ev.currentTarget).data("band-id");
 
-      if (lastfmId === "") {
+      if (bandId != this.model.attributes.band_id) {
         return false;
       }
 

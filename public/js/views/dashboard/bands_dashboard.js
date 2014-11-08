@@ -46,6 +46,8 @@ define([
 
       var missingFacebook = data.missing_facebook;
       var missingLastfm = data.missing_lastfm;
+      var missingEchonest = data.missing_echonest;
+      var missingSpotify = data.missing_spotify;
       var badFacebook = data.bad_facebook;
       var badLastfm = data.bad_lastfm;
       var duplicates = data.duplicates;
@@ -55,6 +57,8 @@ define([
       $('#good').html(good);
       $('#missing-facebook').html(missingFacebook);
       $('#missing-lastfm').html(missingLastfm);
+      $('#missing-echonest').html(missingEchonest);
+      $('#missing-spotify').html(missingSpotify);
       $('#bad-facebook').html(badFacebook);
       $('#bad-lastfm').html(badLastfm);
       $('#duplicates').html(duplicates);
@@ -67,12 +71,13 @@ define([
 		{ value : missingFacebook, color : "#FF0007" },
 		{ value : badFacebook, color : "#5ACCBB" },
 		{ value : missingLastfm, color : "#B200B2" },
+		{ value : missingEchonest, color : "#B244B2" },
+		{ value : missingSpotify, color : "#0200FF" },
 		{ value : badLastfm, color : "#0EB29A" },
 		{ value : duplicates, color : "#800000" }
-
-	];
-	var ctx = $('#chart-valid-bands-pie', this.el).get(0).getContext("2d");
-	var myPie = new Chart(ctx).Pie(pieData);
+	  ];
+	  var ctx = $('#chart-valid-bands-pie', this.el).get(0).getContext("2d");
+	  var myPie = new Chart(ctx).Pie(pieData);
     }
 
   });
