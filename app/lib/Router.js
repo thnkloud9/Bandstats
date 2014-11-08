@@ -65,18 +65,18 @@ exports.initRoutes = function(app, passport, db, jobScheduler) {
     });
 
     app.get('/logout', function(req, res){
-	if (req.session) {
-		// remove session from mongo
-		sessionRepository.remove({session: req.session}, function(err) {
-		    req.logout();
-		    req.session.destroy();
-		    res.redirect('/#login');
-		    return true;
-		});
-	}
+        if (req.session) {
+            // remove session from mongo
+            sessionRepository.remove({session: req.session}, function(err) {
+                req.logout();
+                req.session.destroy();
+                res.redirect('/#login');
+                return true;
+            });
+        }
 
-	req.logout();
-	res.redirect('/#login');
+        req.logout();
+        res.redirect('/#login');
     });
 
     // get all js files in controllers subfolder
