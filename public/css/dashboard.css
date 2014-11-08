@@ -226,3 +226,8 @@ body {
 .no-decoration {
   text-decoration: none !important;
 }
+
+.log-output {
+  height: 410px;
+  overflow: scroll;
+}

@@ -22,6 +22,7 @@ define([
       job_schedule: '',
       job_category: '',
       pids: '',
+      last_output: '',
     },
 
     initialize: function() {
