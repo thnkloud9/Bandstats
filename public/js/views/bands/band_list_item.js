@@ -102,8 +102,11 @@ define([
     deactivateMentions: function () {
       parent = this;
       this.model.set({ article_matching: "false" });
-      this.model.set({ mentions_total: 0 });
-      this.model.set({ mentions: [] });
+      this.model.set("mentions_total", 0);
+      this.model.set("mentions_this_period", 0);
+      this.model.set("mentions_score_total", 0);
+      this.model.set("mentions_score_this_period", 0);
+      this.model.set("mentions", []);
 
       this.model.save(null, {
         success: function(band, response) {
