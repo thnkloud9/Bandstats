@@ -1,5 +1,5 @@
 /**
- * Lastfm Controller
+ * Spotify Controller
  *
  * author: Mark Lewis
  */
@@ -9,35 +9,36 @@ var request = require('request');
 var async = require('async');
 var _ = require('underscore');
 var fs = require('fs');
+var util = require('util');
 
 var BandRepository = require('./../../repositories/BandRepository.js');
-var LastfmManager = require('./../../lib/LastfmManager.js');
+var SpotifyManager = require('./../../lib/SpotifyManager.js');
 
 /**
  * constructor
  */
-function LastfmController(db) {
+function SpotifyController(db) {
 
     this.bandRepository = new BandRepository({'db': db});
-    this.lastfmManager = new LastfmManager();
+    this.spotifyManager = new SpotifyManager();
 }
 
-LastfmController.prototype.indexAction = function(req, res) {
+SpotifyController.prototype.indexAction = function(req, res) {
     this.infoAction(req, res);
 }
 
 /**
  * takes a band name as query param
  * and returns search results from 
- * lastfm api
+ * spotify api
  */
-LastfmController.prototype.searchAction = function(req, res) {
+SpotifyController.prototype.searchAction = function(req, res) {
     if (!req.query.search) {
         res.send({"status": "error", "error": "you must provide search param"});
         return false;
     }
     
-    this.lastfmManager.search(req.query.search, function(err, results) {
+    this.spotifyManager.search(req.query.search, function(err, results) {
         if (err) {
             res.send({"status": "error", "error": err});
             return false;
@@ -48,10 +49,10 @@ LastfmController.prototype.searchAction = function(req, res) {
 
 /**
  * takes a bands query and loops through each result and maps
- * to a lastfm manager function using external_ids.lastfm_id (or
+ * to a spotify manager function using external_ids.spotify_id (or
  * band_name if lookupFunction is search
  */
-LastfmController.prototype.lookupAction = function(req, res) {
+SpotifyController.prototype.lookupAction = function(req, res) {
     var parent = this;
     var query = {};
     var resource = req.params.id;
@@ -64,24 +65,24 @@ LastfmController.prototype.lookupAction = function(req, res) {
     };
 
     // if no search query provided use band_name on search lookups
-    // and lastfm_id on anything else
+    // and spotify_id on anything else
     if (req.query.search) {
         query = req.query.search;
     } else {
         if (resource === 'search') {
-            // get all bands without lastfm ids
+            // get all bands without spotify ids
             query = {
                 $or: [
-                    {"external_ids.lastfm_id": null},
-                    {"external_ids.lastfm_id": ""}
+                    {"external_ids.spotify_id": null},
+                    {"external_ids.spotify_id": ""}
                 ]
             };
         } else if (resource === 'fail_search') {
             query = {
                 $and: [
-                    {"external_ids.lastfm_id": {$ne: null}},
-                    {"external_ids.lastfm_id": {$ne: ""}},
-                    {"running_stats.lastfm_listeners.current": /^error.*/}
+                    {"external_ids.spotify_id": {$ne: null}},
+                    {"external_ids.spotify_id": {$ne: ""}},
+                    {"running_stats.spotify_followers.current": /^error.*/}
                 ]
             };
             resource = 'search';
@@ -89,9 +90,9 @@ LastfmController.prototype.lookupAction = function(req, res) {
         } else {
             query = {
                 $and: [
-                    {"external_ids.lastfm_id": {$ne: null}},
-                    {"external_ids.lastfm_id": {$ne: ""}},
-                    {"external_ids.lastfm_id": /\d+/}
+                    {"external_ids.spotify_id": {$ne: null}},
+                    {"external_ids.spotify_id": {$ne: ""}},
+                    {"external_ids.spotify_id": /\d+/}
                 ]
             };
         }
@@ -120,7 +121,7 @@ LastfmController.prototype.lookupAction = function(req, res) {
             if (resource === 'search') {
                 searchItem.search = band.band_name;
             } else {
-                searchItem.search = band.external_ids.lastfm_id;
+                searchItem.search = band.external_ids.spotify_id;
             }
 
             searchObj.push(searchItem);
@@ -138,8 +139,8 @@ LastfmController.prototype.lookupAction = function(req, res) {
                 return false;
             }
 
-            // call lastfm lookup
-            parent.lastfmManager.lookup(searchObj, lookupFunction, function(err, results) {
+            // call spotify lookup
+            parent.spotifyManager.lookup(searchObj, lookupFunction, function(err, results) {
                 if (err) {
                     var response = {
                         "status": "error", 
@@ -155,13 +156,13 @@ LastfmController.prototype.lookupAction = function(req, res) {
     });
 };
 
-LastfmController.prototype.infoAction = function(req, res) {
+SpotifyController.prototype.infoAction = function(req, res) {
     if (req.params.id === "info" || !req.params.id) {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }
 
-    this.lastfmManager.getInfo(req.params.id, function(err, results) {
+    this.spotifyManager.getInfo(req.params.id, function(err, results) {
         if (err) {
             res.send({"status": "error", "error": err});
             return false;
@@ -170,73 +171,30 @@ LastfmController.prototype.infoAction = function(req, res) {
     });
 }
 
-LastfmController.prototype.toptagsAction = function(req, res) {
-    if (req.params.id === "toptags") {
+SpotifyController.prototype.followersAction = function(req, res) {
+    if (req.params.id === "followers") {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }
 
-    this.lastfmManager.getTopTags(req.params.id, function(err, results) {
+    this.spotifyManager.getFollowers(req.params.id, function(err, results) {
         if (err) {
             res.send({"status": "error", "error": err});
             return false;
         }
-        res.send(results);
-    });
-}
 
-LastfmController.prototype.eventsAction = function(req, res) {
-    if (req.params.id === "events") {
-        res.send({"status": "error", "error": "must be called with id param"});
-        return false;
-    }
-
-    this.lastfmManager.getEvents(req.params.id, function(err, results) {
-        if (err) {
-            res.send({"status": "error", "error": err});
-            return false;
-        }
-        res.send(results);
-    });
-}
-
-LastfmController.prototype.bioAction = function(req, res) {
-    if (req.params.id === "bio") {
-        res.send({"status": "error", "error": "must be called with id param"});
-        return false;
-    }
-
-    this.lastfmManager.getBio(req.params.id, function(err, results) {
-        if (err) {
-            res.send({"status": "error", "error": err});
-            return false;
-        }
-        res.send(results);
-    });
-}
-
-LastfmController.prototype.playsAction = function(req, res) {
-    if (req.params.id === "plays") {
-        res.send({"status": "error", "error": "must be called with id param"});
-        return false;
-    }
-
-    this.lastfmManager.getPlays(req.params.id, function(err, results) {
-        if (err) {
-            res.send({"status": "error", "error": err});
-            return false;
-        }
         res.send(results.toString());
+        
     });
 }
 
-LastfmController.prototype.listenersAction = function(req, res) {
-    if (req.params.id === "listeners") {
+SpotifyController.prototype.popularityAction = function(req, res) {
+    if (req.params.id === "popularity") {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }
 
-    this.lastfmManager.getListeners(req.params.id, function(err, results) {
+    this.spotifyManager.getPopularity(req.params.id, function(err, results) {
         if (err) {
             res.send({"status": "error", "error": err});
             return false;
@@ -246,29 +204,13 @@ LastfmController.prototype.listenersAction = function(req, res) {
     });
 }
 
-LastfmController.prototype.mbidAction = function(req, res) {
-    if (req.params.id === "mbid") {
-        res.send({"status": "error", "error": "must be called with id param"});
-        return false;
-    }
-
-    this.lastfmManager.getMbid(req.params.id, function(err, results) {
-        if (err) {
-            res.send({"status": "error", "error": err});
-            return false;
-        }
-        res.send(results);
-        
-    });
-}
-
-LastfmController.prototype.imageAction = function(req, res) {
+SpotifyController.prototype.imageAction = function(req, res) {
     if (req.params.id === "images") {
         res.send({"status": "error", "error": "must be called with id param"});
         return false;
     }
     
-    this.lastfmManager.getImage(req.params.id, function(err, results) {
+    this.spotifyManager.getImage(req.params.id, function(err, results) {
         if (err) {
             res.send({"status": "error", "error": err});
             return false;
@@ -278,4 +220,4 @@ LastfmController.prototype.imageAction = function(req, res) {
 }
 
 /* export the class */
-exports.controller = LastfmController;
+exports.controller = SpotifyController;
