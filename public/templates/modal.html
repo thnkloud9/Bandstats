@@ -16,7 +16,9 @@
 
       <div class="modal-footer">
         <button id="modal-close" type="button" class="btn btn-default btn-close-modal" data-dismiss="modal">Close</button>
-        <button id="modal-save" type="button" class="btn btn-primary btn-save-modal" data-trigger-event="" data-dismiss="modal">Save changes</button>
+        <% if (buttons.save) { %>
+          <button id="modal-save" type="button" class="btn btn-primary btn-save-modal" data-trigger-event="" data-dismiss="modal">Save changes</button>
+        <% } %>
       </div>
     </div>
   </div>

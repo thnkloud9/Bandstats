@@ -19,7 +19,30 @@ define([
     events: {
       'click #job-save': 'saveJob',
       'click #job-delete': 'deleteJob',
+      'click #job-run': 'runJob',
     }, 
+
+    runJob: function (ev) {
+      // trigger start job via api
+      var url = "/admin/job/" + this.model.get('job_id') + "/start";
+
+      $.ajax({
+        url:url,
+        type:'GET',
+        dataType:"json",
+        success:function (response) {
+          var html = "<a href='#running_jobs'>Running Jobs</a> or <a href='#jobs_log'>Job Log</a>";
+          $('.flash-message').addClass('alert-success').html('Success ' + html).show();
+        },
+        error: function (response) {
+          if(response.message) {  // If there is an error, show the error messages
+            $('.flash-message').text(response.message).show();
+          } else { // If not, just say something went wrong
+            $('.flash-message').addClass('alert-danger').text('Internal Error.  Please try again later').show();
+          }
+        }
+      }); 
+    },
 
     loadJob: function (id) {
       this.model = new JobModel({job_id: id});

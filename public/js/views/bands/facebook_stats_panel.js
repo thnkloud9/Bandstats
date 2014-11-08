@@ -111,7 +111,12 @@ define([
         return false;
       }
 
-      console.log('requesting search results for ' + bandId);
+      require(['views/modal'], function (ModalView) {
+        var buttons = { save: true };
+        var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: buttons});
+        modalView.render();
+        $('#admin-modal').modal('show');
+      });
 
       $('#admin-modal-title').html('Facebook Lookup: ' + search);
 

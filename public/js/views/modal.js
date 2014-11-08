@@ -14,6 +14,7 @@ define([
 
     initialize:function (options) {
       this.vent = options.vent;
+      this.buttons = (options.buttons) ? options.buttons : {} ;
     },
 
     events: { 
@@ -23,7 +24,9 @@ define([
 
     render:function () {
 
-      var templateData = {};
+      var templateData = {
+        buttons: this.buttons
+      };
   
       this.$el.html(this.template(templateData));
       $('.admin-modal-content', this.el).html(this.loadingTemplate({}));

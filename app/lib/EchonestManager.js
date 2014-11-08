@@ -11,6 +11,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var sleep = require('sleep');
 
 /**
  * Constructor
@@ -69,9 +70,14 @@ EchonestManager.prototype.lookup = function(searchObj, lookupFunction, callback)
         var totalStats = searchItem.total_stats;
         var incrementalTotal = searchItem.incremental_total;
 
+        // sleep 0.5 seconds to avoid rate limit
+        util.log('Looking up ' + bandName + ' using ' + searchTerm);
+        sleep.usleep(500000);
+
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
                 //just give err as result and move on
+                util.log(err);
                 results = err;
             };
 

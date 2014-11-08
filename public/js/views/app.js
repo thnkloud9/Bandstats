@@ -49,12 +49,6 @@ define([
         footerView.render();
       });
 
-      require(['views/modal'], function (ModalView) {
-        // Pass the appView down into the footer so we can render the visualisation
-        var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent});
-        modalView.render();
-      });
-
     },
 
     searchBands: function(e) {
