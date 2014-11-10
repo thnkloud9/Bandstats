@@ -20,6 +20,7 @@ var util = require('util');
 var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 var SiteRepository = require(path.join(__dirname,'/../app/repositories/SiteRepository.js'));
 var BandRepository = require(path.join(__dirname,'/../app/repositories/BandRepository.js'));
+var BandstatsUtils = require(path.join(__dirname,'/../app/lib/BandstatsUtils.js'));
 
 /**
  * config, db, and app stuff
@@ -35,6 +36,7 @@ var db = require('mongoskin').db(nconf.get('db:host'), {
 var jobRepository = new JobRepository({'db': db}); 
 var siteRepository = new SiteRepository({"db": db});
 var bandRepository = new BandRepository({"db": db});
+var bandstatsUtils = new BandstatsUtils();
 var processStart = new Date().getTime();
 var processed = 0;
 /**
@@ -257,14 +259,14 @@ function parseSiteArticles(site, save, callback) {
 
 function articleHasMatch(site, article, band) {
     if (band.external_ids.mentions_id) {
-        var mentions_id = sanitizeSearchString(band.external_ids.mentions_id);
+        var mentions_id = bandstatsUtils.sanitizeSearchString(band.external_ids.mentions_id);
         var search_fields = [ 
             'band_name_field',
             'description_field' ];
         for (var f in search_fields) {
             var search_field = search_fields[f];
             if (article[site[search_field]]) {
-                var search_text = sanitizeSearchString(article[site[search_field]].toString());
+                var search_text = bandstatsUtils.sanitizeSearchString(article[site[search_field]].toString());
                 var re = new RegExp('\\b' + mentions_id + '\\b', 'g');
                 
                 if (search_text.match(re)) {
@@ -281,14 +283,3 @@ function articleHasMatch(site, article, band) {
     }
 }
 
-function sanitizeSearchString(text) {
-    sanitized_text = text.toLowerCase();
-    sanitized_text = sanitized_text.replace('&', 'and')
-        .replace(/[\+\,\.\?\!\-\;\:\'\(\)\*]+/g, '')
-        .replace(/[\"“\'].+[\"”\']/g, '')
-        .replace(/[\n\r]/g, '')
-        .replace(/[\[\]]/g, '')
-        .replace(/[\\\/]/g, '');
- 
-    return sanitized_text;
-}

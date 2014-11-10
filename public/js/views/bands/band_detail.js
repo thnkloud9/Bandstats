@@ -6,8 +6,10 @@ define([
   'models/band',
   'views/bands/facebook_stats_panel',
   'views/bands/lastfm_stats_panel',
+  'views/bands/spotify_stats_panel',
   'views/bands/facebook_stats_table',
   'views/bands/lastfm_stats_table',
+  'views/bands/spotify_stats_table',
   'views/bands/mentions_stats_panel',
   'views/bands/mentions_stats_table',
   'views/bands/running_stats_chart',
@@ -17,8 +19,10 @@ define([
     BandModel, 
     FacebookStatsPanelView, 
     LastfmStatsPanelView, 
+    SpotifyStatsPanelView, 
     FacebookStatsTableView, 
     LastfmStatsTableView, 
+    SpotifyStatsTableView, 
     MentionsStatsPanelView, 
     MentionsStatsTableView, 
     RunningStatsChartView, 
@@ -95,6 +99,14 @@ define([
         incremental: 0,
         daily_stats: [] 
       }
+      runningStats.spotify_followers = {
+        current: 0,
+        incremental_avg: 0,
+        incremental_total: 0,
+        last_updated: "",
+        incremental: 0,
+        daily_stats: [] 
+      }
       this.model.set('running_stats', runningStats);
       this.model.set('mentions', []);
       this.model.set('mentions_total', 0);
@@ -161,6 +173,10 @@ define([
       stats = this.model.attributes.running_stats.lastfm_listeners.daily_stats;
       var lastfmChartView = Vm.create(this, 'LastfmChartView', RunningStatsChartView, {model: this.model, vent: this.vent, chart_data: stats});
       $(lastfmChartView.render().el).appendTo($('#lastfm-chart-content', this.el));
+
+      stats = this.model.attributes.running_stats.spotify_followers.daily_stats;
+      var spotifyChartView = Vm.create(this, 'SpotifyChartView', RunningStatsChartView, {model: this.model, vent: this.vent, chart_data: stats});
+      $(spotifyChartView.render().el).appendTo($('#spotify-chart-content', this.el));
  
       var facebookStatsPanelView = Vm.create(this, 'FacebookStatsPanelView', FacebookStatsPanelView, {model: this.model, vent: this.vent});
       $(facebookStatsPanelView.render().el).appendTo($('#facebook-stats-content', this.el));
@@ -170,11 +186,18 @@ define([
       $(lastfmStatsPanelView.render().el).appendTo($('#lastfm-stats-content', this.el));
       lastfmStatsPanelView.on('refreshParent', this.render, this);
 
+      var spotifyStatsPanelView = Vm.create(this, 'SpotifyStatsPanelView', SpotifyStatsPanelView, {model: this.model, vent: this.vent});
+      $(spotifyStatsPanelView.render().el).appendTo($('#spotify-stats-content', this.el));
+      spotifyStatsPanelView.on('refreshParent', this.render, this);
+
       var facebookStatsTableView = Vm.create(this, 'FacebookStatsTableView', FacebookStatsTableView, {model: this.model, vent: this.vent});
       $(facebookStatsTableView.render().el).appendTo($('#facebook-stats-table', this.el));
 
       var lastfmStatsTableView = Vm.create(this, 'LastfmStatsTableView', LastfmStatsTableView, {model: this.model, vent: this.vent});
       $(lastfmStatsTableView.render().el).appendTo($('#lastfm-stats-table', this.el));
+
+      var spotifyStatsTableView = Vm.create(this, 'SpotifyStatsTableView', SpotifyStatsTableView, {model: this.model, vent: this.vent});
+      $(spotifyStatsTableView.render().el).appendTo($('#spotify-stats-table', this.el));
 
       var mentionsStatsTableView = Vm.create(this, 'MentionsStatsTableView', MentionsStatsTableView, {model: this.model, vent: this.vent});
       $(mentionsStatsTableView.render().el).appendTo($('#mentions-stats-table', this.el));
@@ -243,6 +266,7 @@ define([
       var externalIds = this.model.get('external_ids');
       externalIds.facebook_id = $('#facebook-id').val();
       externalIds.lastfm_id = $('#lastfm-id').val();
+      externalIds.spotify_id = $('#spotify-id').val();
       externalIds.mentions_id = $('#mentions-id').val();
 
       this.model.set({

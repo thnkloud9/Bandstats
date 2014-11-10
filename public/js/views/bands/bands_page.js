@@ -72,6 +72,11 @@ define([
       'click .lnk-lastfm-clear': 'clearLastfmId',
       'click .lnk-lastfm-collect': 'collectLastfmLikes',
       'click .lnk-lastfm-view': 'viewLastfmProfile',
+
+      'click .lnk-spotify-lookup': 'lookupSpotifyId',
+      'click .lnk-spotify-clear': 'clearSpotifyId',
+      'click .lnk-spotify-collect': 'collectSpotifyLikes',
+      'click .lnk-spotify-view': 'viewSpotifyProfile',
     },
 
     clearFacebookId: function (ev) {
@@ -90,6 +95,7 @@ define([
       this.vent.trigger("facebookStatsPanel.lookupFacebookId", ev);
     },
 
+
     clearLastfmId: function (ev) {
       this.vent.trigger("lastfmStatsPanel.clearLastfmId", ev);
     },
@@ -104,6 +110,23 @@ define([
 
     lookupLastfmId: function (ev) {
       this.vent.trigger("lastfmStatsPanel.lookupLastfmId", ev);
+    },
+
+
+    clearSpotifyId: function (ev) {
+      this.vent.trigger("spotifyStatsPanel.clearSpotifyId", ev);
+    },
+
+    collectSpotifyLikes: function (ev) {
+      this.vent.trigger("spotifyStatsPanel.collectSpotifyLikes", ev);
+    },
+
+    viewSpotifyProfile: function (ev) {
+      this.vent.trigger("spotifyStatsPanel.viewSpotifyProfile", ev);
+    },
+
+    lookupSpotifyId: function (ev) {
+      this.vent.trigger("spotifyStatsPanel.lookupSpotifyId", ev);
     },
 
 

@@ -9,6 +9,7 @@ var path = require('path');
 var request = require('request');
 var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
+var BandstatsUtils = require(path.join(__dirname, './../lib/BandstatsUtils.js'));
 var async = require('async');
 var moment = require('moment');
 var util = require('util');
@@ -27,7 +28,7 @@ function BandRepository(args) {
     this.collection = 'bands';
     this.retentionValue = nconf.get('retention:value');
     this.retentionPeriod = nconf.get('retention:period');
-
+    this.bandstatsUtils = new BandstatsUtils();
     args.collection = this.collection;
  
     BaseRepository.call(this, args);
@@ -94,7 +95,9 @@ BandRepository.prototype.addDefaultValues = function(band) {
     band.failed_lookups = {
         "lastfm": 0,
         "facebook": 0,
-        "echonest": 0
+        "echonest": 0,
+        "spotify": 0,
+        "twitter": 0
     }
     band.running_stats = {
         "facebook_likes": {
@@ -106,6 +109,14 @@ BandRepository.prototype.addDefaultValues = function(band) {
             "daily_stats": emptyArray
         },
         "lastfm_listeners": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "incremental": 0,
+            "daily_stats": emptyArray
+        },
+        "spotify_followers": {
             "current": 0,
             "incremental_avg": 0,
             "incremental_total": 0,
@@ -175,6 +186,10 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
             var thisStat = stat;
             db.collection('bands').findOne(query, function(err, band, stat) {
                 var runningStats = band.running_stats;
+                // if the stat object doesn't exist, create it
+                if (!runningStats[thisStat]) {
+                    runningStats[thisStat] = {};
+                }
                 var dailyStats = runningStats[thisStat].daily_stats;
                 for (var s in dailyStats) {
                     var dailyStat = dailyStats[s];
@@ -231,7 +246,7 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
         // delete old stats
         function(cb) {
 
-            var expire = moment().subtract(parent.retentionPeriod, parent.retentionValue).format('YYYY-MM-DD');
+            var expire = moment().subtract(parent.retentionValue, parent.retentionPeriod).format('YYYY-MM-DD');
             var expireStat = {};
             expireStat["running_stats." + stat + ".daily_stats"] = { "date":  { $lt:  expire }  };
             var set = { $pull: expireStat };
@@ -536,6 +551,84 @@ BandRepository.prototype.incrementFailedLookups = function(query, provider, call
             console.log(err); 
         }
         callback(null, updated);
+    });
+
+}
+
+BandRepository.prototype.resolveLookups = function(results, provider, bandField, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    var bandstatsUtils = this.bandstatsUtils;
+    var parent = this;
+
+    // save results here
+    async.forEach(results, function(result, rcb) {
+        var bandId = result.band_id;
+        var bandName = result.band_name;
+        var search = result.search;
+        var values = result.results;
+
+        if (values) {
+
+            var match = false;
+            var sanitizedBandName = bandstatsUtils.sanitizeSearchString(bandName);
+            var exact = new RegExp('^' + sanitizedBandName + '$', 'ig');
+            var exactId = null;
+            var exactName = null;
+            for (var v in values) {
+                var value = values[v];
+                // if soundcloud use username instead of name
+                if (provider === "soundcloud") {
+                    value.name = value.username
+                }
+                if (value.name) {
+                    var sanitizedValueName = bandstatsUtils.sanitizeSearchString(value.name);
+
+                    if (sanitizedValueName.match(exact)) { 
+                        match = true;
+                        matchId = value.id;
+                        matchName = value.name;
+                        break;
+                    }
+                } 
+            }
+
+            if (match) {
+                console.log('updating ' + bandName + ' using id ' + search + ' with ' + matchId + ' id and name ' + matchName);
+
+                // save the record 
+                var set = {};
+                set[bandField] = matchId;
+                
+                parent.update({"band_id": bandId}, {$set: set}, {}, function(err, updated) {
+                    if (err) {
+                        console.log(err); 
+                    }
+                    rcb(null, updated);
+                });
+            } else {
+                console.log('could not find match for ' + bandName);
+                parent.incrementFailedLookups({"band_id": bandId}, provider, function(err, updated) {
+                    if (err) {
+                        console.log(err); 
+                    }
+                    rcb(null, updated);
+                });
+            }
+        } else {
+            console.log('could not find match for ' + bandName);
+            parent.incrementFailedLookups({"band_id": bandId}, provider, function(err, updated) {
+                if (err) {
+                    console.log(err); 
+                }
+                rcb(null, updated);
+            });
+        }
+         
+    },
+    function (err, finalResult) {
+        console.log('finished ' + bandField + ' collection database updates');
+        callback(err, finalResult);
     });
 
 }

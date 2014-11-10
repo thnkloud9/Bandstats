@@ -49,12 +49,21 @@ define([
             last_updated: "",
             incremental: 0,
             daily_stats: [] 
+        },
+        spotify_followers: {
+            current: 0,
+            incremental_avg: 0,
+            incremental_total: 0,
+            last_updated: "",
+            incremental: 0,
+            daily_stats: [] 
         }
       },
       failed_lookups: {
         facebook: 0,
         lastfm: 0,
-        echonest: 0
+        echonest: 0,
+        spotify: 0,
       }
     },
 

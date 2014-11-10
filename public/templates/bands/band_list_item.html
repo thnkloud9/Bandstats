@@ -26,12 +26,22 @@
       <%= running_stats.facebook_likes.incremental_avg %>
     </span>
   </td>
+
   <td>
     <span class="bs-tooltip" data-toggle="tooltip" title="total listener">
       <%= running_stats.lastfm_listeners.current %>
     </span> / 
     <span class="bs-tooltip" data-toggle="tooltip" title="avg listeners">
       <%= running_stats.lastfm_listeners.incremental_avg %>
+    </span>
+  </td>
+
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total followers">
+      <%= running_stats.spotify_followers.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg followers">
+      <%= running_stats.spotify_followers.incremental_avg %>
     </span>
   </td>
 
@@ -53,6 +63,9 @@
     </i>
     <i class="fa fa-lastfm-square bs-tooltip" data-toggle="tooltip" title="lastfm errors">
        <%= failed_lookups.lastfm %>
+    </i>
+    <i class="fa fa-spotify bs-tooltip" data-toggle="tooltip" title="spotify errors">
+       <%= failed_lookups.spotify %>
     </i>
   </td>
 

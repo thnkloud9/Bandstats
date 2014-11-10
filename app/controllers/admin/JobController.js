@@ -73,8 +73,10 @@ JobController.prototype.indexAction = function(req, res) {
             }
             if (jobId) {
                 res.send(jobs[0]);
+                return true;
             } else {
                 res.send(results);
+                return true;
             } 
             
         });

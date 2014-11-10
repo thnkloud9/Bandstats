@@ -95,7 +95,7 @@ SpotifyManager.prototype.lookup = function(searchObj, lookupFunction, callback) 
 
 SpotifyManager.prototype.getInfo = function(spotifyId, callback) {
     var options = { 
-        url: this.apiDomain + 'artists/' + spotifyId + '&client_id=' + this.clientId,
+        url: this.apiDomain + 'artists/' + spotifyId + '?client_id=' + this.clientId,
         json: true
     };
 
@@ -122,6 +122,8 @@ SpotifyManager.prototype.getFollowers = function(spotifyId, callback) {
             return false;
         }
         if (!body.followers.total) {
+            // TODO: 0 will trigger this error as well, not sure we want to
+            // mark this as an error
             callback('error, could not find followers for ' + spotifyId);
             return false;
         }

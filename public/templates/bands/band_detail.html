@@ -177,6 +177,35 @@
     <div class="panel-heading band-detail-tool-panel" role="tab" id="headingThree">
       <h4 class="panel-title">
         <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <i class="fa  fa-spotify fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total followers"><%= running_stats.spotify_followers.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental followers"><%= running_stats.spotify_followers.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg followers"><%= running_stats.spotify_followers.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.spotify %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <!-- SPOTIFY PANELS GO HERE -->
+        <div id="spotify-stats-content">
+        </div>
+
+        <div id="spotify-chart-content">
+        </div>
+
+        <div id="spotify-stats-table" class="panel-body">
+        </div>
+        <!-- END SPOTIFY PANELS -->
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingFive">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
           <i class="fa fa fa-rss-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
           <div class="pull-right"> 
               <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total mentions"><%= mentions_total %></span>
@@ -187,7 +216,7 @@
         </a>
       </h4>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
       <div class="panel-body">
         <!-- ARTICLE PANELS GO HERE -->
         <div id="mentions-stats-content">

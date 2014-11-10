@@ -5,8 +5,9 @@ define([
   'vm',
   'views/bands/facebook_stats_panel',
   'views/bands/lastfm_stats_panel',
+  'views/bands/spotify_stats_panel',
   'text!templates/bands/band_gallery_item.html' 
-], function($, _, Backbone, Vm, FacebookStatsPanelView, LastfmStatsPanelView, template) {
+], function($, _, Backbone, Vm, FacebookStatsPanelView, LastfmStatsPanelView, SpotifyStatsPanelView, template) {
 
   var BandGalleryItemView = Backbone.View.extend({
 
@@ -38,6 +39,10 @@ define([
       var viewName = 'LastfmStatsPanelView' + this.model.get("band_id");
       var lastfmStatsPanelView = Vm.create(this, viewName, LastfmStatsPanelView, {model: this.model, vent: this.vent});
       $(lastfmStatsPanelView.render().el).appendTo($('#lastfm-stats-content', this.el)); 
+
+      var viewName = 'SpotifyStatsPanelView' + this.model.get("band_id");
+      var spotifyStatsPanelView = Vm.create(this, viewName, SpotifyStatsPanelView, {model: this.model, vent: this.vent});
+      $(spotifyStatsPanelView.render().el).appendTo($('#spotify-stats-content', this.el)); 
 
       return this;
     },

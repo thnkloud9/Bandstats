@@ -1,0 +1,15 @@
+<li class="media spotify-lookup-item">
+  <a class="lnk-spotify-lookup-select pull-left" data-spotify-id="<%= name %>" data-dismiss="modal">
+    <img class="media-object img-rounded thumbnail-xsmall" src="<%= images[1]['url'] %>" alt="...">
+  </a>
+  <div class="media-body">
+    <a class="lnk-spotify-lookup-select" data-spotify-id="<%= name %>" data-dismiss="modal"><h4 class="media-heading"><%= name %></h4></a>
+    <span><%= uri %></span>
+    
+    <ul class="list-group">
+      <li class="list-group-item">Followers: <span class="badge pull-right"><%= followers.total %></span></li>
+      <li class="list-group-item">Popularity: <span class="badge pull-right"><%= popularity %></span></li>
+    </ul>
+
+  </div>
+</li>

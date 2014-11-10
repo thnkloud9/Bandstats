@@ -18,6 +18,7 @@ var nconf = require('nconf');
 var util = require('util');
 var moment = require('moment');
 var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'));
+var SpotifyManager = require(path.join(__dirname, './../app/lib/SpotifyManager.js'));
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
@@ -37,6 +38,7 @@ var bandRepository = new BandRepository({'db': db});
 var jobRepository = new JobRepository({'db': db}); 
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
+var spotifyManager = new SpotifyManager();
 var echonestManager = new EchonestManager();
 var processStart = new Date().getTime();
 var jobStats = {};
@@ -121,7 +123,7 @@ function start(save) {
 
 function collectRunningStats(save, query, provider, resource, runningStat, callback) {
     var lookupFunction = resource;
-    var yesterday = moment().subtract('days', 1).format('YYYY-MM-DD');
+    var yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
     var today = moment().format('YYYY-MM-DD');
 
     util.log('starting ' + runningStat + ' collection using ' + resource);
