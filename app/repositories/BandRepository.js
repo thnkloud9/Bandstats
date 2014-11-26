@@ -158,6 +158,14 @@ BandRepository.prototype.clearRunningStats = function(band) {
             "last_updated": "",
             "total_incremental": 0,
             "daily_stats": emptyArray
+        },
+        "spotify_followers": {
+            "current": 0,
+            "incremental_avg": 0,
+            "incremental_total": 0,
+            "last_updated": "",
+            "total_incremental": 0,
+            "daily_stats": emptyArray
         }
     }
     band.last_updated = new Date();

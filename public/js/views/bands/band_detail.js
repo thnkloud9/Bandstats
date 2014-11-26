@@ -161,6 +161,7 @@ define([
     },
 
     render: function () {
+      var parent = this;
       $(this.el).html(this.template(this.model.attributes));
 
       this.renderGenreTypeahead();
@@ -206,6 +207,19 @@ define([
       $(mentionsStatsPanelView.render().el).appendTo($('#mentions-stats-content', this.el));
 
       $('.bs-tooltip').tooltip();
+
+      // if this is a new band, show the wizard modal
+      if (this.model.get('band_id') === "0") {
+        require(['views/modal', 'views/bands/new_band_wizard'], function (ModalView, NewBandWizardView) {
+          var modalView = Vm.create(parent, 'ModalView', ModalView, {vent: parent.vent, buttons: {}});
+          modalView.render();
+          $('#admin-modal').modal('show');
+          $('#admin-modal-title').html('Add a new band wizard');
+	      $('.admin-modal-content', this.el).html('<ul id="new-band-wizard" class="list-inline"></ul>');
+          var newBandWizardView = Vm.create(parent, 'NewBandWizardView', NewBandWizardView, {model: parent.model});
+	      newBandWizardView.render();
+        });
+      }
 
       return this;
     },
