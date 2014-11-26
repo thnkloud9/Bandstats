@@ -31,7 +31,7 @@ define([
 
       // note: these are saved queries referrenced by name
       // not actual mongo queries
-      if (this.startQuery.length > 0) {
+      if (typeof this.startQuery != null) {
         path += "&startQuery=" + this.startQuery;
       }
 
