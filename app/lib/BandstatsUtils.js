@@ -11,6 +11,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var sleep = require('sleep');
 
 /**
  * Constructor

@@ -24,10 +24,10 @@ define([
     },
 
     render: function () {
+      var parent = this;
 
       this.$el.html(bandListTemplate);
-
-      var parent = this;
+    
       _.each(this.collection.models, function (model) {
         parent.renderBand(model);
       }, this);

@@ -108,7 +108,7 @@ define([
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
 	    var startQuery = field + '_missing';
         var bandsCollection = new BandsCollection(null, startQuery);
-        bandsCollection.getFirstPage();
+        //bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Missing ' + field});
         searchResultsView.applySessionFilter();
         searchResultsView.render();
@@ -120,7 +120,7 @@ define([
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
 	    var startQuery = field + '_errors';
         var bandsCollection = new BandsCollection(null, startQuery);
-        bandsCollection.getFirstPage();
+        //bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Bad ' + field});
         searchResultsView.applySessionFilter();
         searchResultsView.render();
@@ -132,7 +132,7 @@ define([
       require(['views/bands/bands_page','collections/bands'], function (BandsPageView, BandsCollection) {
 	    var altPath = '/admin/band/duplicates';
         var bandsCollection = new BandsCollection(null, null, altPath);
-        bandsCollection.getFirstPage();
+        //bandsCollection.getFirstPage();
         var searchResultsView = Vm.create(appView, 'BandsPageView', BandsPageView, {collection: bandsCollection, session: session, vent: vent, breadcrumb: 'Duplicate Bands'});
         searchResultsView.applySessionFilter();
         searchResultsView.render();

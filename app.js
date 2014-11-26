@@ -26,12 +26,7 @@ nconf.file(path.join(__dirname, 'app/config/app.json'));
 /**
  * database
  */
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 
 /**
  * auth strategy

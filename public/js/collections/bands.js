@@ -31,14 +31,14 @@ define([
 
       // note: these are saved queries referrenced by name
       // not actual mongo queries
-      if (this.startQuery) {
+      if (this.startQuery.length > 0) {
         path += "&startQuery=" + this.startQuery;
       }
 
       if (this.bandSearch) {
         path += "&search=" + this.bandSearch;
       }
-    
+
       _.forEach(this.sort, function(direction, field) {
         path+= "&sort[" + field + "]=" + direction;
       });
@@ -52,7 +52,7 @@ define([
           path+= "&filter[" + field + "]=" + values;
         }
       });
-    
+   
       return path;
     },
 

@@ -21,7 +21,7 @@
     "later": "~0.0.14",
     "moment": "~2.8.3",
     "mongodb": "~1.2.11",
-    "mongoskin": "~0.5.0",
+    "mongoskin": "~1.4.4",
     "nconf": "~0.6.7",
     "passport": "~0.1.16",
     "passport-facebook": "~0.1.5",

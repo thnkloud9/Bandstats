@@ -432,6 +432,7 @@ BandController.prototype.importAction = function(req, res) {
                 cb(err);
             } else {
                 // or add the band
+                //TODO: add external id look ups
                 parent.bandRepository.insert(band, {}, function(err, newBand) {
                     result.added = true;
                     finalResults.push(result);
@@ -452,7 +453,7 @@ BandController.prototype.duplicatesAction = function(req, res) {
     var limit = (req.query.limit) ? parseInt(req.query.limit) : 0;
     var skip = (req.query.skip) ? parseInt(req.query.skip) : 0;
     var filter = req.query.filter;
-    var sort = req.query.sort;
+    var sort = (req.query.sort) ? req.query.sort : { band_name: 'asc' };
     var duplicateBands = [];
     var filterQuery = {};
     var orderby = {};
@@ -465,25 +466,17 @@ BandController.prototype.duplicatesAction = function(req, res) {
     // add sorting
     if (sort) {
         orderby = this.buildSortQuery(sort);
-    } else {
-        orderby = { band_name: -1 };
     }
 
     this.bandRepository.countDuplicates(filterQuery, function(err, count) {
-        parent.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, results) {
-            if (err) res.send(err);
-           
-            async.forEach(results, function(band, cb) {
-                duplicateBands.push(band);
-                cb();
-            },
-            function(err) {
-                var results = {
-                    "totalRecords": count,
-                    "data": duplicateBands
-                }
-                res.send(results);
-            });
+        parent.bandRepository.findDuplicates(filterQuery, sort, skip, limit, function(err, bands) {
+           if (err) res.send(err);
+          
+            var results = {
+               "totalRecords": count,
+               "data": bands
+            }
+            res.send(results);
         });
     });
 }

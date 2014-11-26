@@ -11,6 +11,7 @@ var xml2js = require('xml2js');
 var BaseRepository = require('./../repositories/BaseRepository.js');
 var BandstatsUtils = require(path.join(__dirname, './../lib/BandstatsUtils.js'));
 var async = require('async');
+var _ = require('underscore');
 var moment = require('moment');
 var util = require('util');
 
@@ -439,7 +440,7 @@ BandRepository.prototype.updateMentions = function(query, site, article, callbac
 BandRepository.prototype.count = function(query, callback) {
     var db = this.db;
     var collection = this.collection;
-    db.collection(collection).count(query, function(err, results) {
+    db.collection(collection).count(query, { allowDiskUse: true }, function(err, results) {
         if (err) {
             util.log(err);
             return false;
@@ -464,70 +465,91 @@ BandRepository.prototype.getBadRunningStatCount = function(stat, callback) {
 BandRepository.prototype.countDuplicates = function(query, callback) {
     var db = this.db;
     var collection = this.collection;
-    var pipeline = [
-        { $match: query},
-        { $group: { 
-            _id: { band_name: "$band_name" },
-            bands: { $push: "$$ROOT" },
-            count: { $sum: 1 } 
-        }}, 
-        { $match: { 
-            count: { $gt: 1 }
-        }}
-    ];
-
-    db.collection(collection).aggregate(pipeline, function(err, results) { 
-        var duplicateBands = [];
-        if (err) {
-            util.log(err);
-            return false;
+    var duplicateBands = [];
+    var previousBandName = '';
+    var orderedQuery = {
+        $query: query,
+        $orderby: {
+            band_name: 1
         }
+    }
 
-        callback(err, results.length);
+    db.collection(collection).find(orderedQuery, {band_name: 1}).toArray(function(err, bands) { 
+        if (err) util.log(err);
+
+        async.forEach(bands, function(band, cb) {
+            if (band.band_name === previousBandName) {
+                duplicateBands.push(band);
+            }
+            previousBandName = band.band_name;
+            cb(err);
+        },
+        function (err) {
+            callback(err, duplicateBands.length);
+        });
     });
 }
 
 BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, callback) {
+    var parent = this;
     var db = this.db;
     var collection = this.collection;
-    var pipeline = [
-        { $sort: sort },
-        { $match: query},
-        { $group: { 
-            _id: { band_name: "$band_name" },
-            bands: { $push: "$$ROOT" },
-            count: { $sum: 1 } 
-        }}, 
-        { $match: { 
-            count: { $gt: 1 }
-        }},
-        { $skip: skip },
-        { $limit: limit  }
-    ];
-
-    db.collection(collection).aggregate(pipeline, function(err, results) { 
-        var duplicateBands = [];
-        if (err) {
-            util.log(err);
-            return false;
+    var orderedQuery = {
+        $query: query,
+        $orderby: {
+            band_name: 1
         }
-        async.forEach(results, function(result, cb) {
-            if (err) cb(err);
+    }
 
-            async.forEach(result.bands, function(band, cb2) {
-                if (err) cb2(err);
+    db.collection(collection).find(orderedQuery, {}).toArray(function(err, bands) { 
+        if (err) util.log(err);
 
-                duplicateBands.push(band);
-            },
-            function(err) {
-                cb2();
-            });
-
-            cb();
-        }, function(err) {
-            callback(null, duplicateBands);
+        var duplicateBands = [];
+        var previousBandName = '';
+        var seen = 0;
+        var added = 0;
+        async.forEach(bands, function(band, cb) {
+            if (band.band_name === previousBandName) {
+                if ((seen >= skip) && (added < limit)) {
+                    duplicateBands.push(band);
+                    duplicateBands.push(previousBand);
+                    added++;
+                    added++;
+                }
+                seen++;
+            }
+            previousBand = band;
+            previousBandName = band.band_name;
+            cb(err);
+        },
+        function (err) {
+            var sortedBands = [];
+            if (sort) {
+                // TODO: this doesn't actually work
+                _.forEach(sort, function(direction, field) {
+                    if (sortedBands.length === 0) {
+                        sortedBands = parent.sortBy(duplicateBands, field, direction);
+                    } else {
+                        sortedBands = parent.sortBy(sortedBands, field, direction);
+                    }
+                });
+                callback(err, sortedBands);
+            }  
+            callback(err, duplicateBands);
         });
     });
+}
+
+BandRepository.prototype.sortBy = function(bands, field, direction) {
+    var sorted = _.sortBy(bands, function(band) { 
+        util.log(band[field]);
+        return band[field]; 
+    }); 
+    if (direction === "asc") {
+        return sorted;
+    } else {
+        return sorted.reverse();
+    }
 }
 
 BandRepository.prototype.getDistinctValues = function(field, query, callback) {
