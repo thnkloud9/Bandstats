@@ -163,6 +163,7 @@ define([
               spotifyLookupItemModel.set('band_id', bandId);
               var spotifyLookupItemView = Vm.create(parent, 'SpotifyLookupItemView', SpotifyLookupItemView, {model: spotifyLookupItemModel});
 	          spotifyLookupItemView.render();
+	          spotifyLookupItemView.on('updateSpotifyId', parent.updateSpotifyId, parent);
 	        });
 
           },
@@ -171,6 +172,25 @@ define([
           }
         }); 	
       });
+    },
+
+    updateSpotifyId: function(spotifyId) {
+      var parent = this;
+      var externalIds = this.model.get('external_ids');
+      externalIds.spotify_id = spotifyId;
+      this.model.set({external_ids: externalIds});
+      this.model.save(null, {
+        success: function(band, saveResponse) {
+          console.log(parent.model.get('band_id') + ' saved');
+          $('.flash-message').addClass('alert-success').text("Success").show();
+          parent.render();
+        },
+        error: function(band, saveResponse) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
+
     },
 
   });

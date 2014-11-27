@@ -26,29 +26,9 @@ define([
     },
 
     updateSpotifyId: function(ev) {
+      var parent = this;
       var spotifyId = String($(ev.currentTarget).data("spotify-id"));
-      var bandId = this.model.get('band_id');
-      var bandModel = new BandModel({band_id: bandId});
-      bandModel.fetch({
-        success: function (model, response) {
-	      // only update spotify_id, copy rest from previous
-          var externalIds = model.get('external_ids');
-          externalIds.spotify_id = spotifyId;
-	      model.set({external_ids: externalIds}); 
-
-          model.save(null, { 
-            success: function(band, saveResponse) {
-	          console.log(bandId + ' saved');
-              $('.flash-message').addClass('alert-success').text("Success").show();
-            }, 
-            error: function(band, saveResponse) {
-              console.log('error:', response);
-              $('.flash-message').addClass('alert-danger').text(response.statusText).show();
-            }
-          });
-	    }
-      });
-
+      parent.trigger('updateSpotifyId', spotifyId);
     }
 
   });

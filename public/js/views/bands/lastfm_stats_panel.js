@@ -43,8 +43,6 @@ define([
         return false;
       }
 
-      console.log('clearing lastfm id for ' + bandId);
-
       var externalIds = this.model.get('external_ids');
       externalIds.lastfm_id = "";
 
@@ -64,8 +62,7 @@ define([
         success: function(band, saveResponse) {
           console.log(bandId + ' saved');
           $('.flash-message').addClass('alert-success').text("Success").show();
-          parent.model.fetch();
-          parent.trigger('refreshParent');
+          parent.render();
         },
         error: function(band, saveResponse) {
           console.log('error:', response);
@@ -92,8 +89,9 @@ define([
             $('.flash-message').addClass('alert-success').text("Success").show();
             // refresh in 5 secods
             setTimeout(function(){
-              parent.model.fetch();
-              parent.trigger('refreshParent');
+              parent.render();
+              //parent.model.fetch();
+              //parent.trigger('refreshParent');
             }, 5000);
           },
          error: function(data) {
@@ -127,7 +125,6 @@ define([
             lastfmLookupItemModel.set('band_id', bandId);
             var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
 	        lastfmLookupItemView.render();
-
           },
           error: function(data) {
 	        console.log('error: ' + data);
@@ -164,6 +161,7 @@ define([
               lastfmLookupItemModel.set('band_id', bandId);
               var lastfmLookupItemView = Vm.create(parent, 'LastfmLookupItemView', LastfmLookupItemView, {model: lastfmLookupItemModel});
 	          lastfmLookupItemView.render();
+              lastfmLookupItemView.on('updateLastfmId', parent.updateLastfmId, parent);
 	        });
 
           },
@@ -173,6 +171,24 @@ define([
         }); 	
       });
     },
+
+  updateLastfmId: function(lastfmId) {
+    var parent = this;
+    var externalIds = this.model.get('external_ids');
+    externalIds.lastfm_id = lastfmId;
+    this.model.set({external_ids: externalIds});
+    this.model.save(null, {
+      success: function(band, saveResponse) {
+        console.log(parent.model.get('band_id') + ' saved');
+        $('.flash-message').addClass('alert-success').text("Success").show();
+        parent.render();
+      },
+      error: function(band, saveResponse) {
+        console.log('error:', response);
+        $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+      }
+    });
+  }, 
 
   });
 

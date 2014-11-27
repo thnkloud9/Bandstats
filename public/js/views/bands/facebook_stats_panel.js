@@ -168,6 +168,7 @@ define([
                facebookLookupItemModel.set('band_id', bandId);
                var facebookLookupItemView = Vm.create(parent, 'FacebookLookupItemView', FacebookLookupItemView, {model: facebookLookupItemModel});
 	           facebookLookupItemView.render();
+	           facebookLookupItemView.on('updateFacebookId', parent.updateFacebookId, parent);
              });
 
             },
@@ -177,7 +178,24 @@ define([
         }); 	
       });
     },
-
+    
+    updateFacebookId: function(facebookId) {
+      var parent = this;
+      var externalIds = this.model.get('external_ids');
+      externalIds.facebook_id = facebookId;
+      this.model.set({external_ids: externalIds});
+      this.model.save(null, {
+        success: function(band, saveResponse) {
+          console.log(parent.model.get('band_id') + ' saved');
+          $('.flash-message').addClass('alert-success').text("Success").show();
+          parent.render();
+        },
+        error: function(band, saveResponse) {
+          console.log('error:', response);
+          $('.flash-message').addClass('alert-danger').text(response.statusText).show();
+        }
+      });
+    }
 
   });
 
