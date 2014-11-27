@@ -35,7 +35,6 @@ define([
    },
 
    closeModal: function(ev) {
-     console.log('closing modal');
      $('.admin-modal-content', this.el).html(this.loadingTemplate({}));
    },
 

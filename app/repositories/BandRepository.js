@@ -84,12 +84,16 @@ BandRepository.prototype.addDefaultValues = function(band) {
     var emptyObject = {};
     var emptyArray = [];
     var facebookId = (band.external_ids.facebook_id) ? band.external_ids.facebook_id : ""; 
+    var spotifyId = (band.external_ids.spotify_id) ? band.external_ids.spotify_id : ""; 
+    var lastfmId = (band.external_ids.lastfm_id) ? band.external_ids.lastfm_id : band.band_name; 
+    var echonestId = (band.external_ids.echonest_id) ? band.external_ids.echonest_id : ""; 
+    var mentionsId = (band.external_ids.mentions_id) ? band.external_ids.mentions_id : band.band_name; 
     band.external_ids = {
-        "lastfm_id": band.band_name,
+        "lastfm_id": lastfmId,
         "facebook_id": facebookId,
-        "echonest_id": "",
-        "mentions_id": band.band_name,
-        "spotify_id": "",
+        "echonest_id": echonestId,
+        "mentions_id": mentionsId,
+        "spotify_id": spotifyId,
         "bandcamp_id": "",
         "twitter_id": ""
     }
