@@ -29,6 +29,7 @@ function BandRepository(args) {
     this.collection = 'bands';
     this.retentionValue = nconf.get('retention:value');
     this.retentionPeriod = nconf.get('retention:period');
+    this.sumStats = nconf.get('stats:sum_stats');
     this.bandstatsUtils = new BandstatsUtils();
     args.collection = this.collection;
  
@@ -268,8 +269,10 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
 
                 for (var s in runningStats) {
                     var runningStat = runningStats[s];
-                    sumCurrent += runningStat.current;
-                    sumIncremental += runningStat.incremental;
+                    if (parent.sumStats.indexOf(s)) {
+                        sumCurrent += runningStat.current;
+                        sumIncremental += runningStat.incremental;
+                    }
                 }
                 var set = { 
                     $set: { 
