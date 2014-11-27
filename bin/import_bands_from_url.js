@@ -12,12 +12,7 @@ var nconf = require('nconf');
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
 var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 nconf.file(path.join(__dirname, '/../app/config/app.json'));
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 var bandRepository = new BandRepository({'db': db}); 
 var jobRepository = new JobRepository({'db': db}); 
 var processStart = new Date().getTime();

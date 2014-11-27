@@ -139,6 +139,8 @@ BandRepository.prototype.addDefaultValues = function(band) {
     band.article_matching = "true";
     band.mentions = emptyArray;
     band.mentions_total = 0;
+    band.sum_current = 0;
+    band.sum_incremental = 0;
     band.last_updated = new Date();
     return band;
 }
@@ -254,6 +256,30 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
 
             db.collection(collection).update(query, set, {"multi":true}, function(err, result) {
                 cb(err, result);
+            });
+        },
+        // update totals
+        function (cb) {
+            var thisStat = stat;
+            db.collection('bands').findOne(query, function(err, band, stat) {
+                var runningStats = band.running_stats;
+                var sumCurrent = 0;
+                var sumIncremental = 0;
+
+                for (var s in runningStats) {
+                    var runningStat = runningStats[s];
+                    sumCurrent += runningStat.current;
+                    sumIncremental += runningStat.incremental;
+                }
+                var set = { 
+                    $set: { 
+                        "sum_current": sumCurrent,
+                        "sum_incremental": sumIncremental
+                    }
+                }
+                db.collection(collection).update(query, set, {"multi":true}, function(err, result) { 
+                    cb(err, result);
+                });
             });
         },
         // delete old stats

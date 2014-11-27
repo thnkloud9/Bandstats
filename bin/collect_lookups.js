@@ -28,12 +28,7 @@ var BandstatsUtils = require(path.join(__dirname, '/../app/lib/BandstatsUtils.js
  * config, db, and app stuff
  */
 nconf.file(path.join(__dirname, '/../app/config/app.json'));
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 var bandRepository = new BandRepository({'db': db}); 
 var jobRepository = new JobRepository({'db': db}); 
 var facebookManager = new FacebookManager();
