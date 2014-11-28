@@ -69,7 +69,7 @@ program
                         // delete real dupes
                         util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
                         util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                        bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, abnds) {
+                        bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
                             if (err) jobStats.errors++;
                             previousBand = band;
                             jobStats.processed++;
@@ -81,16 +81,13 @@ program
                         for (var r in band.regions) {
                             var newRegion = band.regions[r];
                             if (previousBand.regions.indexOf(newRegion) < 0) {
-                                util.log('added ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
+                                util.log('adding ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
                                 previousBand.regions.push(newRegion); 
                             }
-                            var set = {
-                                regions: previousBand.regions
-                            }
-                            bandRepository.update({'band_id': previousBand.band_id}, set, {}, function (err, bands) {
+                            bandRepository.update({'band_id': previousBand.band_id}, { $set: { regions: previousBand.regions }}, {}, function (err, bands) {
                                 if (err) jobStats.errors++;
                                 util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                                bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, abnds) {
+                                bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
                                     previousBand = band;
                                     jobStats.processed++;
                                     cb();
