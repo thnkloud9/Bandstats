@@ -63,38 +63,72 @@ program
                     cb();
                     return false;
                 }
-                if ((band.band_name == previousBand.band_name) &&
-                    (band.genres.toString() == previousBand.genres.toString())) {
-                    if (band.regions.toString() == previousBand.regions.toString()) {
-                        // delete real dupes
-                        util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
-                        util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                        bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
-                            if (err) jobStats.errors++;
-                            previousBand = band;
-                            jobStats.processed++;
-                            cb();
-                            return true;
-                        });
-                    } else {
-                        // add extra region to existing band
-                        for (var r in band.regions) {
-                            var newRegion = band.regions[r];
-                            if (previousBand.regions.indexOf(newRegion) < 0) {
-                                util.log('adding ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
-                                previousBand.regions.push(newRegion); 
-                            }
-                            bandRepository.update({'band_id': previousBand.band_id}, { $set: { regions: previousBand.regions }}, {}, function (err, bands) {
+                if (band.band_name == previousBand.band_name) {
+                    if (band.genres.toString() == previousBand.genres.toString()) {
+                        if (band.regions.toString() == previousBand.regions.toString()) {
+                            // delete real dupes
+                            util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
+                            util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                            bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
                                 if (err) jobStats.errors++;
-                                util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                                bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
-                                    previousBand = band;
-                                    jobStats.processed++;
-                                    cb();
-                                    return true;
-                                });
+                                previousBand = band;
+                                jobStats.processed++;
+                                cb();
+                                return true;
                             });
-                        }
+                        } else {
+                            // add extra region to existing band
+                            for (var r in band.regions) {
+                                var newRegion = band.regions[r];
+                                if (previousBand.regions.indexOf(newRegion) < 0) {
+                                    util.log('adding ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
+                                    previousBand.regions.push(newRegion); 
+                                }
+                                bandRepository.update({'band_id': previousBand.band_id}, { $set: { regions: previousBand.regions }}, {}, function (err, bands) {
+                                    if (err) jobStats.errors++;
+                                    util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                                    bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
+                                        previousBand = band;
+                                        jobStats.processed++;
+                                        cb();
+                                        return true;
+                                    });
+                                });
+                            }
+                        } 
+                    } else {
+                        if (band.genres.toString() == previousBand.genres.toString()) {
+                            // delete real dupes
+                            util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
+                            util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                            bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
+                                if (err) jobStats.errors++;
+                                previousBand = band;
+                                jobStats.processed++;
+                                cb();
+                                return true;
+                            });
+                        } else {
+                            // add extra region to existing band
+                            for (var g in band.genres) {
+                                var newGenre = band.genres[g];
+                                if (previousBand.genres.indexOf(newGenre) < 0) {
+                                    util.log('adding ' + newGenre + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
+                                    previousBand.genres.push(newGenre); 
+                                }
+                                bandRepository.update({'band_id': previousBand.band_id}, { $set: { genres: previousBand.genres }}, {}, function (err, bands) {
+                                    if (err) jobStats.errors++;
+                                    util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                                    bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
+                                        previousBand = band;
+                                        jobStats.processed++;
+                                        cb();
+                                        return true;
+                                    });
+                                });
+                            }
+                        } 
+
                     } 
 
                 } else {   
