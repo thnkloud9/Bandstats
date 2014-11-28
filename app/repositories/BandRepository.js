@@ -531,10 +531,11 @@ BandRepository.prototype.countDuplicates = function(query, callback) {
     });
 }
 
-BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, callback) {
-    var parent = this;
+BandRepository.prototype.getDuplicatesIndex = function(query, callback) {
     var db = this.db;
     var collection = this.collection;
+    var duplicateBands = [];
+    var previousBandName = '';
     var orderedQuery = {
         $query: query,
         $orderby: {
@@ -542,41 +543,50 @@ BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, cal
         }
     }
 
-    db.collection(collection).find(orderedQuery, {}).toArray(function(err, bands) { 
+    db.collection(collection).find(orderedQuery, {band_id: 1, band_name: 1}).toArray(function(err, bands) { 
         if (err) util.log(err);
 
-        var duplicateBands = [];
-        var previousBandName = '';
-        var seen = 0;
-        var added = 0;
         async.forEach(bands, function(band, cb) {
             if (band.band_name === previousBandName) {
-                if ((seen >= skip) && (added < limit)) {
-                    duplicateBands.push(band);
-                    duplicateBands.push(previousBand);
-                    added++;
-                    added++;
-                }
-                seen++;
+                duplicateBands.push(band.band_id);
+                duplicateBands.push(previousBandId);
             }
-            previousBand = band;
+            previousBandId = band.band_id;
             previousBandName = band.band_name;
             cb(err);
         },
         function (err) {
-            var sortedBands = [];
-            if (sort) {
-                // TODO: this doesn't actually work
-                _.forEach(sort, function(direction, field) {
-                    if (sortedBands.length === 0) {
-                        sortedBands = parent.sortBy(duplicateBands, field, direction);
-                    } else {
-                        sortedBands = parent.sortBy(sortedBands, field, direction);
-                    }
-                });
-                callback(err, sortedBands);
-            }  
             callback(err, duplicateBands);
+        });
+    });
+}
+
+BandRepository.prototype.findDuplicates = function(query, sort, skip, limit, callback) {
+    var parent = this;
+    var db = this.db;
+    var collection = this.collection;
+
+    parent.getDuplicatesIndex(query, function(err, duplicatesIndex) {
+        var total = duplicatesIndex.length;
+            
+        var orderedQuery = {
+            $query: {
+                $and: [
+                    query,
+                    {'band_id': { $in: duplicatesIndex }}
+                ]
+            },
+            $orderby: sort
+        }
+        var options = { 
+            'limit': limit,
+            'skip': skip
+        }
+
+        db.collection(collection).find(orderedQuery, options).toArray(function(err, bands) { 
+            if (err) util.log(err);
+
+            callback(err, bands, total);
         });
     });
 }

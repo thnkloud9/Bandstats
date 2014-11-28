@@ -468,16 +468,14 @@ BandController.prototype.duplicatesAction = function(req, res) {
         orderby = this.buildSortQuery(sort);
     }
 
-    this.bandRepository.countDuplicates(filterQuery, function(err, count) {
-        parent.bandRepository.findDuplicates(filterQuery, sort, skip, limit, function(err, bands) {
-           if (err) res.send(err);
+    parent.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, bands, total) {
+       if (err) res.send(err);
           
-            var results = {
-               "totalRecords": count,
-               "data": bands
-            }
-            res.send(results);
-        });
+        var results = {
+           "totalRecords": total,
+           "data": bands
+        }
+        res.send(results);
     });
 }
 
