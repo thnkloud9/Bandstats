@@ -17,7 +17,6 @@ var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.ge
 var bandRepository = new BandRepository({'db': db}); 
 var jobRepository = new JobRepository({'db': db}); 
 var processStart = new Date().getTime();
-var processed = 0;
 var jobStats = {
     "errors": 0,
     "processed": 0
@@ -54,12 +53,6 @@ program
 
             var results = results;
             async.forEach(results, function(result, cb) {
-                //if (!result.running_stats) {
-                //    jobStats.errors++;
-                //    cb();
-                //    return false;
-                //}
-                
 		        var bandId = result.band_id;
         		var band = bandRepository.clearRunningStats(result);
 
