@@ -23,6 +23,9 @@ function BandstatsUtils() {
 
 
 BandstatsUtils.prototype.sanitizeSearchString = function(text) {
+    if ((typeof text == 'undefined') || (text == null)) {
+	return '';
+    }
     sanitized_text = text.toLowerCase();
     sanitized_text = sanitized_text.replace('&', 'and')
         .replace(/[\+\*\,\.\?\!\-\;\:\'\(\)]+/g, '')
