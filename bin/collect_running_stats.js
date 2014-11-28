@@ -34,6 +34,10 @@ var jobRepository = new JobRepository({'db': db});
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
 var spotifyManager = new SpotifyManager();
+spotifyManager.getSpotifyAccessToken(function(err) {
+  if (err) util.log('Error getting spotify access token!');
+});
+
 var echonestManager = new EchonestManager();
 var processStart = new Date().getTime();
 var jobStats = {};
