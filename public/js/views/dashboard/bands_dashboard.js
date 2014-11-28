@@ -50,8 +50,9 @@ define([
       var missingSpotify = data.missing_spotify;
       var badFacebook = data.bad_facebook;
       var badLastfm = data.bad_lastfm;
+      var badSpotify = data.bad_spotify;
       var duplicates = data.duplicates;
-      var good = data.total - (missingFacebook + missingLastfm + badFacebook + badLastfm);
+      var good = data.total - (missingFacebook + missingLastfm + badFacebook + badLastfm + badSpotify);
 
 
       $('#good').html(good);
@@ -61,6 +62,7 @@ define([
       $('#missing-spotify').html(missingSpotify);
       $('#bad-facebook').html(badFacebook);
       $('#bad-lastfm').html(badLastfm);
+      $('#bad-spotify').html(badSpotify);
       $('#duplicates').html(duplicates);
       $('#total').html(data.total);
 
@@ -74,6 +76,7 @@ define([
 		{ value : missingEchonest, color : "#B244B2" },
 		{ value : missingSpotify, color : "#0200FF" },
 		{ value : badLastfm, color : "#0EB29A" },
+		{ value : badSpotify, color : "#0EB200" },
 		{ value : duplicates, color : "#800000" }
 	  ];
 	  var ctx = $('#chart-valid-bands-pie', this.el).get(0).getContext("2d");

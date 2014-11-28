@@ -73,6 +73,11 @@ DashboardController.prototype.bandStatsAction = function(req, res) {
                 cb(err, count);
                 }); 
         },
+        bad_spotify: function(cb) {
+                parent.bandRepository.count({"failed_lookups.spotify": { $gt : 0 }}, function(err, count) {
+                cb(err, count);
+                }); 
+        },
         duplicates: function(cb) {
                 parent.bandRepository.countDuplicates({}, function(err, count) {
                 cb(err, count);

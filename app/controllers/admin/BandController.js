@@ -161,6 +161,16 @@ BandController.prototype.getStartQuery = function(queryName) {
         return query;
     }
 
+    if (queryName === "spotify_followers_errors") {
+        var query = {};
+        query["running_stats.spotify_followers.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
     if (queryName === "facebook_id_missing") {
         var query = {};
         query["external_ids.facebook_id"] = { 

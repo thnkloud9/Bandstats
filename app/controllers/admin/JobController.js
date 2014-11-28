@@ -184,8 +184,7 @@ JobController.prototype.updateAction = function(req, res) {
         if ((err) || (!updated)) {
             res.setHeader('Content-Type', 'application/json');
             res.status(500);
-            res.send();
-            return false;
+            return res.send();
         }
 
         // update the job scheduler
@@ -201,7 +200,7 @@ JobController.prototype.updateAction = function(req, res) {
         util.log('updated job ' + values.job_id);
         res.setHeader('Content-Type', 'application/json');
         res.status(200);
-        res.send();
+        return res.send();
     });
 }
 

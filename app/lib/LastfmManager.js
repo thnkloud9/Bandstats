@@ -105,7 +105,7 @@ LastfmManager.prototype.lookup = function(searchObj, lookupFunction, callback) {
 
 LastfmManager.prototype.getInfo = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -126,7 +126,7 @@ LastfmManager.prototype.getInfo = function(lastfmId, callback) {
 
 LastfmManager.prototype.getListeners = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -147,7 +147,7 @@ LastfmManager.prototype.getListeners = function(lastfmId, callback) {
 
 LastfmManager.prototype.getTopTags = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.gettoptags&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.gettoptags&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -167,7 +167,7 @@ LastfmManager.prototype.getTopTags = function(lastfmId, callback) {
 
 LastfmManager.prototype.getEvents = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getevents&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getevents&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -187,7 +187,7 @@ LastfmManager.prototype.getEvents = function(lastfmId, callback) {
 
 LastfmManager.prototype.getBio = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -211,7 +211,7 @@ LastfmManager.prototype.getBio = function(lastfmId, callback) {
 
 LastfmManager.prototype.getPlays = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
@@ -252,7 +252,7 @@ LastfmManager.prototype.getMbid = function(lastfmId, callback) {
 
 LastfmManager.prototype.getImage = function(lastfmId, callback) {
     var options = { 
-        url: this.apiDomain + '/?method=artist.getinfo&artist=' + lastfmId + '&api_key=' + this.apiKey + '&format=json',
+        url: this.apiDomain + '/?method=artist.getinfo&artist=' + encodeURIComponent(lastfmId) + '&api_key=' + this.apiKey + '&format=json',
         json: true
     };
 
