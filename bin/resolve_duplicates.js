@@ -60,8 +60,7 @@ program
             async.forEach(duplicateBands, function(band, cb) {
                 if (typeof previousBand.band_name === 'undefined') {
                     previousBand = band;
-                    cb();
-                    return false;
+                    return cb();
                 }
                 if (band.band_name == previousBand.band_name) {
                     if (band.genres.toString() == previousBand.genres.toString()) {
@@ -73,8 +72,7 @@ program
                                 if (err) jobStats.errors++;
                                 previousBand = band;
                                 jobStats.processed++;
-                                cb();
-                                return true;
+                                return cb();
                             });
                         } else {
                             // add extra region to existing band
@@ -90,8 +88,7 @@ program
                                     bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
                                         previousBand = band;
                                         jobStats.processed++;
-                                        cb();
-                                        return true;
+                                        return cb();
                                     });
                                 });
                             }
@@ -105,8 +102,7 @@ program
                                 if (err) jobStats.errors++;
                                 previousBand = band;
                                 jobStats.processed++;
-                                cb();
-                                return true;
+                                return cb();
                             });
                         } else {
                             // add extra region to existing band
@@ -122,8 +118,7 @@ program
                                     bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
                                         previousBand = band;
                                         jobStats.processed++;
-                                        cb();
-                                        return true;
+                                        return cb();
                                     });
                                 });
                             }
@@ -136,7 +131,7 @@ program
                     //util.log(band.band_name + ' - ' + previousBand.band_name);
                     //util.log(band.genres + ' - ' + previousBand.genres);
                     previousBand = band;
-                    cb();
+                    return cb();
                 }
             },
             function (err) {
