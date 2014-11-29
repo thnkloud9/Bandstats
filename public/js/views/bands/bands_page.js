@@ -25,8 +25,8 @@ define([
       this.session = options.session; 
       this.vent = options.vent;
       this.breadcrumb = options.breadcrumb;
-      this.filter.genres = [];
-      this.filter.regions = [];
+      //this.filter.genres = [];
+      //this.filter.regions = [];
 	  //this.sort['running_stats.facebook_likes.current'] = "desc";
     },
 

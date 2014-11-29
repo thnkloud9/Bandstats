@@ -9,7 +9,7 @@ define([
         cookie: {
           expires: null,
           httpOnly: true,
-          originalMaxAge: 1000,
+          originalMaxAge: 600000,
           path: "/" 
         },
         passport: {

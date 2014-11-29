@@ -30,7 +30,7 @@ SpotifyManager.prototype.getSpotifyAccessToken = function(callback) {
     var now = new Date();
     var expire = new Date();
     // return token if its valid
-    if ((typeof this.accessToken != undefined) && (now.getTime() < this.tokenExpire)) {
+    if ((typeof this.accessToken !== 'undefined') && (now.getTime() < this.tokenExpire)) {
       util.log('I have a valid token already');
       var accessToken = this.tokenType + ' ' + this.accessToken;
       callback(null, accessToken);
@@ -181,9 +181,7 @@ SpotifyManager.prototype.getFollowers = function(spotifyId, callback) {
                 callback('error, bad response from spotify ' + err);
                 return false;
             }
-            if (!body.followers.total) {
-                // TODO: 0 will trigger this error as well, not sure we want to
-                // mark this as an error
+            if (typeof body.followers === 'undefined') {
                 callback('error, could not find followers for ' + spotifyId);
                 return false;
             }
