@@ -127,6 +127,11 @@ BandController.prototype.indexAction = function(req, res) {
    
     this.bandRepository.count(unorderedQuery, function(err, count) { 
       parent.bandRepository.find(orderedQuery, options, function(err, bands) {
+        if (err) {
+            util.log(JSON.stingify(err));
+            res.send(err);
+	    return false;
+        }
         var results = {
           "totalRecords": count,
           "data": bands
