@@ -82,16 +82,16 @@ program
                                     util.log('adding ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
                                     previousBand.regions.push(newRegion); 
                                 }
-                                bandRepository.update({'band_id': previousBand.band_id}, { $set: { regions: previousBand.regions }}, {}, function (err, bands) {
-                                    if (err) jobStats.errors++;
-                                    util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                                    bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
-                                        previousBand = band;
-                                        jobStats.processed++;
-                                        return cb();
-                                    });
-                                });
                             }
+                            bandRepository.update({'band_id': previousBand.band_id}, { $set: { regions: previousBand.regions }}, {}, function (err, bands) {
+                                if (err) jobStats.errors++;
+                                util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                                bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
+                                    previousBand = band;
+                                    jobStats.processed++;
+                                    return cb();
+                                });
+                            });
                         } 
                     } else {
                         if (band.genres.toString() == previousBand.genres.toString()) {
@@ -105,23 +105,31 @@ program
                                 return cb();
                             });
                         } else {
-                            // add extra region to existing band
+                            // add extra genres to existing band
                             for (var g in band.genres) {
                                 var newGenre = band.genres[g];
                                 if (previousBand.genres.indexOf(newGenre) < 0) {
                                     util.log('adding ' + newGenre + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
                                     previousBand.genres.push(newGenre); 
                                 }
-                                bandRepository.update({'band_id': previousBand.band_id}, { $set: { genres: previousBand.genres }}, {}, function (err, bands) {
-                                    if (err) jobStats.errors++;
-                                    util.log('deleting ' + band.band_name + ' ' + band.band_id);
-                                    bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
-                                        previousBand = band;
-                                        jobStats.processed++;
-                                        return cb();
-                                    });
-                                });
                             }
+                            // add extra regions to existing band
+                            for (var r in band.regions) {
+                                var newRegion = band.regions[r];
+                                if (previousBand.regions.indexOf(newRegion) < 0) {
+                                    util.log('adding ' + newRegion + ' to ' + previousBand.band_name + ' ' + previousBand.band_id); 
+                                    previousBand.regions.push(newRegion); 
+                                }
+                            }
+                            bandRepository.update({'band_id': previousBand.band_id}, { $set: { genres: previousBand.genres, regions: previousBand.regions }}, {}, function (err, bands) {
+                                if (err) jobStats.errors++;
+                                util.log('deleting ' + band.band_name + ' ' + band.band_id);
+                                bandRepository.remove({'band_id': band.band_id}, {multi: true}, function(err, bands) {
+                                    previousBand = band;
+                                    jobStats.processed++;
+                                    return cb();
+                                });
+                            });
                         } 
 
                     } 
