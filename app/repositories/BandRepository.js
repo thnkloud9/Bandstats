@@ -137,6 +137,9 @@ BandRepository.prototype.addDefaultValues = function(band) {
     if (!band.genres) {
         band.genres = emptyArray;
     }
+    if (!band.contest_codes) {
+        band.contest_codes = emptyArray;
+    }
     band.article_matching = "true";
     band.mentions = emptyArray;
     band.mentions_total = 0;

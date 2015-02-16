@@ -16,6 +16,7 @@ define([
       regions: [],
       genres: [],
       mentions: [],
+      contest_codes: [],
       mentions_total: 0,
       sum_current: 0,
       sum_incremental: 0,
