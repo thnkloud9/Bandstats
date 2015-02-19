@@ -62,8 +62,8 @@ program
                     previousBand = band;
                     return cb();
                 }
-                if (band.band_name == previousBand.band_name) {
-                    if (band.genres.toString() == previousBand.genres.toString()) {
+                if (band.band_name === previousBand.band_name) {
+                    if (band.genres.toString() === previousBand.genres.toString()) {
                         if (band.regions.toString() == previousBand.regions.toString()) {
                             // delete real dupes
                             util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
@@ -75,6 +75,11 @@ program
                                 return cb();
                             });
                         } else {
+			    // if fb ids do not match, do not de-dupe
+			    if (band.external_ids.facebook_id !== previousBand.external_ids.facebook_id) {
+				// dont do anything right now
+                                return cb();
+			    }
                             // add extra region to existing band
                             for (var r in band.regions) {
                                 var newRegion = band.regions[r];
@@ -94,7 +99,7 @@ program
                             });
                         } 
                     } else {
-                        if (band.genres.toString() == previousBand.genres.toString()) {
+                        if (band.genres.toString() === previousBand.genres.toString()) {
                             // delete real dupes
                             util.log(band.band_name + ' ' + band.band_id + ' ' + previousBand.band_id + ' are identical');
                             util.log('deleting ' + band.band_name + ' ' + band.band_id);
@@ -105,6 +110,11 @@ program
                                 return cb();
                             });
                         } else {
+			    // if fb ids do not match, do not de-dupe
+			    if (band.external_ids.facebook_id !== previousBand.external_ids.facebook_id) {
+				// dont do anything right now
+                                return cb();
+			    }
                             // add extra genres to existing band
                             for (var g in band.genres) {
                                 var newGenre = band.genres[g];

@@ -239,10 +239,14 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                         var incremental = 1;
                         var previous = parseInt(value) - 1;
                     } else {
-                        // we SHOULD non have a non 0 previous here,
-                        // if there is a problem with stats, dump previous here
-                        // and see if its 0
-                        var incremental = parseInt(value) - parseInt(previous); 
+                        if (parseInt(value) < parseInt(previous)) {
+                            var incremental = 0;
+                        } else {
+                            // we SHOULD non have a non 0 previous here,
+                            // if there is a problem with stats, dump previous here
+                            // and see if its 0
+                            var incremental = parseInt(value) - parseInt(previous); 
+                        }
                     }
                     var totalStats = result.total_stats;
                     var incrementalTotal = parseInt(result.incremental_total) + incremental;
