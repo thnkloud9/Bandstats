@@ -37,6 +37,7 @@ ChartController.prototype.indexAction = function(req, res) {
     var orderByList = req.query.orderBy;
     var regionList = req.query.region;
     var genreList = req.query.genre;
+    var bandIdList = req.query.bandId;
     var jsonpCallback = req.query.callback;
 
     // only used for delimagazine charts
@@ -67,6 +68,11 @@ ChartController.prototype.indexAction = function(req, res) {
     if (genreList) {
         genres = genreList.split(',');
         conditions.push({"genres": { $in: genres }});
+    }
+
+    if (bandIdList) {
+        bandIds = bandIdList.split(',');
+        conditions.push({"band_id": { $in: bandIds }});
     }
 
     if (highLastFM) {
