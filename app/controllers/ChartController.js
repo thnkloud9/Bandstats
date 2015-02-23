@@ -48,16 +48,21 @@ ChartController.prototype.indexAction = function(req, res) {
 
     if (page) {
         if (page > 1) {
-            skip = (page * limit) + 1;
+            skip = ((page - 1) * limit);
         }
     }
 
     if (req.query.search) {
         search = new RegExp('.*' + req.query.search + '.*', 'i');
-        conditions.push({"band_name": search});
-        conditions.push({"band_id": search});
-        conditions.push({"external_ids.facebook_id": search});
-        conditions.push({"band_url": search});
+	searchQuery = {
+            $or: [
+                {"band_name": search},
+                {"band_id": search},
+                {"external_ids.facebook_id": search},
+                {"band_url": search},
+            ]
+        };
+        conditions.push(searchQuery);
     }
 
     if (regionList) {
@@ -76,11 +81,11 @@ ChartController.prototype.indexAction = function(req, res) {
     }
 
     if (highLastFM) {
-        conditions.push({"running_stats.lastfm_listeners.current": {$lt: parseInt(highLastFM)}});
+        conditions.push({"running_stats.lastfm_listeners.current": {$lte: parseInt(highLastFM)}});
     }
 
     if (lowLastFM) {
-        conditions.push({"running_stats.lastfm_listeners.current": {$gt: parseInt(lowLastFM)}});
+        conditions.push({"running_stats.lastfm_listeners.current": {$gte: parseInt(lowLastFM)}});
     }
 
     // dont show failed lookups or bands without score 

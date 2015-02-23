@@ -272,9 +272,11 @@ BandRepository.prototype.updateRunningStat = function(query, provider, stat, val
 
                 for (var s in runningStats) {
                     var runningStat = runningStats[s];
-                    if (parent.sumStats.indexOf(s)) {
-                        sumCurrent += runningStat.current;
-                        sumIncremental += runningStat.incremental;
+                    if (parent.sumStats) {
+                        if (parent.sumStats.indexOf(s)) {
+                            sumCurrent += runningStat.current;
+                            sumIncremental += runningStat.incremental;
+                        }
                     }
                 }
                 var set = { 
