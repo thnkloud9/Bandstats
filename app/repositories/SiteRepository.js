@@ -60,6 +60,12 @@ SiteRepository.prototype.remove = function(query, options, callback) {
     });
 }
 
+SiteRepository.prototype.count = function(query, callback) {
+    BaseRepository.prototype.count.call(this, query, function(err, count) {
+        callback(err, count);
+    });
+}
+
 /**
  * Site specific functions
  */
@@ -70,15 +76,21 @@ SiteRepository.prototype.remove = function(query, options, callback) {
  */
 SiteRepository.prototype.getNewArticles = function(site, callback) {
     var parent = this;
+    util.log(site.site_name + ' last entry was ' + site.last_entry);
+    util.log(site.site_url);
     var req = {
         uri: site.site_url,
         headers: {
-            'If-Modified-Since': site.last_entry
+            'If-Modified-Since': site.last_entry,
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'
         }
     }
+
+    
     feedparser.parseUrl(req, function(err, meta, articles) {
         // update site.last_entry so we don't reparse already read articles
         if (err || !meta) {
+            console.log(err);
             callback(err);
         }
         // make sure we actually have real string values

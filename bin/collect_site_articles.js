@@ -20,21 +20,18 @@ var util = require('util');
 var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 var SiteRepository = require(path.join(__dirname,'/../app/repositories/SiteRepository.js'));
 var BandRepository = require(path.join(__dirname,'/../app/repositories/BandRepository.js'));
+var BandstatsUtils = require(path.join(__dirname,'/../app/lib/BandstatsUtils.js'));
 
 /**
  * config, db, and app stuff
  */
 nconf.file(path.join(__dirname, '/../app/config/app.json'));
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 
 var jobRepository = new JobRepository({'db': db}); 
 var siteRepository = new SiteRepository({"db": db});
 var bandRepository = new BandRepository({"db": db});
+var bandstatsUtils = new BandstatsUtils();
 var processStart = new Date().getTime();
 var processed = 0;
 /**
@@ -195,10 +192,15 @@ program.parse(process.argv);
 function parseSiteArticles(site, save, callback) {
     util.log("processing " + site.site_name);
     // get band list
-    bandRepository.getBandsIndex({"band_name": { $ne: "" } }, function(err, bands) {
+    var query = {
+        "band_name": { $ne: "" },
+        "article_matching": { $eq: "true"}
+    }
+    bandRepository.getBandsIndex(query, function(err, bands) {
         // get new articles  
         siteRepository.getNewArticles(site, function(err, meta, articles) {
             if (err || !articles) {
+                util.log('No articles found for ' + site.site_name);
                 callback();
                 return false;
             }
@@ -210,7 +212,8 @@ function parseSiteArticles(site, save, callback) {
                     var match = articleHasMatch(site, article, band);
 
                     if (!match) {
-                        cb();
+                        //cb();
+                        setImmediate(function() { cb() }); 
                         return false;
                     }
                     
@@ -250,18 +253,16 @@ function parseSiteArticles(site, save, callback) {
 }
 
 function articleHasMatch(site, article, band) {
-    if (band.band_name) {
-        var band_name = sanitizeSearchString(band.band_name);
+    if (band.external_ids.mentions_id) {
+        var mentions_id = bandstatsUtils.sanitizeSearchString(band.external_ids.mentions_id);
         var search_fields = [ 
             'band_name_field',
-            'artist_name_field', 
-            'track_name_field', 
             'description_field' ];
         for (var f in search_fields) {
             var search_field = search_fields[f];
             if (article[site[search_field]]) {
-                var search_text = sanitizeSearchString(article[site[search_field]].toString());
-                var re = new RegExp('\\b' + band_name + '\\b', 'g');
+                var search_text = bandstatsUtils.sanitizeSearchString(article[site[search_field]].toString());
+                var re = new RegExp('\\b' + mentions_id + '\\b', 'g');
                 
                 if (search_text.match(re)) {
                     return true;
@@ -277,14 +278,3 @@ function articleHasMatch(site, article, band) {
     }
 }
 
-function sanitizeSearchString(text) {
-    sanitized_text = text.toLowerCase();
-    sanitized_text = sanitized_text.replace('&', 'and')
-        .replace(/[\+\,\.\?\!\-\;\:\'\(\)]+/g, '')
-        .replace(/[\"“\'].+[\"”\']/g, '')
-        .replace(/[\n\r]/g, '')
-        .replace(/[\[\]]/g, '')
-        .replace(/[\\\/]/g, '');
- 
-    return sanitized_text;
-}

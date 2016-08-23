@@ -1,0 +1,62 @@
+{
+    "app": {
+        "port": 4000,
+        "title": "Bandstats",
+        "session_timeout": 86400000
+    },
+    "retention": {
+        "value": 2,
+        "period": "weeks"
+    },
+    "db": {
+        "host": "localhost",
+        "port": 27017,
+        "database": "bandstats"
+    },
+    "stats": {
+        "sum_stats": [ "facebook_likes", "lastfm_listeners" ]
+    },
+    "bandcamp": {
+        "enabled": false,
+        "api_key": "",
+        "domain": "http://api.bandcamp.com/api"
+    },
+    "lastfm": {
+        "enabled": true,
+        "api_key": "",
+        "api_secret": "",
+        "domain": "http://ws.audioscrobbler.com/2.0"
+    },
+    "echonest": {
+        "enabled": true,
+        "api_key": "",
+        "api_secret": "",
+        "consumer_key": "",
+        "domain": "http://developer.echonest.com/api/v4"
+    },
+    "facebook": {
+        "enabled": true,
+        "app_id": "",
+        "app_secret": "",
+        "channel_url": "",
+        "jssdk_src": "//connect.facebook.net/en_US/all.js",
+        "domain": "https://graph.facebook.com"
+    },
+    "spotify": {
+        "enabled": true,
+        "client_id": "026893e5f9e044edb12a464cfc2a842f",
+        "client_secret": "199987dcc2554c7e96afd6d0d0061211",
+        "domain": "https://api.spotify.com/v1/"
+    },
+    "soundcloud": {
+        "enabled": true,
+        "client_id": "",
+        "domain": "http://api.soundcloud.com"
+    },
+    "musicbrainz": {
+        "enabled": false
+    },
+    "youtube": {
+        "enabled": false
+    }
+}

@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Bands Dashboard</h3>
+  </div>
+  <div id='bands-dashboard-content' class="panel-body">
+    <ul class="list-inline">
+    <li style="min-width: 250px">
+      <ul class="list-group">
+        <li class="list-group-item">Good <span id='good' style="background-color: #5cb85c" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/duplicates/list'>Duplicates</a> <span id='duplicates' style="background-color: #800000" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/bad/facebook_likes'>Bad Facebook Id</a> <span id='bad-facebook' style="background-color: #5ACCBB" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/bad/lastfm_listeners'>Bad Lastfm Id</a> <span id='bad-lastfm' style="background-color: #0EB29A" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/bad/spotify_followers'>Bad Spotify Id</a> <span id='bad-spotify' style="background-color: #0EB29A" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/missing/facebook_id'>Missing Facebook Id</a> <span id='missing-facebook' style="background-color: #FF0007" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/missing/lastfm_id'>Missing Lastfm Id</a> <span id='missing-lastfm' style="background-color: #B200B2" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/missing/echonest_id'>Missing Echonest Id</a> <span id='missing-echonest' style="background-color: #B244B2" class="badge">0</span></li>
+        <li class="list-group-item"><a href='#bands/missing/spotify_id'>Missing Spotify Id</a> <span id='missing-spotify' style="background-color: #0200FF" class="badge">0</span></li>
+        <li class="list-group-item">Total <span id='total' class="badge">0</span></li>
+      </ul>
+    </li>
+
+    <li>
+      <canvas id='chart-valid-bands-pie' height="250" width="250"></canvas>
+    </li>
+
+  </div>
+</div>

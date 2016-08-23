@@ -1,0 +1,31 @@
+<div class="row panel panel-default">
+  <div class="panel-heading">
+    <a href="#sites/<%= site_id %>">
+      <h5><%= site_name %></h5>
+    </a>
+  </div>
+  
+  <div class="panel-body">
+
+    <div class="col-xs-4 col-md-2">
+      <a href="#sites/<%= site_id %>">
+        <img src="<%= site_image_src %>" alt="not available" class="img-rounded thumbnail-small pull-left">
+      </a>
+    </div>
+
+    <div class="col-md-10">
+
+      <p>
+        <a href="<%= site_url %>"><%= site_url %></a>
+      </p>
+
+      <p>Weight: <%= site_weight%></p>
+      <p>Last Entry: <%= last_entry %></p>
+      <p>Created: <%= created %></p>
+
+
+    </div>
+
+  </div>
+
+</div>

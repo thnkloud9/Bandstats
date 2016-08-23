@@ -1,0 +1,10 @@
+       <%= job_name %> 
+	<div class="progress">
+          <div class="progress-bar progress-bar-success" style="width: <%= processed_prcnt %>%">
+                <small><%= job_processed %></small>
+          </div>
+          <div class="progress-bar progress-bar-danger" style="width: <%= failed_prcnt %>%">
+                <small><%= job_failed %></small>
+          </div>
+        </div>
+        <span><small>Last Run: <%= readable_last_run %></small></span>

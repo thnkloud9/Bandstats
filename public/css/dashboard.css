@@ -1,0 +1,314 @@
+/*
+ *  * Base structure
+ *   */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+}
+
+
+/*
+ *  * Global add-ons
+ *   */
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+
+/*
+ *  * Sidebar
+ *   */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a {
+  color: #fff;
+  background-color: #428bca;
+}
+
+
+/*
+ *  * Main content
+ *   */
+
+.main {
+  /* padding: 20px; */
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*
+ *  * Placeholder dashboard ideas
+ *   */
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.band-tile {
+}
+
+.thumbnail-medium {
+  width: 230px !important;
+  height: 230px !important;
+  margin-bottom: 5px;
+}
+
+.thumbnail-gallery {
+  width: 195px !important;
+  height: 195px !important;
+  margin-bottom: 5px;
+}
+
+.thumbnail-container {
+  position: relative;
+  display: inline-block;
+  max-width: 235px;
+}
+
+.thumbnail-overlay {
+  position: absolute;
+  bottom: 5px;
+  left: 15px;
+  width: 230px;
+  height: 85px;
+  padding-left: 5px;
+  background-color: #000; 
+  border-color: #666;
+  border-style: solid;
+  border-width: 1px;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; 
+  filter: alpha(opacity=80);  
+  -moz-opacity: 0.8;          
+  -khtml-opacity: 0.8;      
+  opacity: 0.8;
+}
+
+.thumbnail-small {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+.thumbnail-xsmall {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+#lastfm-stats-table {
+  overflow: scroll;
+  height: 200px
+}
+
+#facebook-stats-table {
+  overflow: scroll;
+  height: 200px
+}
+
+.loading-results {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  min-height: 32px;
+  min-width: 32px;
+  background-image: url(/images/bg_loading.gif);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.flash-message-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.flash-message {
+  min-width: 300px;
+  display: none;
+  cursor:pointer;
+  box-shadow: 5px 5px 2px #eeeeee;
+}
+
+
+#bands-filter-list-content {
+  margin-top: 10px;
+}
+
+.dashboard-widget {
+  vertical-align: top;
+  min-width: 250px;
+}
+
+#jobs-dashboard-widget {
+  min-width: 500px;
+}
+
+#job-list-menu {
+  margin-left: 92%;
+}
+
+.admin-modal-content {
+  padding: 15px;
+  height: 350px;
+  overflow: scroll;
+}
+
+.facebook-lookup-item {
+  margin-top: 15px !important;
+}
+
+#form-settings {
+  width: 400px;
+}
+
+.modal-flash-message {
+  width: 93%;
+  margin: 20px;
+}
+
+.toggle-btn-right {
+  float: right;
+}
+
+#band-detail-tools {
+}
+
+.band-detail-tool-panel {
+  width: 550px;
+}
+
+.site-article-panel {
+  width: 550px;
+}
+
+
+.no-decoration {
+  text-decoration: none !important;
+}
+
+.log-output {
+  height: 410px;
+  overflow: scroll;
+}
+
+
+/*  wizard tab */
+.wizard-container {
+
+}
+
+.wizard-row {
+
+}
+div.wizard-tab-container{
+  z-index: 10;
+  background-color: #ffffff;
+  padding: 0 !important;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  border:1px solid #ddd;
+  margin-top: 20px;
+  margin-left: 50px;
+  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  -moz-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  background-clip: padding-box;
+  opacity: 0.97;
+  filter: alpha(opacity=97);
+}
+div.wizard-tab-menu{
+  padding-right: 0;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+div.wizard-tab-menu div.list-group{
+  margin-bottom: 0;
+}
+div.wizard-tab-menu div.list-group>a{
+  margin-bottom: 0;
+}
+div.wizard-tab-menu div.list-group>a:first-child{
+  border-top-right-radius: 0;
+  -moz-border-top-right-radius: 0;
+}
+div.wizard-tab-menu div.list-group>a:last-child{
+  border-bottom-right-radius: 0;
+  -moz-border-bottom-right-radius: 0;
+}
+div.wizard-tab-menu div.list-group>a.active,
+div.wizard-tab-menu div.list-group>a.active .glyphicon,
+div.wizard-tab-menu div.list-group>a.active .fa{
+  color: #ffffff;
+}
+div.wizard-tab-menu div.list-group>a.active:after{
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-top: -13px;
+  border-left: 0;
+  border-bottom: 13px solid transparent;
+  border-top: 13px solid transparent;
+  border-left: 10px solid #428bca;
+}
+
+div.wizard-tab-content{
+  background-color: #ffffff;
+  padding-left: 20px;
+  padding-top: 10px;
+}
+
+div.wizard-tab div.wizard-tab-content:not(.active){
+  display: none;
+}

@@ -61,6 +61,19 @@ UserRepository.prototype.remove = function(query, options, callback) {
 /**
  * User specific functions
  */
+UserRepository.prototype.count = function(query, callback) {
+    var db = this.db;
+    var collection = this.collection;
+    db.collection(collection).count(query, function(err, results) {
+        if (err) {
+            util.log(err);
+            return false;
+        }
+       
+        callback(null, results);
+    });
+}
+
 UserRepository.prototype.encryptPassword = function(user, callback) {
     var parent = this;
     bcrypt.genSalt(10, function(err, salt) {

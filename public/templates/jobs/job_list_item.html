@@ -1,0 +1,66 @@
+   <td>
+      <% if (job_category == "Import") { %>
+        <i class="fa fa-sign-in fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Export") { %>
+        <i class="fa fa-sign-out fa-2x"></i>
+      <% } %>
+      <% if (job_category == "System Maintenance") { %>
+        <i class="fa fa-cogs fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Stat Collector") { %>
+        <i class="fa fa-tachometer fa-2x"></i>
+      <% } %>
+      <% if (job_category == "Profile Data Lookup") { %>
+        <i class="fa fa-user fa-2x"></i>
+      <% } %>
+
+      <a href="#jobs/<%= job_id %>" class="list plain">
+      <%= job_name %>
+     </a>
+   </td>
+
+   <td>
+     <%= readable_last_run %>
+   </td>
+
+   <td>
+     <%= readable_duration %>
+   </td>
+
+   <td>
+    <% if (job_processed > 0) { %>
+      <span class="badge pull-right">
+        <%= job_processed %>
+      </span>
+    <% }  %>
+   </td>
+
+   <td>
+    <% if (job_failed > 0) { %>
+      <span class="badge pull-right alert-danger">
+        <%= job_failed %>
+      </span>
+    <% }  %>
+   </td>
+
+   <td>
+     <%= job_schedule %>
+   </td>
+
+   <td>
+    <ul class="list-inline">
+      <li>
+        <% if (job_active == "true" ) { %>
+          <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-success job-deactivate">Active</button>
+        <% } else { %>
+          <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-danger job-activate">Inactive</button>
+        <% }  %>
+      </li>
+      <li>
+        <button type="button" data-job-id="<%= job_id %>" class="btn btn-xs btn-primary btn-run-job">Run Now</button>
+      </li>
+      <li>
+        <button type="button" data-band-id="<%= job_id %>" class="btn btn-xs btn-danger job-delete">Delete</button>
+      </li>
+   </td>

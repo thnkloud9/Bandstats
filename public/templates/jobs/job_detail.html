@@ -1,0 +1,78 @@
+<ol class="breadcrumb">
+  <li><a href="#jobs">Jobs</a></li>
+  <li class="active"><%= job_name %></li>
+</ol>
+
+<div id="band-detail-content" class="row">
+  <ul class="list-inline">
+
+    <!-- column one -->
+    <li style="vertical-align: top">
+
+      <div style="width: 300px">
+        <div class="form-group">
+          <label for="job-id" class="control-label">Id:</label>
+          <input class="form-control" id="job-id" name="job_id" type="text" value="<%= job_id === null ? '' : job_id %>" class="span2" disabled/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-name" class="control-label">Name:</label>
+          <input class="form-control" type="text" id="job-name" name="job_name" value="<%= job_name %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-command" class="control-label">Command:</label>
+          <input class="form-control" type="text" id="job-command" name="job_command" value="<%= job_command %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-arguments" class="control-label">Arguments:</label>
+          <input class="form-control" type="text" id="job-arguments" name="job_arguments" value="<%= job_arguments %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-schedule" class="control-label">Schedule:</label>
+          <input class="form-control" type="text" id="job-schedule" name="job_schedule" value="<%= job_schedule %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-category" class="control-label">Category:</label>
+          <select class="form-control" id="job-category">
+            <option <% if (job_category == "System Maintenance" ) { %>selected<% } %>>System Maintenance</option>
+            <option <% if (job_category == "Stat Collector" ) { %>selected<% } %>>Stat Collector</option>
+            <option <% if (job_category == "Profile Data Lookup" ) { %>selected<% } %>>Profile Data Lookup</option>
+            <option <% if (job_category == "Import" ) { %>selected<% } %>>Import</option>
+            <option <% if (job_category == "Export" ) { %>selected<% } %>>Export</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="job-description" class="control-label">Description:</label>
+          <input class="form-control" type="text" id="job-description" name="description" value="<%= job_description %>"/>
+        </div>
+
+        <div class="form-group">
+          <label for="job-active" class="control-label">Active: </label>
+          <input class="form-control" type="checkbox" id="job-active" name="active" value="true" <%= job_active == "true" ? 'checked' : '' %>/>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a id="job-save" class="btn btn-primary save">Save</a>
+        <a id="job-run" class="btn btn-primary run">Run Now</a>
+        <a id="job-delete" class="btn btn-danger delete">Delete</a>
+      </div>
+    </li>
+
+    <li style="vertical-align: top">
+      <div style="width: 600px">
+        <h4>Output from last run at <%= job_last_run %></h4>
+        <pre class="log-output"><%= last_output %></pre> 
+      </div>
+    </li>
+
+  </ul>
+</div>
+
+    
+

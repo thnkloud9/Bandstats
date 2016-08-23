@@ -1,0 +1,38 @@
+      <!-- facebook stats panel -->
+          <ul class="list-group">
+            <li class="list-group-item">
+              <form class="form-inline" role="form">
+                <div class="form-group" style="width: 200px">
+                  <div class="input-group">
+                    <div class="input-group-addon lnk-facebook-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id%>">
+                      <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="Lookup Facebook Id" data-placement="right"></i>
+                    </div>
+                    <input class="form-control" id="facebook-id" type="text" value="<%= external_ids.facebook_id %>">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-sm btn-primary lnk-facebook-view" data-band-id="<%= band_id %>">View</button>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-sm btn-success lnk-facebook-collect" data-band-id="<%= band_id %>">Collect Now</button>
+                </div>
+    
+                <div class="form-group">
+                  <button class="btn btn-sm btn-danger lnk-facebook-clear" data-band-id="<%= band_id %>">Clear</button>
+                </div>
+              </form>
+            </li>
+
+            <li class="list-group-item">
+              <span class="label label-default"><%= running_stats.facebook_likes.current %> Likes</span>
+              <span class="label label-default"><%= running_stats.facebook_likes.incremental %> Incremental</span>
+              <span class="label label-default"><%= running_stats.facebook_likes.incremental_avg %> Incremental Avg</span>
+              <span class="label label-info"><%= running_stats.facebook_likes.last_updated %></span>
+              <br />
+              <span class="label label-danger"><%= failed_lookups.facebook %> Errors</span>
+              <span class="label label-danger"><%= running_stats.facebook_likes.error %></span>
+            </li>
+          </ul>
+      <!-- end facebook stats panel -->

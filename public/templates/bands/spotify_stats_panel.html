@@ -1,0 +1,38 @@
+      <!-- spotify stats panel -->
+          <ul class="list-group">
+            <li class="list-group-item">
+              <form class="form-inline" role="form">
+                <div class="form-group" style="width: 200px">
+                  <div class="input-group">
+                    <div class="input-group-addon lnk-spotify-lookup" data-search="<%= band_name %>" data-band-id="<%= band_id%>">
+                      <i class="fa fa-spotify bs-tooltip" data-toggle="tooltip" title="Lookup Spotify Id" data-placement="right"></i>
+                    </div>
+                    <input class="form-control" id="spotify-id" type="text" value="<%= external_ids.spotify_id %>">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-sm btn-primary lnk-spotify-view" data-band-id="<%= band_id %>">View</button>
+                </div>
+
+                <div class="form-group">
+                  <button class="btn btn-sm btn-success lnk-spotify-collect" data-band-id="<%= band_id %>">Collect Now</button>
+                </div>
+    
+                <div class="form-group">
+                  <button class="btn btn-sm btn-danger lnk-spotify-clear" data-band-id="<%= band_id %>">Clear</button>
+                </div>
+              </form>
+            </li>
+
+            <li class="list-group-item">
+              <span class="label label-default"><%= running_stats.spotify_followers.current %> Followers</span>
+              <span class="label label-default"><%= running_stats.spotify_followers.incremental %> Incremental</span>
+              <span class="label label-default"><%= running_stats.spotify_followers.incremental_avg %> Incremental Avg</span>
+              <span class="label label-info"><%= running_stats.spotify_followers.last_updated %></span>
+              <br />
+              <span class="label label-danger"><%= failed_lookups.spotify %> Errors</span>
+              <span class="label label-danger"><%= running_stats.spotify_followers.error %></span>
+            </li>
+          </ul>
+      <!-- end spotify stats panel -->

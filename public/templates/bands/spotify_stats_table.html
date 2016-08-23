@@ -1,0 +1,20 @@
+<!-- header row -->
+<thead>
+  <th>Date</th>
+  <th>Total</th>
+  <th>Incremental</th>
+</thead>
+
+<tbody>
+
+  <% for (var i = 0; i < running_stats.spotify_followers.daily_stats.length; i++) { %>
+    <% var dailyStat = running_stats.spotify_followers.daily_stats[i]; %>
+        <tr>
+          <td><%= dailyStat.date %></td>
+          <td><%= dailyStat.value %></td>
+          <td><%= dailyStat.incremental %></td>
+        </tr>
+
+  <% } %>
+ 
+</tbody>

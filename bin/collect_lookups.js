@@ -17,27 +17,27 @@ var path = require('path');
 var nconf = require('nconf');
 var SoundcloudManager = require(path.join(__dirname, './../app/lib/SoundcloudManager.js'));
 var LastfmManager = require(path.join(__dirname, './../app/lib/LastfmManager.js'));
+var SpotifyManager = require(path.join(__dirname, './../app/lib/SpotifyManager.js'));
 var EchonestManager = require(path.join(__dirname, './../app/lib/EchonestManager.js'));
 var FacebookManager = require(path.join(__dirname, '/../app/lib/FacebookManager.js'));
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
 var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
+var BandstatsUtils = require(path.join(__dirname, '/../app/lib/BandstatsUtils.js'));
 
 /**
  * config, db, and app stuff
  */
 nconf.file(path.join(__dirname, '/../app/config/app.json'));
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 var bandRepository = new BandRepository({'db': db}); 
 var jobRepository = new JobRepository({'db': db}); 
 var facebookManager = new FacebookManager();
 var lastfmManager = new LastfmManager();
+var spotifyManager = new SpotifyManager();
 var echonestManager = new EchonestManager();
 var soundcloudManager = new SoundcloudManager();
+var bandstatsUtils = new BandstatsUtils();
+
 var processStart = new Date().getTime();
 
 /**
@@ -51,7 +51,8 @@ program
     .option('-n, --band_name <band_name>', 'band name')
     .option('-r, --resource <resource>', 'a valid api provider function')
     .option('-f, --field <field_name>', 'band field name to store the values (example: facebook_likes, lastfm_listeners, etc)')
-    .option('-l, --limit <num>', 'limit the lookup to <num> records');
+    .option('-l, --limit <num>', 'limit the lookup to <num> records')
+    .option('-e, --error_threshold <num>', 'limit the lookup to bands with LESS THAN <num> errors');
 
 /**
  * update commands
@@ -81,11 +82,22 @@ program
             conditions.push(nullQuery);
             conditions.push(emptyQuery);
 
-            query = {
-                $or: conditions
-            };
+            if (program.error_threshold > 0) {
+                var errorLimit = parseInt(program.error_threshold);
+                var errorQuery = {};
+                errorQuery["failed_lookups." + program.provider] = { $lt: errorLimit }
+
+                query = {
+                    $and: [errorQuery],
+                    $or: conditions
+                };
+            } else {
+                query = {
+                    $or: conditions
+                };
+            }
         }
-       
+
         collectLookups(query, program.provider, program.resource, program.field, function(err, results) {
             if (err) {
                 console.log(err);
@@ -126,23 +138,6 @@ program
 // process command line args
 program.parse(process.argv);
 
-/**
- * Function
- * TODO: move these to a lib 
- */
-
-function sanitizeSearchString(text) {
-    sanitized_text = text.toLowerCase();
-    sanitized_text = sanitized_text.replace('&', 'and')
-        .replace(/[\+\,\.\?\!\-\;\:\'\(\)]+/g, '')
-        .replace(/[\"“\'].+[\"”\']/g, '')
-        .replace(/[\n\r]/g, '')
-        .replace(/[\[\]]/g, '')
-        .replace(/[\\\/]/g, '');
- 
-    return sanitized_text;
-}
-
 function collectLookups(query, provider, resource, bandField, callback) {
 
     var options = {
@@ -171,7 +166,9 @@ function collectLookups(query, provider, resource, bandField, callback) {
                 "search": band.band_name
             };
 
-            searchObj.push(searchItem);
+            if (band.band_name != "") {
+                searchObj.push(searchItem);
+            }
 
             cb(null, searchObj);
         },
@@ -193,68 +190,13 @@ function collectLookups(query, provider, resource, bandField, callback) {
                 }
 
                 console.log('finished ' + bandField + ' collection using ' + resource);
-
-                // save results here
-                async.forEach(results, function(result, rcb) {
-                    //var result = results[r];
-                    var bandId = result.band_id;
-                    var bandName = result.band_name;
-                    var search = result.search;
-                    var values = result.results;
-
-                    if (values) {
-
-                        var match = false;
-                        var sanitizedBandName = sanitizeSearchString(bandName);
-                        var exact = new RegExp('^' + sanitizedBandName + '$', 'ig');
-                        var exactId = null;
-                        var exactName = null;
-                        for (var v in values) {
-                            var value = values[v];
-                            // if soundcloud use username instead of name
-                            if (provider === "soundcloud") {
-                                value.name = value.username
-                            }
-                            if (value.name) {
-                                var sanitizedValueName = sanitizeSearchString(value.name);
-
-                                if (sanitizedValueName.match(exact)) { 
-                                    match = true;
-                                    matchId = value.id;
-                                    matchName = value.name;
-                                    break;
-                                }
-                            } 
-                        }
-
-                        if (match) {
-                            console.log('updating ' + bandName + ' using id ' + search + ' with ' + matchId + ' id and name ' + matchName);
-
-                            // save the record 
-                            var set = {};
-                            set[bandField] = matchId;
-                            
-                            bandRepository.update({"band_id": bandId}, {$set: set}, {}, function(err, updated) {
-                                if (err) {
-                                    console.log(err); 
-                                }
-                                rcb(null, updated);
-                            });
-                        } else {
-                            console.log('could not find match for ' + bandName);
-                            rcb(null, result);
-                        }
-                    } else {
-                        console.log('could not find match for ' + bandName);
-                        rcb(null, result);
-                    }
-                     
-                },
-                function (err, finalResult) {
+                
+                bandRepository.resolveLookups(results, provider, bandField, function(err, finalResults) {
                     console.log('finished ' + bandField + ' collection database updates');
-                    callback(err, finalResult);
+                    callback(err, finalResults);
                 });
+
             });
         });
     }); 
-};
+}

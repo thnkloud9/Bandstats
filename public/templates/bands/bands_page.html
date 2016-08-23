@@ -1,0 +1,158 @@
+<ol class="breadcrumb">
+  <li><a href="#bands">Bands</a></li>
+  <% if (breadcrumb) { %>
+  <li class="active"><%= breadcrumb %></li>
+  <% } %>
+</ol>
+
+<!-- view menu -->
+<div class="row">
+  <div class="pull-left">
+    <ul id="band-list-filter" class="list-inline small">
+
+	<!-- genres -->
+        <% for (var i = 0; i < genres.length; i++) { %>
+           <li><span class="label label-default genre-filter"><%= genres[i] %></span></li>
+        <% } %>
+
+	<!-- regions -->
+        <% for (var i = 0; i < regions.length; i++) { %>
+            <li><span class="label label-default region-filter"><%= regions[i] %></span></li>
+        <% } %>
+
+	<!-- sorts -->
+        <% for (var i = 0; i < sorts.length; i++) { %>
+            <li><span class="label label-default sort-filter"><%= sorts[i] %></span></li>
+        <% } %>
+    </ul>
+
+  </div>
+
+  <div class="pull-right">
+    <button id="btn-tile-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-th"></span> Tile 
+    </button>
+    <button id="btn-gallery-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-th-list"></span> Gallery
+    </button>
+    <button id="btn-list-view" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-align-justify"></span> List
+    </button>
+    <button id="btn-show-filter" type="button" class="btn btn-default">
+      <span class="glyphicon glyphicon-filter"></span> Filter
+    </button>
+    <span id="band-list-total" class="badge">0</span>
+  </div>
+</div>
+<!-- end view menu -->
+
+<!-- filter menu -->
+<div id="bands-filter-list-content" class="row bands-list-filter" style="display: none">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Filter Builder</h3>
+    </div>
+    <div class="panel-body">
+	<h5>Filter by</h5>
+	<!-- genres controls -->
+	<div class="row">
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+                <span class="input-group-btn">
+                  <button id="btn-add-genre-filter" class="btn btn-default" type="button">Add</button>
+                </span>
+              </div>
+            </div>
+        </div>
+        <!-- end genres controls -->
+
+	<h5>And (not Or)</h5>
+
+        <!-- region controls -->
+	<div class="row">
+            <div class="col-md-4">
+               <div class="input-group">
+                <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+                <span class="input-group-btn">
+                  <button id="btn-add-region-filter" class="btn btn-default" type="button">Add</button>
+                </span>
+              </div>
+            </div>
+        </div>
+        <!-- end region controls -->
+
+	<h5>Sort by</h5>
+	
+	<div class="row">
+            <div class="col-md-6">
+	      <ul class="list-inline">
+		<li>
+                 <div class="input-group">
+		  <select id="select-sort" class="form-control">
+		    <option value="running_stats.facebook_likes.current">Facebook Likes</option>
+		    <option value="running_stats.facebook_likes.incremental_total">Facebook Incremental Likes</option>
+		    <option value="running_stats.facebook_likes.incremental_avg">Facebook Incremental Average Likes</option>
+		    <option value="failed_lookups.facebook">Facebook Errors</option>
+            <option disabled>──────────</option>
+		    <option value="running_stats.lastfm_listeners.current">Lastfm Listeners</option>
+		    <option value="running_stats.lastfm_listeners.incremental_total">Lastfm Incremental Listeners</option>
+		    <option value="running_stats.lastfm_listeners.incremental_avg">Lastfm Incremental Average Listeners</option>
+		    <option value="failed_lookups.lastfm">Lastfm Errors</option>
+            <option disabled>──────────</option>
+		    <option value="running_stats.spotify_followers.current">Spotify Followers</option>
+		    <option value="running_stats.spotify_followers.incremental_total">Spotify Incremental Followers</option>
+		    <option value="running_stats.spotify_followers.incremental_avg">Spotify Incremental Average Followers</option>
+		    <option value="failed_lookups.spotify">Spotify Errors</option>
+            <option disabled>──────────</option>
+		    <option value="mentions_total">Article Mentions</option>
+		    <option value="mentions_this_period">Article Mentions This Period</option>
+		    <option value="mentions_score_this_period">Article Mentions Score</option>
+            <option disabled>──────────</option>
+		    <option value="sum_current">Sum Current</option>
+		    <option value="sum_incremental">Sum Incremental</option>
+		    <option value="band_name">Band Name</option>
+		    <option value="created">Created</option>
+		    <option value="last_updated">Last Updated</option>
+		  </select>
+                 </div>
+		</li>
+
+		<li>
+                 <div class="input-group">
+		  <select id="select-direction" class="form-control">
+		    <option value="desc">Desc</option>
+		    <option value="asc">Asc</option>
+		  </select>
+                 </div>
+		</li>
+
+		<li>
+                 <div class="input-group">
+	      	   <button id="btn-add-sort-filter" type="button" class="btn btn-default">Add</button>
+                 </div>
+		</li>
+
+	      </ul>
+            </div>
+	</div>
+
+	<br>
+
+	<div>
+          <div class="input-group">
+	    <ul class="list-inline">
+	      <li><button id="btn-clear-filter" type="button" class="btn btn-default">Clear</button></li>
+	      <li><button id="btn-apply-filter" type="button" class="btn btn-success">Apply</button></li>
+	    </ul>
+	  </div>
+	</div>
+
+    </div>
+  </div>
+</div>
+<!-- end filter menu -->
+
+<div id="bands-page-content"></div>
+

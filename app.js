@@ -18,8 +18,6 @@ var flash = require('connect-flash');
 var passport = require('passport');
 var SkinStore = require('connect-mongoskin');
 
-require("jinjs").registerExtension(".jinjs");
-
 /**
  * configuration
  */
@@ -28,12 +26,7 @@ nconf.file(path.join(__dirname, 'app/config/app.json'));
 /**
  * database
  */
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 
 /**
  * auth strategy
@@ -44,32 +37,31 @@ var passport = require('passport');
  * web server 
  */
 var node_port = nconf.get('app:port');
-var app = module.exports.app = express()
+var app = module.exports.app = express();
+var sessionTimeout = nconf.get('app:session_timeout');
 app.configure(function() {
     app.set('title', nconf.get('app:title'));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.methodOverride());
 
-    // use jinjs for templates
-    //app.set("view options", { jinjs_pre_compile: function (str) { return parse_pwilang(str); } });
-    app.set('view engine', 'jinjs');
     app.set("view options", { layout: false });
-    app.set('views', __dirname + '/app/views');
 
     // setup public folder
     app.use(express.static(__dirname + '/public'));
 
     // authentication and sessions
     app.use(flash());
-    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db)}));
+    app.use(express.session({ secret: 'bandstats tracks', store: new SkinStore(db), cookie: { maxAge:sessionTimeout }})); 
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);
-})
+});
 
 /**
  * Load the JobSchedule
+ * TODO: allow for a switch to init job scheduler so that we can have multiple
+ *       worker processes, but only one job scheduler
  */
 var JobScheduler = require('./app/lib/JobScheduler.js');
 var jobScheduler = new JobScheduler(db);

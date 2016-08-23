@@ -1,0 +1,14 @@
+<td>
+  <a href="#users/<%= user_id %>" class="list plain">
+    <h5><%= username %></h5>
+  </a>
+</td>
+
+<td><%= role %></td>
+
+<td>
+  <% for (var i = 0; i < bands.length; i++) { %>
+    <% var band = bands[i]; %>
+    <%= band %>
+  <% } %>
+</td>

@@ -79,12 +79,16 @@ FacebookManager.prototype.search = function(query, callback) {
             json: true            
         };
 
+        util.log(options.url);
+
         request(options, function(err, response, body) {
             var musicPageIds = []; 
             var results = [];
 
             if (err || response.statusCode != 200) {
-                callback("error, bad response from facebook, statusCode " + response.statusCode);
+                if (response) {
+                    callback("error, bad response from facebook, statusCode " + response.statusCode);
+                }
                 return false;
             }
             if (!body.data) {

@@ -13,12 +13,7 @@ var nconf = require('nconf');
 var BandRepository = require(path.join(__dirname, '/../app/repositories/BandRepository.js'));
 var JobRepository = require(path.join(__dirname, '/../app/repositories/JobRepository.js'));
 nconf.file(path.join(__dirname, '/../app/config/app.json'));
-var db = require('mongoskin').db(nconf.get('db:host'), {
-    port: nconf.get('db:port'),
-    database: nconf.get('db:database'),
-    safe: true,
-    strict: false
-});
+var db = require('mongoskin').db("mongodb://"+nconf.get('db:host')+":"+ nconf.get('db:port') + "/" +  nconf.get('db:database'), {native_parser: true});
 var bandRepository = new BandRepository({'db': db}); 
 var jobRepository = new JobRepository({'db': db}); 
 var processStart = new Date().getTime();
@@ -37,7 +32,7 @@ program
     .option('-j, --job_id <job_id>', 'bandstats jobId Id (numeric), used for tracking only')
     .option('-i, --band_id <band_id>', 'bandstats bandId Id (numeric)')
     .option('-n, --band_name <band_name>', 'band name')
-    .option('-f, --field <field_name>', 'band field name to store the values (example: running_stats.uacebook_likes, lastfm_listeners, etc)')
+    .option('-f, --field <field_name>', 'band field name to store the values (example: running_stats.facebook_likes, lastfm_listeners, etc)')
     .option('-v, --value <value>', 'initial value for field)')
     .option('-l, --limit <num>', 'limit to <num> records')
 
@@ -46,7 +41,7 @@ program
  */
 program
     .command('add')
-    .description('adds a field to band document records')
+    .description('adds a field to all band records')
     .action(function() { 
 
         var query = buildQuery();
@@ -86,7 +81,7 @@ program
  */
 program
     .command('delete')
-    .description('not implemented')
+    .description('remove a field from all band records')
     .action(function() {
 
         var query = buildQuery();
@@ -193,18 +188,17 @@ function deleteField(bands, field, callback) {
 
 function addField(bands, field, value, callback) {
     async.forEach(bands, function(band, cb) {
-        if (!band.running_stats[program.field]) {
-            jobStats.errors++;
-            cb();
-            return false;
+        var setObject = {};
+        setObject[field] = value;
+        var set = {
+            $set: setObject
         }
-            
-        cb()       
-        //db.collection('bands').update({"band_id": bandId}, set, function(err, result) {
-        //    if (err) jobStats.errors++;
-        //    util.log('updated band_id ' + bandId);
-        //    cb();
-        //});
+
+        db.collection('bands').update({"band_id": band.band_id}, set, function(err, result) {
+            if (err) jobStats.errors++;
+            util.log('updated band_id ' + band.band_id);
+            cb();
+        });
     },
     function (err) {
         util.log('done with update');

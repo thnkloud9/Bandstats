@@ -11,6 +11,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var sleep = require('sleep');
 
 /**
  * Constructor
@@ -69,9 +70,14 @@ EchonestManager.prototype.lookup = function(searchObj, lookupFunction, callback)
         var totalStats = searchItem.total_stats;
         var incrementalTotal = searchItem.incremental_total;
 
+        // sleep 0.5 seconds to avoid rate limit
+        util.log('Looking up ' + bandName + ' using ' + searchTerm);
+        sleep.usleep(500000);
+
         lookupFunction.call(parent, searchTerm, function(err, results) {
             if (err) {
                 //just give err as result and move on
+                util.log(err);
                 results = err;
             };
 
@@ -211,6 +217,26 @@ EchonestManager.prototype.getImages = function(echonestId, callback) {
         }
 
         callback(null, body.response.images);
+    });
+}
+
+EchonestManager.prototype.getSongs = function(echonestId, callback) {
+    var options = { 
+        url: this.apiDomain +'/artist/songs?id=' + echonestId + '&api_key=' + this.apiKey + '&format=json',
+        json: true
+    };
+
+    request(options, function (err, response, body) {
+        if (err || response.statusCode != 200) {
+            callback('error, bad response from echonest ' + err);
+            return false;
+        }
+        if ((!body.response) || (!body.response.songs)) {
+            callback('error, could not find songs for ' + echonestId);
+            return false;
+        }
+
+        callback(null, body.response.songs);
     });
 }
 

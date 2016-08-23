@@ -1,0 +1,129 @@
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Bandstats 2.0</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dashboard <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#">Overview</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#dashboard/genres">Genre Stats</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#dashboard/regions">Region Stats</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Bands <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#bands">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/0">Create</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/missing/facebook_id">Missing Facebook Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/missing/lastfm_id">Missing Lastfm Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/missing/spotify_id">Missing Spotify Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/bad/facebook_likes">Bad Facebook Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/bad/lastfm_listeners">Bad Lastfm Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/bad/spotify_followers">Bad Spotify Ids</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/duplicates/list">Duplicates</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#bands/import/load">Import</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sites <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#sites">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#sites/0">Create</a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Jobs <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#jobs">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#jobs/0">Create</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#running_jobs">Running</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#jobs_log">Log</a>
+                </li>
+              </ul>
+            </li>
+
+            <li><a class="topnav-link" id="settings" href="#settings">Settings</a></li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Users <span class="caret"></span> </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" href="#users">List</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" href="#users/0">Create</a>
+                </li>
+              </ul>
+            </li>
+
+	        <li class="dropdown">
+    	      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      	        <%= user.username %> <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+		        <li>
+                  <a class="topnav-link" id="view-profile" href="#users/<%= user.user_id %>">Edit Profile</a>
+                </li>
+		        <li>
+                  <a class="topnav-link" id="logout" href="/logout">Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right">
+              <input type="text" id="band-search" class="form-control" placeholder="Band Search..." value="" />
+          </form>
+        </div>
+      </div>
+  </div>

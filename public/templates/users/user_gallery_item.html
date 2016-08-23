@@ -1,0 +1,33 @@
+<div class="row panel panel-default">
+  <div class="panel-heading">
+    <a href="#users/<%= user_id %>">
+      <h5><%= username %></h5>
+    </a>
+  </div>
+  
+  <div class="panel-body">
+
+    <div class="col-xs-4 col-md-2">
+      <a href="#users/<%= user_id %>">
+        <img src="<%= (user_image_src) ? user_image_src : '/images/default_profile.jpg'  %>" alt="not available" class="img-rounded thumbnail-small pull-left">
+      </a>
+    </div>
+
+    <div class="col-md-10">
+
+      <p>
+        Role: <%= role %>
+      </p>
+
+      <p>
+        <% for (var i = 0; i < bands.length; i++) { %>
+          <% var band = bands[i]; %>
+          <span class="label label-default"><%= band %></span>
+        <% } %>
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

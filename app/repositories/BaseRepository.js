@@ -46,7 +46,7 @@ BaseRepository.prototype.insert = function(values, options, callback) {
     // get a new sequential id first
     this.db.collection('counters').findAndModify(query, sort, update, options, function(err, result) {
         if (err) throw err;
-
+        
         values[collection.replace(/s$/, "") + "_id"] = result.seq.toString();
         values['created'] = new Date();
         db.collection(collection).insert(values, options, function(err, results) {
@@ -102,5 +102,14 @@ BaseRepository.prototype.remove = function(query, options, callback) {
         callback(null, results);
     });
 }
+
+BaseRepository.prototype.count = function(query, callback) {
+    this.db.collection(this.collection).count(query, function(err, results) {
+        if (err) throw err;
+
+        callback(null, results);
+    });
+}
+
 
 module.exports = BaseRepository;

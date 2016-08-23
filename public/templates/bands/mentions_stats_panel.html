@@ -1,0 +1,36 @@
+      <!-- mentions stats panel -->
+          <ul class="list-group">
+            <li class="list-group-item">
+              <form class="form-inline" role="form">
+                <div class="form-group" style="width: 300px">
+                  <div class="input-group">
+                    <div class="input-group-addon">
+                      <i class="fa fa-rss-square bs-tooltip" data-toggle="tooltip" title="Enter text to use during article matching for this band" data-placement="right"></i>
+                    </div>
+                    <input class="form-control" id="mentions-id" type="text" value="<%= external_ids.mentions_id %>">
+                  </div>
+                </div>
+
+                <div  class="form-group">
+                  <button id="lnk-mentions-clear" class="btn btn-sm btn-danger" data-band-id="<%= band_id %>">Clear</button>
+                </div>
+              </form>
+
+            </li>
+            <li class="list-group-item">
+              Total Mentions <span class="badge"><%= mentions_total %></span>
+            </li>
+            <li class="list-group-item">
+              Mentions Score Total <span class="badge"><%= mentions_score_total %></span>
+            </li>
+            <li class="list-group-item">
+              Mentions This Retention Period <span class="badge"><%= mentions_this_period %></span>
+            </li>
+            <li class="list-group-item">
+              Mentions Score This Retention Period <span class="badge"><%= mentions_score_this_period %></span>
+            </li>
+            <li class="list-group-item">
+              Last Updated <span class="label label-info pull-right"><%= last_updated %></span>
+            </li>
+          </ul>
+      <!-- end facebook stats panel -->

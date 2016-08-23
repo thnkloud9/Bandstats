@@ -17,7 +17,7 @@ var BandRepository = require('./../../repositories/BandRepository.js');
 /**
  * constructor
  */
-var BandController = function(db) {
+function BandController(db) {
 
     /**
      * Load the band repo for mongo connectivity
@@ -25,353 +25,581 @@ var BandController = function(db) {
     this.bandRepository = new BandRepository({'db': db});
     this.data = {"section": "band"};
     this.viewPath = "./../../views/";
-    /**
-     * just render template for jquery datatables
-     */
-    this.indexAction = function(req, res) {
-        var data = this.data;
-        var template = require(this.viewPath + 'band_index');
-        res.send(template.render(_.extend(data, {"search": req.query.search})));
-    } 
-
-    /**
-     * server-side implementation to support
-     * jquery datatables plugin for mongoskin
-     */
-    this.bandsAction = function(req, res) {
-        var data = this.data;
-        var query = {};
-        var parent = this;
-        var displayLength = req.query.iDisplayLength;
-        var displayStart = req.query.iDisplayStart;
-        var numDisplayColumns = req.query.iColumns;
-        var numSortColumns = req.query.iSortingCols;
-        var sEcho = req.query.sEcho;
- 
-        if (req.query.search) {
-            search = new RegExp('.*' + req.query.search + '.*', 'i');
-            query = {
-                $or: [
-                    {"band_name": search},
-                    {"band_id": search},
-                    {"external_ids.facebook_id": search},
-                    {"band_url": search},
-                ]
-            };
-        }
-
-        // if quey is present, override search
-        if (req.query.query) {
-            query = query;
-        }
-
-        var options = {
-            "limit": displayLength,
-            "skip": displayStart,
-            "_id": 0
-        };
-        
-        // add display columns
-        for (var c=0; c<=numDisplayColumns; c++) {
-            options[req.query['mDataProp_'+c]] = 1;
-        }
-
-        // add sorting
-        var orderby = {};
-        for (var s=0; s<numSortColumns; s++) {
-            var columnName = req.query['mDataProp_'+req.query['iSortCol_'+s]];
-            if (req.query['sSortDir_'+s] === 'asc') {
-                var direction = 1;
-            } else {
-                var direction = -1;
-            }
-            orderby[columnName] = direction;
-        }
-
-        // make the ordered query
-        var orderedQuery = {
-            $query: query,
-            $orderby: orderby
-        }
-
-        this.bandRepository.count(query, function(err, count) {
-            parent.bandRepository.find(orderedQuery, options, function(err, bands) {
-                var results = {
-                    "sEcho": sEcho,
-                    "iTotalRecords": count,
-                    "iTotalDisplayRecords": count,
-                    "bands": bands
-                }
-                res.send(results);
-            });
-        });
-    }
-
-    this.failedAction = function(req, res) {
-        var data = this.data;
-        var parent = this;
-        // TODO get this list from nconf
-        var running_stats = ['facebook_likes', 'lastfm_listeners'];
-
-        // get number of failed ids for all running_stats 
-        async.forEach(running_stats, function(stat, cb) {
-            var countId = "failed_" + stat + "_count";
-            parent.bandRepository.getBadRunningStatCount(stat, function(err, results) {
-                var result = {};
-                result[countId] = results;
-                _.extend(data, result);
-                cb(err);
-            });
-        },
-        function (err) {
-            var template = require(parent.viewPath + 'band_failed');
-            res.send(template.render(data));
-        });
-    }
-
-    this.badLastfmIdsAction = function(req, res) {
-        this.bandRepository.getBadLastfmIds(function(err, results) {
-            res.send(results);
-
-        }); 
-    }
-
-    this.badFacebookIdsAction = function(req, res) {
-        this.bandRepository.getBadFacebookIds(function(err, results) {
-            res.send(results);
-
-        }); 
-    }
-
-    this.lookupsAction = function(req, res) {
-        var data = this.data;
-        var parent = this;
-        // TODO get this list from nconf
-        var apis = ['facebook', 'lastfm', 'musicbrainz', 'soundcloud', 'bandcamp', 'echonest'];
-
-        // get number of missing ids for all external apis
-        async.forEach(apis, function(api, cb) {
-            var apiId = "external_ids." + api + "_id";
-            var countId = "missing_" + api + "_count";
-            var emptyQuery = {};
-            var nullQuery ={};
-            emptyQuery[apiId] = "";
-            nullQuery[apiId] = null;
-
-            var query = {
-                $or: [
-                    emptyQuery,
-                    nullQuery 
-                ]
-            };
-            parent.bandRepository.count(query, function(err, results) {
-                var result = {};
-                result[countId] = results;
-                _.extend(data, result);
-                cb(err);
-            });
-        },
-        function (err) {
-            var template = require(parent.viewPath + 'band_lookups');
-            res.send(template.render(data));
-        });
-    }
-
-    this.editAction = function(req, res) {
-        var data = this.data;
-        var query = {'band_id': req.params.id};
-        var bandRepository = this.bandRepository;
-        var template = require(this.viewPath + 'band_edit');
-        var apisEnabled = {
-            "facebook": nconf.get('facebook:enabled'),
-            "lastfm": nconf.get('lastfm:enabled'),
-            "echonest": nconf.get('echonest:enabled'),
-            "soundcloud": nconf.get('soundcloud:enabled'),
-            "bandcamp": nconf.get('bandcamp:enabled'),
-            "musicbrainz": nconf.get('musicbrainz:enabled'),
-            "youtube": nconf.get('youtube:enabled'),
-        }
-        _.extend(data, {
-            "json": {},
-            "apis_enabled": apisEnabled 
-        });
-
-        if (req.params.id === "0") {
-            // this is a new record
-            data.band = {};
-            data.json.band = JSON.stringify({});
-            res.send(template.render(data));
-        } else {
-            // get the record from the db
-            this.bandRepository.findOne(query, function(err, band) {
-                if ((err) || (!band)) {
-                    res.send({status: "error", error: "band not found"});
-                    return false;
-                }
-                delete band._id;
-                data.band = band;
-                data.json.band = JSON.stringify(band);
-                res.send(template.render(data));
-            });
-        }
-    }
-
-    this.articlesAction = function(req, res) {
-        var data = this.data;
-        var query = {'band_id': req.params.id};
-        var bandRepository = this.bandRepository;
-
-        this.bandRepository.findOne(query, function(err, band) {
-            if ((err) || (!band)) {
-                res.send({status: "error", error: "band not found"});
-                return false;
-            }
-            // get articles
-            bandRepository.getBandArticles(band, function(err, band, articles) {
-                    data.articles = articles;
-                    res.send(data);
-            });
-        });
-        
-    }
-
-    this.updateAction = function(req, res) {
-        if ((req.route.method != "put") || (!req.body.values)) {
-            res.send({status: "error", error: "update must be put action and must include values"});
-            return false;
-        }
-        var query = {'band_id': req.params.id};
-        var values = req.body.values;
-        var bandRepository = this.bandRepository
-
-        bandRepository.update(query, {$set: values}, {"multi": true}, function(err, updated) {
-            if ((err) || (!updated)) {
-                res.send({status: "error", error: err});
-                return false;
-            }
-            // send updated band back
-            res.send({status: "success", updated: updated});        
-        });
-
-    }
-
-    this.removeAction = function(req, res) {
-        if ((req.route.method != "delete") || (!req.params.id)) {
-            var data = {
-                status: "error",
-                error: "remove must be delete action and must be called from a band resource",
-                method: req.route.method,
-                id: req.params.id
-            };
-            res.send(data);
-        }
-        var query = {'band_id': req.params.id};
-        
-        this.bandRepository.remove(query, {safe: true}, function(err, removed) {
-            if ((err) || (!removed)) {
-                res.send({status: "error", error: err});
-                return false;
-            }
-            res.send({status: "success", id: req.params.id, removed: removed});
-        });
-    }
-
-    this.createAction = function(req, res) {
-        if ((req.route.method != "post") || (!req.body.values)) {
-            var data = {
-                status: "error",
-                error: "insert must be post action and must include values",
-                method: req.route.method,
-                values: req.body.values 
-            };
-            res.send(data);
-        }    
-        this.bandRepository.insert(req.body.values, {}, function(err, band) {
-            res.send({status: "success", band: band});
-        });
-    }
-
-    this.duplicatesAction = function(req, res) {
-        var data = this.data;
-        var parent = this;
-        this.bandRepository.findDuplicates(function(err, results) {
-            if (err) res.send(err);
-            
-            var finalResults = [];
-            async.forEach(results, function(band, cb) {
-
-                parent.bandRepository.find({"band_name": band.band_name}, {}, function(err, bandResults) {
-                    if (err) util.log(err);
-
-                    for (var b in bandResults) {
-                        finalResults.push(bandResults[b]);
-                    }
-                    cb();
-                }); 
-            },
-            function(err) {
-                var template = require(parent.viewPath + 'band_duplicates');
-                _.extend(data, { 
-                    "duplicates": finalResults,
-                    "duplicates_json": JSON.stringify(finalResults)
-                });
-                res.send(template.render(data));
-            });
-        });
-    }
-
-    // NOT BEING USED YET
-    this.showAction = function(req, res) {
-        var data = this.data;
-        var param = req.params.id;
-        var data = this.data;
-
-        _.extend(data, {
-            "json": {}
-        });
-
-        if (!isNaN(param)) {
-            var template = require(this.viewPath + 'band_test');
-            var query = {"band_id": param};
-            this.bandRepository.findOne(query, function(err, band) {
-                if ((err) || (!band)) {
-                    res.send({status: "error", error: "band not found"});
-                    return false;
-                }
-                delete band._id;
-                data.band = band;
-                data.json.band = JSON.stringify(band);
-                res.send(template.render(data));
-            });
-
-        } else {
-            var template = require(this.viewPath + 'band_' + page);
-            res.send(template.render(data));
-        }
-    }
-
-    this.genresAction = function(req, res) {
-        var parent = this;
-        var data = this.data;
-
-        this.bandRepository.getDistinctValues('genres', {}, function(err, genres) {
-            if (err) util.log(err);
-
-            res.send(genres);
-        });
-    }
-
-    this.regionsAction = function(req, res) {
-        var parent = this;
-        var data = this.data;
-
-        this.bandRepository.getDistinctValues('regions', {}, function(err, regions) {
-            if (err) util.log(err);
-
-            res.send(regions);
-        });
-    }
 }
 
+/**
+ * just render template for jquery datatables
+ */
+BandController.prototype.indexAction = function(req, res) {
+    // forward POST, PUT, and DELETE request to appropriate actions
+    if (req.route.method == "post") {
+      this.createAction(req, res);
+    }
+
+    if (req.route.method == "put") {
+      this.updateAction(req, res);
+    }
+
+    if (req.route.method == "delete") {
+      this.removeAction(req, res);
+    }
+
+    var data = this.data;
+    var bandId = req.params.id;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
+    var filter = req.query.filter;
+    var sort = req.query.sort;
+    var searchQuery = {};
+    var filterQuery = {};
+    var orderby = {};
+
+    var options = {};
+    var parent = this;
+
+    // if search requested search for band name, id, or external id
+    if (req.query.search) {
+        search = new RegExp('.*' + req.query.search + '.*', 'i');
+        searchQuery = {
+            $or: [
+                {"band_name": search},
+                {"band_id": search},
+                {"external_ids.facebook_id": search},
+                {"band_url": search},
+            ]
+        };
+    }
+
+    // if filter add to query
+    if (filter) {
+	    filterQuery = this.buildFilterQuery(filter);
+    }
+
+    
+    // add sorting
+    if (sort) {
+        orderby = this.buildSortQuery(sort);
+    }
+
+    if (req.query.startQuery) {
+      //var startQuery = JSON.parse(decodeURIComponent(req.query.q));
+      var startQuery = this.getStartQuery(req.query.startQuery);
+    } else {
+      var startQuery = {};
+    }
+
+    // make the ordered query
+    var orderedQuery = {
+        $query: { 
+            $and: [
+	        	startQuery, 
+                searchQuery, 
+                filterQuery 
+            ]
+        },
+        $orderby: orderby
+    };
+
+    // unordered query for count
+    var unorderedQuery = {
+        $and: [
+	        startQuery, 
+            searchQuery,
+            filterQuery
+        ]
+    }
+
+    // if this is for single band
+    if (bandId) {
+        unorderedQuery = { band_id: bandId };
+        orderedQuery = { band_id: bandId };
+    }
+
+    // now add pager options, and remove _id
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+
+    // DEBUG
+    //util.log(JSON.stringify(orderedQuery));
+   
+    this.bandRepository.count(unorderedQuery, function(err, count) { 
+      parent.bandRepository.find(orderedQuery, options, function(err, bands) {
+        if (err) {
+            util.log(JSON.stingify(err));
+            res.send(err);
+	    return false;
+        }
+        var results = {
+          "totalRecords": count,
+          "data": bands
+        }
+        if (bandId) {
+          res.send(bands[0]);
+        } else {
+          res.send(results);
+        }
+      });
+    });
+}
+
+BandController.prototype.getStartQuery = function(queryName) {
+    if (queryName === "facebook_likes_errors") {
+        var query = {};
+        query["running_stats.facebook_likes.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "lastfm_listeners_errors") {
+        var query = {};
+        query["running_stats.lastfm_listeners.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "spotify_followers_errors") {
+        var query = {};
+        query["running_stats.spotify_followers.error"] = { 
+            $exists: true, 
+            $nin: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "facebook_id_missing") {
+        var query = {};
+        query["external_ids.facebook_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "lastfm_id_missing") {
+        var query = {};
+        query["external_ids.lastfm_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "echonest_id_missing") {
+        var query = {};
+        query["external_ids.echonest_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    if (queryName === "spotify_id_missing") {
+        var query = {};
+        query["external_ids.spotify_id"] = { 
+            $in: [ "", null ] 
+        }
+
+        return query;
+    }
+
+    return {};
+}
+ 
+BandController.prototype.countAction = function(req, res) {
+    this.bandRepository.count({}, function(err, count) {
+        res.send({"count": count});
+    });
+} 
+
+/**
+ * simple list of bands and ids
+ * used for typeahead and lookups
+ */
+BandController.prototype.listAction = function(req, res) {
+    var data = this.data;
+    var limit = req.query.limit;
+    var skip = req.query.skip;
+    var query = {};
+    var options = {};
+
+    if (req.query.search) {
+        search = new RegExp('.*' + req.query.search + '.*', 'i');
+        query = {
+            $or: [
+                {"band_name": search},
+                {"band_id": search},
+                {"external_ids.facebook_id": search},
+                {"band_url": search},
+            ]
+        };
+    }
+
+    var options = {
+        "limit": limit,
+        "skip": skip,
+        "_id": 0
+    };
+   
+    this.bandRepository.find(query, options, function(err, bands) {
+        if (err) {
+            util.log(JSON.stingify(err));
+            res.send(err);
+        }
+        res.send(bands);
+    });
+} 
+
+
+BandController.prototype.failedAction = function(req, res) {
+    var data = this.data;
+    var parent = this;
+    // TODO get this list from nconf
+    var running_stats = ['facebook_likes', 'lastfm_listeners'];
+
+    // get number of failed ids for all running_stats 
+    async.forEach(running_stats, function(stat, cb) {
+        var countId = "failed_" + stat + "_count";
+        parent.bandRepository.getBadRunningStatCount(stat, function(err, results) {
+            var result = {};
+            result[countId] = results;
+            _.extend(data, result);
+            cb(err);
+        });
+    },
+    function (err) {
+        res.send(data);
+    });
+}
+
+BandController.prototype.badLastfmIdsAction = function(req, res) {
+    this.bandRepository.getBadLastfmIds(function(err, results) {
+        res.send(results);
+
+    }); 
+}
+
+BandController.prototype.badFacebookIdsAction = function(req, res) {
+    this.bandRepository.getBadFacebookIds(function(err, results) {
+        res.send(results);
+
+    }); 
+}
+
+BandController.prototype.lookupsAction = function(req, res) {
+    var data = this.data;
+    var parent = this;
+    // TODO get this list from nconf
+    var apis = ['facebook', 'lastfm', 'musicbrainz', 'soundcloud', 'bandcamp', 'echonest'];
+
+    // get number of missing ids for all external apis
+    async.forEach(apis, function(api, cb) {
+        var apiId = "external_ids." + api + "_id";
+        var countId = "missing_" + api + "_count";
+        var emptyQuery = {};
+        var nullQuery ={};
+        emptyQuery[apiId] = "";
+        nullQuery[apiId] = null;
+
+        var query = {
+            $or: [
+                emptyQuery,
+                nullQuery 
+            ]
+        };
+        parent.bandRepository.count(query, function(err, results) {
+            var result = {};
+            result[countId] = results;
+            _.extend(data, result);
+            cb(err);
+        });
+    },
+    function (err) {
+        res.send(data);
+    });
+}
+
+BandController.prototype.articlesAction = function(req, res) {
+    var data = this.data;
+    var query = {'band_id': req.params.id};
+    var bandRepository = this.bandRepository;
+
+    this.bandRepository.findOne(query, function(err, band) {
+        if ((err) || (!band)) {
+            res.send({status: "error", error: "band not found"});
+            return false;
+        }
+        // get articles
+        res.send(band.mentions);
+    });
+    
+}
+
+BandController.prototype.updateAction = function(req, res) {
+    if (req.route.method != "put") {
+        res.send({status: "error", error: "update must be put action and must include values"});
+        return false;
+    }
+    var query = {'band_id': req.params.id};
+    var band = req.body;
+    var bandRepository = this.bandRepository
+
+    // delete _id to avoid errors
+    delete band._id;
+
+    bandRepository.update(query, band, {}, function(err, updated) {
+        if ((err) || (!updated)) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500);
+            res.send();
+            return false;
+        }
+        // send updated user back
+        util.log('updated band ' + band.band_id);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send();
+    });
+
+}
+
+BandController.prototype.removeAction = function(req, res) {
+    if ((req.route.method != "delete") || (!req.params.id)) {
+        var data = {
+            status: "error",
+            error: "remove must be delete action and must be called from a band resource",
+            method: req.route.method,
+            id: req.params.id
+        };
+        res.send(data);
+    }
+    var query = {'band_id': req.params.id};
+    
+    this.bandRepository.remove(query, {safe: true}, function(err, removed) {
+        if ((err) || (!removed)) {
+            res.send({status: "error", error: err});
+            return false;
+        }
+        res.send({status: "success", id: req.params.id, removed: removed});
+    });
+}
+
+BandController.prototype.createAction = function(req, res) {
+    if (req.route.method != "post") {
+        var data = {
+            status: "error",
+            error: "insert must be post action and must include values",
+            method: req.route.method,
+            values: req.body 
+        };
+        res.send(data);
+    }
+    this.bandRepository.insert(req.body, {}, function(err, band) {
+        res.send({status: "success", band: band});
+    });
+}
+
+BandController.prototype.importAction = function(req, res) {
+    var parent = this;
+    var finalResults = [];
+
+    if (req.route.method != "post") {
+        var data = {
+            status: "error",
+            error: "import must be post action and must include bands",
+            method: req.route.method,
+            values: req.body.bands 
+        };
+        res.send(data);
+    }    
+
+    async.forEach(req.body.bands, function(band, cb) {
+        var result = {
+            "band_id": band.band_id,
+            "band_name": band.band_name,
+            "duplicate": false,
+            "added": false
+        };
+
+        var query = {
+            $and: [
+                {"band_name": band.band_name},
+                {"regions": { $in: [ band.regions[0] ] } }, 
+                {"genres": { $in: [ band.genres[0] ] } }
+            ] 
+        };
+
+        // see if this band already exists
+        parent.bandRepository.find(query, {}, function(err, bandResults) {
+            // mark duplicate
+            if (bandResults.length > 0) {
+                result.duplicate = true;
+                finalResults.push(result);
+                cb(err);
+            } else {
+                // or add the band
+                //TODO: add external id look ups
+                parent.bandRepository.insert(band, {}, function(err, newBand) {
+                    result.added = true;
+                    finalResults.push(result);
+                    cb(err);
+                });
+            }
+        });
+    },
+    function(err) {
+        res.send(finalResults);
+    });
+ 
+},
+
+BandController.prototype.duplicatesAction = function(req, res) {
+    var data = this.data;
+    var parent = this;
+    var limit = (req.query.limit) ? parseInt(req.query.limit) : 0;
+    var skip = (req.query.skip) ? parseInt(req.query.skip) : 0;
+    var filter = req.query.filter;
+    var sort = (req.query.sort) ? req.query.sort : { band_name: 'asc' };
+    var duplicateBands = [];
+    var filterQuery = {};
+    var orderby = {};
+
+    // if filter add to query
+    if (filter) {
+	    filterQuery = this.buildFilterQuery(filter);
+    }
+
+    // add sorting
+    if (sort) {
+        orderby = this.buildSortQuery(sort);
+    }
+
+    parent.bandRepository.findDuplicates(filterQuery, orderby, skip, limit, function(err, bands, total) {
+       if (err) res.send(err);
+          
+        var results = {
+           "totalRecords": total,
+           "data": bands
+        }
+        res.send(results);
+    });
+}
+
+BandController.prototype.genresAction = function(req, res) {
+    var parent = this;
+    var data = this.data;
+
+    this.bandRepository.getDistinctValues('genres', {}, function(err, genres) {
+        if (err) util.log(err);
+
+        if (req.query.search) {
+            var results = [];
+            search = new RegExp('.*' + req.query.search + '.*', 'i');
+            async.forEach(genres, function(genre, cb) {
+                if (search.test(genre)) {
+                    results.push(genre);
+                }
+                cb();
+            },
+            function(err) {
+                res.send(results);
+                return true;
+            });
+        } else {
+          res.send(genres);
+        }
+    });
+}
+
+BandController.prototype.regionsAction = function(req, res) {
+    var parent = this;
+    var data = this.data;
+
+    this.bandRepository.getDistinctValues('regions', {}, function(err, regions) {
+        if (err) util.log(err);
+
+        if (req.query.search) {
+            var results = [];
+            search = new RegExp('.*' + req.query.search + '.*', 'i');
+            async.forEach(regions, function(region, cb) {
+                if (search.test(region)) {
+                    results.push(region);
+                }
+                cb();
+            },
+            function(err) {
+                res.send(results);
+                return true;
+            });
+        } else {
+          res.send(regions);
+        }
+
+    });
+}
+
+BandController.prototype.buildFilterQuery = function(filter) {
+    var filterQuery = {}
+    var filters = {};
+    var andFilters = [];
+    var orFilters = [];
+
+
+	// different fields will be seperated by AND
+	// different values for a given field will be
+	// separated by OR 
+    _.forEach(filter, function(values, field) {
+	    var andFilter = {};
+	    var orFilter = {};
+	    orFilters = [];
+
+        // see if multiple values were passed, use or
+        if (typeof values === 'object') {
+            _.forEach(values, function(value) {
+                var orFilter = {};
+                orFilter[field] = { $in: [ value ] };
+                orFilters.push(orFilter);  
+            });
+		    var andFilter = {};
+		    andFilter = { $or: orFilters };
+		    andFilters.push(andFilter);
+        } else {
+            andFilter[field] = { $in: [ values ] };
+            andFilters.push(andFilter);
+        }
+
+    });
+  
+	filterQuery = {
+	    $and: andFilters
+	}
+
+    return filterQuery;
+}
+
+BandController.prototype.buildSortQuery = function(sort) {
+    var orderby = {}
+    // add sorting
+    if (sort) {
+        _.forEach(sort, function(direction, field) {
+            if (direction === "asc") {
+                orderby[field] = 1; 
+            } else {
+                orderby[field] = -1; 
+            }
+        });
+    }
+
+    return orderby;
+}
 /* export the class */
 exports.controller = BandController;

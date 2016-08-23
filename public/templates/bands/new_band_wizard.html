@@ -1,0 +1,139 @@
+<div class="wizard-container">
+    <div class="row wizard-row">
+        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-9 wizard-tab-container">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 wizard-tab-menu">
+              <div class="list-group">
+                <a href="#" id="basic-menu" class="list-group-item active text-center">
+                  <h4 class="fa fa-cogs fa-2x"></h4>
+                </a>
+                <a href="#" id="facebook-menu" class="list-group-item text-center">
+                  <h4 class="fa fa-facebook-square fa-2x"></h4>
+                </a>
+                <a href="#" id="lastfm-menu" class="list-group-item text-center">
+                  <h4 class="fa fa-lastfm-square fa-2x"></h4>
+                </a>
+                <a href="#" id="spotify-menu" class="list-group-item text-center">
+                  <h4 class="fa fa-spotify fa-2x"></h4>
+                </a>
+                <a href="#" id="rss-menu" class="list-group-item text-center">
+                  <h4 class="fa fa-rss-square fa-2x"></h4>
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 wizard-tab">
+                <!-- basic info section -->
+                <div id="basic-tab" class="wizard-tab-content active">
+                    <center>
+                      <h3 style="margin-top: 0;">Basic Info</h3>
+
+                      <div class="form-group">
+                        <label for="wizard-band-name" class="control-label">Name:</label>
+                        <input id="wizard-band-name" class="form-control" type="text" value="<%= band_name %>"/>
+                      </div>
+
+                     <!-- genres controls -->
+                     <div class="form-group">
+                       <input id="wizard-genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+                    </div>
+                    <!-- end genres controls -->
+
+                    <!-- region controls -->
+                    <div class="form-group">
+                      <input id="wizard-region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+                    </div>
+                    <!-- end region controls -->
+
+                    <div class="form-group">
+                      <button class="btn btn-sm btn-primary next" data-next="facebook">Next</button>
+                    </div>
+
+                    </center>
+                </div>
+                <!-- facebook section -->
+                <div id="facebook-tab" class="wizard-tab-content">
+                    <center>
+                      <h3 style="margin-top: 0;">Facebook Profile</h3>
+
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-addon lnk-facebook-lookup">
+                            <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="Lookup Facebook Id" data-placement="right"></i>
+                          </div>
+                          <input class="form-control" id="wizard-facebook-id" type="text" />
+                        </div>
+                      </div>
+
+                      <div id="facebook-search-results" class="loading-results">
+                      </div>
+
+                      <div class="form-group">
+                        <button class="btn btn-sm btn-primary next" data-next="lastfm">Next</button>
+                      </div>
+
+                    </center>
+                </div>
+    
+                <!-- lastfm search -->
+                <div id="lastfm-tab" class="wizard-tab-content">
+                    <center>
+                      <h3 style="margin-top: 0;">Lastfm Profile</h3>
+
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-addon lnk-lastfm-lookup" >
+                            <i class="fa fa-lastfm-square bs-tooltip" data-toggle="tooltip" title="Lookup Facebook Id" data-placement="right"></i>
+                          </div>
+                          <input class="form-control" id="wizard-lastfm-id" type="text" />
+                        </div>
+                      </div>
+
+                      <div id="lastfm-search-results" class="loading-results">
+                      </div>
+
+                      <div class="form-group">
+                        <button class="btn btn-sm btn-primary next" data-next="spotify">Next</button>
+                      </div>
+
+                    </center>
+                </div>
+                <!-- spotify section -->
+                <div id="spotify-tab" class="wizard-tab-content">
+                    <center>
+                      <h3 style="margin-top: 0;">Spotify Profile</h3>
+
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-addon lnk-spotify-lookup">
+                            <i class="fa fa-spotify bs-tooltip" data-toggle="tooltip" title="Lookup Facebook Id" data-placement="right"></i>
+                          </div>
+                          <input class="form-control" id="wizard-spotify-id" type="text" />
+                        </div>
+                      </div>
+
+                      <div id="spotify-search-results" class="loading-results">
+                      </div>
+
+                      <div class="form-group">
+                        <button class="btn btn-sm btn-primary next" data-next="rss">Next</button>
+                      </div>
+                    </center>
+                </div>
+                <!-- rss section -->
+                <div id="rss-tab" class="wizard-tab-content">
+                    <center>
+                      <h3 style="margin-top: 0;">RSS Profile</h3>
+
+                      <div class="form-group">
+                        <label for="mentions-id" class="control-label">RSS Match String:</label>
+                        <input id="wizard-mentions-id" class="form-control" type="text" />
+                      </div>
+
+                      <div class="form-group">
+                        <button class="btn btn-sm btn-primary save-band" data-dismiss="modal">Save</button>
+                      </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>

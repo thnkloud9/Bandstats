@@ -1,0 +1,239 @@
+<ol class="breadcrumb">
+  <li><a href="#bands">Bands</a></li>
+  <li class="active"><%= band_name %></li>
+</ol>
+
+<div id="band-detail-content" class="row">
+  <ul class="list-inline">
+
+    <!-- column one -->
+    <li style="vertical-align: top">
+
+      <div style="width: 300px">
+        <div class="well">
+          <p><img id="picture" class="image-droppable" width="250" src="<%= band_image_src === null ? 'pics/generic.jpg' : band_image_src  %>"/></p>
+          <p>To change the picture, drag a new picture from an external source on this page.</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a id='band-save' class="btn btn-primary save">Save</a>
+        <a id='band-delete' class="btn btn-danger delete">Delete</a>
+        <a id='band-clear-all' class="btn btn-warning">Clear All Stats</a>
+      </div>
+
+    </li>
+
+    <!-- column two -->
+     <li style="vertical-align: top">
+	   <div style="width: 300px">
+
+         <div class="form-group">
+           <label for="bandId" class="control-label">Id:</label>
+           <input id="bandId" class="form-control" type="text" value="<%= band_id === null ? '' : band_id %>" class="span2" disabled/>
+	     </div>
+		
+         <div class="form-group">
+           <label for="band-name" class="control-label">Name:</label>
+           <input id="band-name" class="form-control" type="text" value="<%= band_name %>"/>
+	     </div>
+
+         <div class="form-group">
+           <label for="band-url" class="control-label">Band Url:</label>
+           <input id="band-url" class="form-control" type="text" value="<%= band_url %>"/>
+	     </div>
+
+         <!-- genres controls -->
+         <div class="input-group">
+           <input id="genre-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Genres...">
+           <span class="input-group-btn">
+             <button id="btn-add-genre" class="btn btn-default" type="button">Add</button>
+           </span>
+        </div><!-- /input-group -->
+
+        <% for (var i = 0; i < genres.length; i++) { %>
+          <% var genre = genres[i]; %>
+          <span class="label label-default genres btn-delete-genre" data-genre="<%= genre %>"><%= genre %></span>
+        <% } %>
+    <!-- end genres controls -->
+
+    <!-- region controls -->
+        <div class="input-group">
+          <input id="region-typeahead" type="text" class="form-control tt-input-with-btn" value="" placeholder="Regions...">
+          <span class="input-group-btn">
+            <button id="btn-add-region" class="btn btn-default" type="button">Add</button>
+          </span>
+        </div><!-- /input-group -->
+
+        <% for (var i = 0; i < regions.length; i++) { %>
+          <% var region = regions[i]; %>
+          <span class="label label-default regions btn-delete-region" data-region="<%= region %>"><%= region %></span>
+        <% } %>
+    <!-- end region controls -->
+
+        <div class="form-group">
+          <label class="control-label">Active: </label>
+          <div id="toggle-active" class="btn-group toggle-btn-right">
+            <% if (active == "true") { %> 
+              <button class="btn btn-xs btn-success active">ON</button>
+              <button class="btn btn-xs btn-default">OFF</button>
+            <% } else { %>
+              <button class="btn btn-xs btn-default">ON</button>
+              <button class="btn btn-xs btn-danger active">OFF</button>
+            <% } %>
+        </div>
+        
+        <div class="form-group">
+          <label class="control-label">Collect Article Matches: </label>
+          <div id="toggle-article-matching" class="btn-group toggle-btn-right"> 
+            <% if (article_matching == "true") { %> 
+              <button class="btn btn-xs btn-success active">ON</button>
+              <button class="btn btn-xs btn-default">OFF</button>
+            <% } else { %>
+              <button class="btn btn-xs btn-default">ON</button>
+              <button class="btn btn-xs btn-danger active">OFF</button>
+            <% } %>
+          </div>
+        </div>
+
+	    <div class="input-group" style="width: 100%">
+		  <label class="control-label">Created: </label>
+		  <span class="label label-info pull-right"><%= created %></span>
+	    </div>
+
+	    <div class="input-group" style="width: 100%">
+		  <label class="control-label">Last Updated: </label>
+		  <span class="label label-info pull-right"><%= last_updated %></span>
+        </div>
+
+      </div>
+    </li>
+
+    <!-- column three -->
+    <li>
+      <div id="band-detail-tools">
+        <!-- START VERTICAL ACCORDIAN -->
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <i class="fa fa-facebook-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total likes"><%= running_stats.facebook_likes.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental likes"><%= running_stats.facebook_likes.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg likes"><%= running_stats.facebook_likes.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.facebook %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <!-- FACEBOOK PANELS GO HERE -->
+        <div id="facebook-stats-content">
+        </div>
+
+        <div id="facebook-chart-content">
+        </div>
+
+        <div id="facebook-stats-table" class="panel-body">
+        </div>
+        <!-- END FACEBOOK PANELS -->
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <i class="fa fa-lastfm-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total listeners"><%= running_stats.lastfm_listeners.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental listeners"><%= running_stats.lastfm_listeners.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg listeners"><%= running_stats.lastfm_listeners.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.lastfm %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <!-- LASTFM PANELS GO HERE -->
+        <div id="lastfm-stats-content">
+        </div>
+
+        <div id="lastfm-chart-content">
+        </div>
+
+        <div id="lastfm-stats-table" class="panel-body">
+        </div>
+        <!-- END LASTFM PANELS -->
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <i class="fa  fa-spotify fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total followers"><%= running_stats.spotify_followers.current %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental followers"><%= running_stats.spotify_followers.incremental %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="incremental avg followers"><%= running_stats.spotify_followers.incremental_avg %></span>
+              <span class="label label-danger bs-tooltip" data-toggle="tooltip" title="errors"><%= failed_lookups.spotify %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <!-- SPOTIFY PANELS GO HERE -->
+        <div id="spotify-stats-content">
+        </div>
+
+        <div id="spotify-chart-content">
+        </div>
+
+        <div id="spotify-stats-table" class="panel-body">
+        </div>
+        <!-- END SPOTIFY PANELS -->
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading band-detail-tool-panel" role="tab" id="headingFive">
+      <h4 class="panel-title">
+        <a class="collapsed no-decoration" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+          <i class="fa fa fa-rss-square fa-2x bs-tooltip" data-toggle="tooltip" title="click to expand"></i>
+          <div class="pull-right"> 
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total mentions"><%= mentions_total %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="total mentions score"><%= mentions_score_total %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="mentions this period"><%= mentions_this_period %></span>
+              <span class="label label-default bs-tooltip" data-toggle="tooltip" title="mentions score this period"><%= mentions_score_this_period %></span>
+          </div>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+      <div class="panel-body">
+        <!-- ARTICLE PANELS GO HERE -->
+        <div id="mentions-stats-content">
+        </div>
+
+        <div id="mentions-stats-table" class="panel-body">
+        </div>
+        <!-- END ARTICLE PANELS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+        <!-- END VERTICAL ACCORDIAN -->
+      </div>
+    </li>
+
+  </ul>
+</div>
+

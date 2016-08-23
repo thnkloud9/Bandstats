@@ -1,0 +1,20 @@
+<!-- header row -->
+<thead>
+  <th>Date</th>
+  <th>Site</th>
+  <th>Link</th>
+</thead>
+
+<tbody>
+
+  <% for (var i = 0; i < mentions.length; i++) { %>
+    <% var mentionStat = mentions[i]; %>
+        <tr>
+          <td><%= mentionStat.date %></td>
+          <td><%= mentionStat.site_name %></td>
+          <td><a href="<%= mentionStat.link %>" target="_blank">Read</a></td>
+        </tr>
+
+  <% } %>
+ 
+</tbody>

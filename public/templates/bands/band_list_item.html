@@ -1,0 +1,93 @@
+  <td>
+    <a class="band-detail-link" href="#bands/<%= band_id %>" class="list plain">
+      <h5><%= band_name %></h5>
+    </a>
+  </td>
+
+  <td>
+    <% for (var i = 0; i < genres.length; i++) { %>
+      <% var genre = genres[i]; %>
+      <span class="label label-default genres btn-delete-genre" data-genre="<%= genre %>"><%= genre %></span>
+    <% } %>
+  </td>
+
+  <td>
+    <% for (var i = 0; i < regions.length; i++) { %>
+      <% var region = regions[i]; %>
+      <span class="label label-default regions btn-delete-region" data-region="<%= region %>"><%= region %></span>
+    <% } %>
+  </td>
+
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total likes">
+      <%= running_stats.facebook_likes.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg likes">
+      <%= running_stats.facebook_likes.incremental_avg %>
+    </span>
+  </td>
+
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total listener">
+      <%= running_stats.lastfm_listeners.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg listeners">
+      <%= running_stats.lastfm_listeners.incremental_avg %>
+    </span>
+  </td>
+
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total followers">
+      <%= running_stats.spotify_followers.current %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="avg followers">
+      <%= running_stats.spotify_followers.incremental_avg %>
+    </span>
+  </td>
+
+  <td>
+    <span class="bs-tooltip" data-toggle="tooltip" title="total mentions">
+      <%= mentions_total %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="total this period">
+      <%= mentions_this_period %>
+    </span> / 
+    <span class="bs-tooltip" data-toggle="tooltip" title="total score this period">
+      <%= mentions_score_this_period %>
+    </span>  
+  </td>
+
+  <td>
+    <i class="fa fa-facebook-square bs-tooltip" data-toggle="tooltip" title="facebook errors">
+      <%= failed_lookups.facebook %>
+    </i>
+    <i class="fa fa-lastfm-square bs-tooltip" data-toggle="tooltip" title="lastfm errors">
+       <%= failed_lookups.lastfm %>
+    </i>
+    <i class="fa fa-spotify bs-tooltip" data-toggle="tooltip" title="spotify errors">
+       <%= failed_lookups.spotify %>
+    </i>
+  </td>
+
+  <td><% var lastUpdatedDate = new Date(last_updated); print(lastUpdatedDate.toLocaleDateString()) %></td>
+  <td>
+    <ul class="list-inline">
+      <li>
+        <% if ( article_matching === "true") { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success deactivate-mentions"><i class="fa fa-rss-square"></i> ON</button>
+        <% } else { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger activate-mentions"><i class="fa fa-rss-square"></i> OFF</button>
+        <% } %>
+      </li>
+      <li>
+        <% if (active === "true") { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success band-deactivate">Active</button>
+        <% } else { %>
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger band-activate">Hidden</button>
+        <% } %>
+      </li>
+      <li>
+        <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger band-delete">Delete</button>
+      </li>
+    </ul>
+  </td>

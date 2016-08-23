@@ -1,0 +1,69 @@
+<ol class="breadcrumb">
+  <li><a href="#bands">Bands</a></li>
+  <li class="active">Import</li>
+</ol>
+
+<div id="bands-import-content" class="row">
+        <form enctype="multipart/form-data" method="post">
+
+        <ul class="list-inline">
+          <li> 
+            <div class="radio">
+              <label>
+                <input type="radio" name="file-type" class="option-file" id="option-json-array" value="json-array" checked>
+                JSON array (single line)
+              </label>
+            </div>
+          </li>
+
+          <li> 
+            <div class="radio">
+              <label>
+                <input type="radio" name="file-type"  class="option-file" id="option-json-object" value="json-objects">
+                JSON objects (1 object per line)
+              </label>
+            </div>
+          </li>
+
+          <li> 
+            <div class="radio">
+              <label>
+                <input type="radio" name="file-type"  class="option-file" id="option-csv" value="csv">
+                CSV (comma separated, 1 object per line)
+              </label>
+            </div>
+          </li>
+
+          <li> 
+            <div class="radio">
+              <label>
+                <input type="radio" name="file-type" id="option-url" value="url">
+                URL (JSON array)
+              </label>
+            </div>
+          </li>
+
+
+        </ul>
+
+	    <div style="width: 500px">
+          <div class="form-group" id="dataurl-container" style="display: none">
+             <label for="dataurl" class="control-label">Bands Data URL:</label>
+             <input id="dataurl" class="form-control" type="text" value="" class="span2" />
+		  </div>
+
+           <div class="form-group" id="datafile-container">
+             <label for="datafile" class="control-label">Bands Data File:</label>
+             <input id="datafile" class="form-control" type="file" value="" class="span2" />
+		   </div>
+		 </div>
+		
+        <div class="form-actions">
+            <a id='bands-import' class="btn btn-primary save">Import</a>
+        </div>
+    
+        </form>
+
+        <div id="datafile-content"></div>
+</div>
+

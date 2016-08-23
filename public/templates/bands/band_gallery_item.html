@@ -1,0 +1,64 @@
+<div class="row panel panel-default">
+  <div class="panel-heading">
+    <a class="band-detail-link" href="#bands/<%= band_id %>">
+      <h5><%= band_name %></h5>
+    </a>
+  </div>
+  
+  <div class="panel-body">
+
+    <div class="col-xs-4 col-md-2">
+      <a class="band-detail-link" href="#bands/<%= band_id %>">
+        <img src="<%= band_image_src %>" alt="not available" class="img-rounded thumbnail-gallery pull-left">
+      </a>
+    </div>
+
+    <div class="col-md-10">
+
+      <p>
+        <a href="<%= band_url %>"><%= band_url %></a>
+      </p>
+
+      <p>
+        <% for (var i = 0; i < regions.length; i++) { %>
+          <% var region = regions[i]; %>
+          <span class="label label-default"><%= region %></span>
+        <% } %>
+      </p>
+
+      <p>
+        <% for (var i = 0; i < genres.length; i++) { %>
+          <% var genre = genres[i]; %>
+          <span class="label label-default"><%= genre %></span>
+        <% } %>
+      </p>
+
+      <p>
+        <% if ( article_matching === "true") { %>                                                                
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-success deactivate-mentions"><i class="fa fa-rss-square"></i> ON</button>
+        <% } else { %>                                                                                           
+          <button type="button" data-band-id="<%= band_id %>" class="btn btn-xs btn-danger activate-mentions"><i class="fa fa-rss-square"></i> OFF</button>
+        <% } %>                                                                                                  
+        <span class="badge"><%= mentions_total %></span>
+      </p>
+  
+      <ul class="list-unstyled"> 
+        <li class="col-md-6">
+          <div id="facebook-stats-content">
+          </div>
+        </li>
+        <li class="col-md-6">
+          <div id="lastfm-stats-content">
+          </div>
+        </li>
+        <li class="col-md-6">
+          <div id="spotify-stats-content">
+          </div>
+        </li>
+      </ul>
+
+    </div>
+
+  </div>
+
+</div>
