@@ -193,9 +193,8 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                 "search": band.external_ids[provider + '_id']
             };
 
-            // Added Condition
-            if(incrementalTotal != 0)
-                searchObj.push(searchItem);
+            
+            searchObj.push(searchItem);
 
 
             cb(null, searchObj);
