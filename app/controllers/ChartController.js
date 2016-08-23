@@ -68,6 +68,9 @@ var ChartController = function(db) {
             conditions.push(condition);
         }
 
+        //Adding condition to limit the query to return only the bands having >=2 daily stats
+        conditions.push({"running_stats.facebook_likes.daily_stats" : { $gte : 2 }});
+
         if(!limit) {
             limit = 400;
         }

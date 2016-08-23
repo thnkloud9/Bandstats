@@ -193,7 +193,9 @@ function collectRunningStats(save, query, provider, resource, runningStat, callb
                 "search": band.external_ids[provider + '_id']
             };
 
+            
             searchObj.push(searchItem);
+
 
             cb(null, searchObj);
         },

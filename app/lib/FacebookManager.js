@@ -157,7 +157,8 @@ FacebookManager.prototype.lookup = function(searchObj, lookupFunction, callback)
                 "previous": previous
             };
 
-            searchResults.push(searchResult); 
+            
+            searchResults.push(searchResult);
             
             cb(null, searchResults);
         });
